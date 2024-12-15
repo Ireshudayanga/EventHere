@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    volumes:
+      - ./frontend:/app         # Mount local code into the container
+      - /app/node_modules       # Prevent overriding node_modules
+    ports:
+      - "5173:5173"             # Vite dev server port
+    command: npm run dev        # Start dev server
+    environment:
+      - NODE_ENV=development
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    volumes:
+      - ./backend:/app         # Mount local backend code into the container
+      - /app/node_modules      # Prevent overriding node_modules
+    ports:
+      - "5000:5000"
+    command: npm run dev        # Run backend with Nodemon
+    environment:
+      - NODE_ENV=development

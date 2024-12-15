@@ -1,0 +1,36 @@
+# Node modules
+node_modules/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Environment variables
+.env
+
+# Debug and build files
+debug/
+dist/
+
+# Dependency directories
+coverage/
+.DS_Store
+
+# Docker files
+docker-compose.override.yml
+
+# Logs for nodemon
+nodemon-debug.log
+
+# IDE and editor files
+.vscode/
+.idea/
+*.sw?
