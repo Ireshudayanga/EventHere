@@ -1,6 +1,6 @@
 import React from 'react'
 import logo from '../assets/images/1000PPI.png'
-import searchIcon from '../assets/images/searchIcon.svg'
+
 
 const Navbar = () => {
   return (
@@ -55,9 +55,6 @@ const Navbar = () => {
           </svg>
           <div>Login</div>
         </div>
-
-
-
       </div>
     </div>
 
