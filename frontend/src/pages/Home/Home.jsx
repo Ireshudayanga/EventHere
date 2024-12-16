@@ -1,10 +1,16 @@
 import React from 'react'
 import '../Home/Home.css'
 import Hero from './Hero'
+import Banner from './Banner'
 const Home = () => {
   return (
     <div>
-     <Hero />
+      <div className='mx-[200px]'><Hero /></div>
+      <div className='bg-black'>
+        <div className='mx-[200px]'>
+          <Banner />
+        </div>
+      </div>
     </div>
   )
 }

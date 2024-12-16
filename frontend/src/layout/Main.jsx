@@ -5,7 +5,7 @@ import Navbar from '../components/Navbar'
 const Main = () => {
     return (
         <div className='bg-image '>
-            <div className='mx-[200px] '>
+            <div >
             <Navbar />
             <div className='min-h-screen '>
                 <Outlet />
