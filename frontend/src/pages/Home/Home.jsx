@@ -1,9 +1,10 @@
 import React from 'react'
 import '../Home/Home.css'
+import Hero from './Hero'
 const Home = () => {
   return (
-    <div className=''>
-      This is home page
+    <div>
+     <Hero />
     </div>
   )
 }
