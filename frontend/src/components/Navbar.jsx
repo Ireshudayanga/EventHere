@@ -1,5 +1,5 @@
 import React from 'react'
-import logo from '../assets/images/1000PPI.png'
+import logo from '../assets/images/300PPI.png'
 
 
 const Navbar = () => {
