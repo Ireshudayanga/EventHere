@@ -12,6 +12,10 @@ body {
   color: #ffffff; 
 }
 
+.imgblur{
+  filter: blur(5px);
+}
+
 .italicfont {
   font-family: 'Dancing Script', cursive;
   font-size: 8rem;

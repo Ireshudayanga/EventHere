@@ -1,9 +1,38 @@
 .bg-image {
-    background-image: url('../../assets/images/bg02.jpg'); 
-    background-size: cover; 
-    background-repeat: no-repeat; 
-    background-position: center; 
-    min-height: 100vh; 
-    width: 100%; 
-    position: relative; /* To position the overlay */
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0)), 
+    url('../../assets/images/bg02.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    min-height: 100vh;
+    width: 100%;
+    
+}
+
+.primarybutton{
+    background-color: #1A73E8;
+    width: 170px;
+    color: #ffffff;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    font-weight: 350; 
+}
+
+.secondarybutton {
+    background-color: transparent; 
+    color: #ffffff; 
+    padding: 10px 20px;
+    width: 170px;
+    border: 2px solid #ffffff; 
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+
 }

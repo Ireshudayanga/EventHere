@@ -4,7 +4,7 @@ import Footer from '../components/Footer'
 import Navbar from '../components/Navbar'
 const Main = () => {
     return (
-        <div className='bg-image'>
+        <div className='bg-image '>
             <div className='mx-[200px] '>
             <Navbar />
             <div className='min-h-screen '>
