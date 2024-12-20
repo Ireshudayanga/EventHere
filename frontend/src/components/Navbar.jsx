@@ -4,7 +4,7 @@ import logo from '../assets/images/300PPI.png'
 
 const Navbar = () => {
   return (
-    <div className='mx-[200px] flex flex-row items-center justify-between'>
+    <div className=' mx-[100px] flex flex-row items-center justify-between'>
       <div className='w-52'>
         <img src={logo} alt="EventHere Logo" />
       </div>

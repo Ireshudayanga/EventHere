@@ -4,10 +4,10 @@ import Footer from '../components/Footer'
 import Navbar from '../components/Navbar'
 const Main = () => {
     return (
-        <div className='bg-image '>
+        <div className='bg-image'>
             <div >
             <Navbar />
-            <div className='min-h-screen '>
+            <div className=''>
                 <Outlet />
             </div>
             <Footer />
