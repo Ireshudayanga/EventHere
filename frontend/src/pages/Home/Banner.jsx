@@ -26,7 +26,7 @@ const Banner = () => {
 
       {/* Right side - Text Content */}
       <div className="w-1/2 pl-8">
-        <h2 className="text-2xl font-semibold mb-4">Lorem Ipsum</h2>
+        <h2 className="text-5xl font-semibold mb-4 leading-tight">Power Up Your Events With <span className='primary-color'>Event</span><span className='yellow-color'>Here</span></h2>
         <p className="text-gray-700 leading-relaxed">
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa vel velit ab obcaecati architecto
           nam distinctio excepturi non eaque, iure beatae tempora ullam 
@@ -44,9 +44,7 @@ const Banner = () => {
           Perspiciatis consequuntur suscipit minima sed nesciunt nobis, vel, corrupti distinctio,
           pariatur libero possimus sit repellat non incidunt unde voluptatum harum ad similique!
         </p>
-        <p className="text-gray-700 leading-relaxed mt-4">
-          Perspiciatis consequuntur suscipit minima sed nesciunt nobis, vel, corrupti distinctio,
-        </p>
+        
       </div>
     </div>
   );
