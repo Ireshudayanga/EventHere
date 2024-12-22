@@ -79,3 +79,11 @@
     border-color: #FBBC05;
   }
   
+  .featureframe {
+    width: 230px;
+    height: 260px;
+    border: 4px solid #34A853;
+    border-radius: 30px;
+    background-color: #bedddb;
+    box-shadow: #5ea38d 0px 0px 10px;
+  }

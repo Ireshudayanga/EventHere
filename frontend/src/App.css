@@ -6,9 +6,9 @@ body {
   font-weight: 400;
   line-height: 1.6;
   box-sizing: border-box;
-  background: linear-gradient(black 0px, black 20px, #bedddb 350px, #bedddb 100%); 
+  background-color: #bedddb;
   color: #ffffff;
-  min-height: 800px;
+ 
 }
 
 
@@ -72,3 +72,4 @@ body {
   cursor: not-allowed;
   box-shadow: none;
 }
+
