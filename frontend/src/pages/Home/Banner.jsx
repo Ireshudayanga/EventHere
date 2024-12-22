@@ -5,7 +5,7 @@ import feature03 from '../../assets/svg/feature03.svg';
 
 const Banner = () => {
   return (
-    <div className=" flex flex-row items-start w-full px-6 md:px-20 mt-28 ">
+    <div className=" flex flex-row items-start w-full px-6 md:px-20 mt-44 ">
       {/* Left side - Images */}
       <div className="relative w-1/2 flex flex-row">
         {/* Frame 1 */}
@@ -31,7 +31,6 @@ const Banner = () => {
         EventHere makes finding, attending, and sharing events effortless. Discover events tailored to you, carpool with others, stay organized with a personal calendar, and connect through comments and reviews. Make an impact by volunteering or donating, 
         and earn eco-friendly badges along the way. EventHere brings people together.
         </p>
-        
       </div>
     </div>
   );
