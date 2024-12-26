@@ -1,0 +1,32 @@
+[
+    {
+        "id": 1,
+        "image": "/images/card01.jpg",
+        "title": "Mega Blast",
+        "description": "Happening"
+    },
+    {
+        "id": 2,
+        "image": "/images/card02.jpg",
+        "title": "Vesak Festival",
+        "description": "Visit us !!..."
+    },
+    {
+        "id": 3,
+        "image": "/images/card03.jpg",
+        "title": "Health Clinic",
+        "description": "In your Area....."
+    },
+    {
+        "id": 4,
+        "image": "/images/card04.jpg",
+        "title": "Black Friday",
+        "description": "In this weekend !!"
+    },
+    {
+        "id": 5,
+        "image": "/images/card05.jpg",
+        "title": "Nova Star",
+        "description": "31 Night Chill !!"
+    }
+]
