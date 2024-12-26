@@ -5,7 +5,7 @@ import feature03 from '../../assets/svg/feature03.svg';
 
 const Banner = () => {
   return (
-    <div className=" flex flex-row items-start w-full px-6 md:px-20 mt-44 ">
+    <div className=" flex flex-row  w-full  mt-44 ">
       {/* Left side - Images */}
       <div className="relative w-1/2 flex flex-row">
         {/* Frame 1 */}
@@ -25,7 +25,7 @@ const Banner = () => {
       </div>
 
       {/* Right side - Text Content */}
-      <div className="w-1/2 pl-8">
+      <div className="w-1/2 ">
         <h2 className="text-5xl font-semibold mb-4 leading-tight">Power Up Your <br /> Events <br />With <span className='primary-color'>Event</span><span className='yellow-color'>Here</span></h2>
         <p className=" my-14 text-gray-700 leading-loose">
         EventHere makes finding, attending, and sharing events effortless. Discover events tailored to you, carpool with others, stay organized with a personal calendar, and connect through comments and reviews. Make an impact by volunteering or donating, 

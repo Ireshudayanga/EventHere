@@ -11,7 +11,7 @@ const Home = () => {
       <div className=' my-16 lg:my-28 px-6 md:px-40'>
         <Hero />
       </div>
-      <div className="px-3 lg:px-40">
+      <div className="px-2 md:px-14">
         <Banner />
       </div>
       <div className="px-2 md:px-6">
