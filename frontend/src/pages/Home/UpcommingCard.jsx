@@ -23,7 +23,7 @@ const UpcommingCard = () => {
   }, []);
 
   return (
-    <div className="flex flex-col items-center h-[800px] bg-slate-100">
+    <div className="flex flex-col items-center h-[800px] ">
       <div className="text-center p-6 max-w-3xl">
         <div className="text-4xl primary-color font-bold">Discover Events That Matter to You</div>
         <div className="mt-6 text-gray-700">
@@ -39,9 +39,8 @@ const UpcommingCard = () => {
         {cardData.map((card, index) => (
           <div
             key={card.id}
-            className={`border-2 border-[#2858b9] w-[200px] h-[330px] rounded-3xl flex flex-col items-center p-6 ${
-              index % 2 === 1 ? 'translate-y-6' : '-translate-y-6'
-            }`}
+            className={`border-2 border-[#2858b9] w-[200px] h-[330px] rounded-3xl flex flex-col items-center p-6 ${index % 2 === 1 ? 'translate-y-6' : '-translate-y-6'
+              }`}
           >
             <div className="items-center justify-center flex">
               <img className="w-[150px] h-[150px] rounded-full object-cover" src={card.image} alt={card.title} />
@@ -56,6 +55,12 @@ const UpcommingCard = () => {
             </div>
           </div>
         ))}
+      </div>
+      {/* See All Button */}
+      <div className="flex justify-center mt-24">
+        <button className="flex items-center  cardButton">
+          <div className="">See All Events</div>
+        </button>
       </div>
     </div>
   );
