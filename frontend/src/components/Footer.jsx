@@ -1,18 +1,18 @@
 /* eslint-disable react/prop-types */
 import * as React from "react";
-
+import logo from '../assets/images/300PPI.png';
 const footerLinks = {
   getStarted: {
     title: "Get started",
-    links: ["Download app", "New releases", "Originals", "Plans"]
+    links: ["Download app", "Create event", "Sell tickets online"]
   },
   account: {
     title: "Account",
-    links: ["Sign in", "Platform", "Support"]
+    links: ["Sign in","Support", "Contact us"]
   },
   pride: {
-    title: "Pride",
-    links: ["Partners", "Careers", "Press"]
+    title: "Developer",
+    links: ["Proudly made in Sri Lanka"]
   }
 };
 
@@ -32,7 +32,6 @@ function FooterLinks({ title, links }) {
 }
 
 const socialIcons = [
-  { src: "https://cdn.builder.io/api/v1/image/assets/TEMP/e1b483037f2e4e31bfe5dae50902a93781259f02933134f7f295086b287f1f34?placeholderIfAbsent=true&apiKey=75ee0982192e49fc91344ce448028012", alt: "Social media icon" },
   { src: "https://cdn.builder.io/api/v1/image/assets/TEMP/d48d6948ca2010aff9999f59435a88941d48709aa300e1f5908b3c77e0946173?placeholderIfAbsent=true&apiKey=75ee0982192e49fc91344ce448028012", alt: "Social media icon" },
   { src: "https://cdn.builder.io/api/v1/image/assets/TEMP/231fd00d34c075573660ec9f14d5e28dc44c74d876e1bc5225ff125c8c9b878e?placeholderIfAbsent=true&apiKey=75ee0982192e49fc91344ce448028012", alt: "Social media icon" },
   { src: "https://cdn.builder.io/api/v1/image/assets/TEMP/a91eb86b7970b2d95c6f6906055b722e0cf1d7ef41aa62549edd11717cae9aec?placeholderIfAbsent=true&apiKey=75ee0982192e49fc91344ce448028012", alt: "Social media icon" }
@@ -69,7 +68,7 @@ function Footer() {
         <div className="flex flex-wrap gap-10 justify-center items-start self-stretch my-auto min-w-[240px] max-md:max-w-full">
           <img
             loading="lazy"
-            src="https://cdn.builder.io/api/v1/image/assets/TEMP/c075f7a69ac98c9d5843949906aed2b86dc6c82ac44f404790795064affd9704?placeholderIfAbsent=true&apiKey=75ee0982192e49fc91344ce448028012"
+            src={logo}
             alt="Company logo"
             className="object-contain shrink-0 aspect-[1.39] min-w-[240px] w-[294px]"
           />

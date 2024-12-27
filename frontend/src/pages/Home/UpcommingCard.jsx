@@ -15,7 +15,7 @@ const UpcommingCard = () => {
       })
       .then((data) => {
         setCardData(data);
-        console.log('Event data:', data);
+        // console.log('Event data:', data);
       })
       .catch((error) => {
         console.error('Error fetching event data:', error);
@@ -43,7 +43,7 @@ const UpcommingCard = () => {
               }`}
           >
             <div className="items-center justify-center flex">
-              <img className="w-[150px] h-[150px] rounded-full object-cover" src={card.image} alt={card.title} />
+              <img className="w-[150px] h-[150px] rounded-full object-cover" loading='lazy' src={card.image} alt={card.title} />
             </div>
             <div className="mt-6 primary-color font-semibold text-xl">{card.title}</div>
             <div className="mt-1 text-zinc-700">{card.description}</div>
