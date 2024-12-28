@@ -1,10 +1,17 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // Import the hook for navigation
 import logo from '../assets/images/300PPI.png';
 
 const Navbar = () => {
   const [activePage, setActivePage] = useState('Home');
-
+  const navigate = useNavigate(); // Initialize navigate hook
   const navItems = ['Home', 'Events', 'Calendar', 'Volunteer', 'Explore'];
+
+  const handleNavigation = (item) => {
+    setActivePage(item);
+    // Navigate to the appropriate route
+    navigate(item === 'Home' ? '/' : `/${item.toLowerCase()}`);
+  };
 
   return (
     <div className="mx-[100px] flex flex-row items-center justify-between">
@@ -22,7 +29,7 @@ const Navbar = () => {
               className={`relative px-4 text-white cursor-pointer ${
                 activePage === item ? 'font-bold' : 'font-normal'
               }`}
-              onClick={() => setActivePage(item)}
+              onClick={() => handleNavigation(item)}
             >
               {item}
               {activePage === item && (
