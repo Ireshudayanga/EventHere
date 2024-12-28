@@ -3,7 +3,10 @@ import React, { Children } from 'react'
 import { createBrowserRouter } from "react-router-dom";
 import Main from "../layout/Main";
 import Home from "../pages/Home/Home";
-import EventPaage from '../pages/Event/EventPaage';
+import Dashboard from '../layout/Dashboard';
+import EventPage from '../pages/Event/EventPage';
+
+
 
 const router = createBrowserRouter([
     {
@@ -17,8 +20,15 @@ const router = createBrowserRouter([
         ]
     },
     {
-        path: "/events",
-        element: <EventPaage />,
-    }
+        path: "/",
+        element: <Dashboard />,
+        children: [            {
+            path: "/events",
+            element: <EventPage/>,
+            },
+           
+        ]
+    },
+    
 ])
 export default router

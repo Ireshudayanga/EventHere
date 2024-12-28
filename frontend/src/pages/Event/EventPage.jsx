@@ -17,7 +17,8 @@ const EventPage = () => {
                     <p className="text-black">John Doe</p>
                 </div>
             </div>
-
+            
+            
             {/* Main Content */}
             <div className="bg-[#d4d3d3] h-[92%] w-[94%] mt-4 rounded-2xl shadow-2xl ml-auto">
                 {/* Main Layout */}
