@@ -4,26 +4,16 @@ import SearchBar from './SearchBar';
 import userIcon from '../../assets/svg/User.svg';
 import '../Event/Event.css';
 import { Link } from 'react-router-dom';
+import searchIcon from '../../assets/svg/Search.svg';
 
 const EventPage = () => {
     return (
         <div className="h-screen">
-            {/* Top Navigation */}
-            <div className="flex flex-row py-4 px-8 justify-between items-center">
-                <Link to="/"> <img src={home} alt="home" className="w-8 h-8" /></Link>
-                <SearchBar />
-                <div className="flex flex-row items-center gap-4">
-                    <img className="w-8" src={userIcon} alt="user icon" />
-                    <p className="text-black">John Doe</p>
-                </div>
-            </div>
-            
-            
+            <SearchBar />
             {/* Main Content */}
             <div className="bg-[#d4d3d3] h-[92%] w-[94%] mt-4 rounded-2xl shadow-2xl ml-auto">
                 {/* Main Layout */}
                 <div className="flex h-full p-7">
-
                     {/* Left Section */}
                     <div className="w-[25%] h-full flex flex-col gap-5">
                         <div className="bg-white text-black p-5 rounded-2xl h-[35%] shadow-lg">
