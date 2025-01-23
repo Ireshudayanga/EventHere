@@ -115,3 +115,31 @@
 .gradient-bg {
   background: linear-gradient( #1A73E8 0%, #bedddb 100%);
 }
+
+.italicfont {
+  font-family: 'Dancing Script', cursive;
+  font-weight: 700;
+}
+
+
+
+/* For medium screens (tablets, etc.) */
+@media (max-width: 1024px) {
+  .bg-image {
+      max-height: 140vh;
+  }
+}
+
+/* For small screens (mobile devices) */
+@media (max-width: 768px) {
+  .bg-image {
+      max-height: 120vh;
+  }
+}
+
+/* For extra small screens (very small devices) */
+@media (max-width: 480px) {
+  .bg-image {
+      max-height: 100vh;
+  }
+}

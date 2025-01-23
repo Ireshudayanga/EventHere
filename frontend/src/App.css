@@ -8,7 +8,7 @@ body {
   box-sizing: border-box;
   background-color: #bedddb;
   color: #ffffff;
- 
+  
 }
 
 
@@ -16,12 +16,6 @@ body {
   filter: blur(5px);
 }
 
-.italicfont {
-  font-family: 'Dancing Script', cursive;
-  font-size: 8rem;
-  font-weight: 700;
-
-}
 
 .primary-color {
   color: #1A73E8;

@@ -4,29 +4,66 @@ import logo from '../assets/images/300PPI.png';
 
 const Navbar = () => {
   const [activePage, setActivePage] = useState('Home');
+  const [isMenuOpen, setIsMenuOpen] = useState(false); // State to handle menu toggle
   const navigate = useNavigate(); // Initialize navigate hook
   const navItems = ['Home', 'Events', 'Calendar', 'Volunteer', 'Explore'];
 
   const handleNavigation = (item) => {
     setActivePage(item);
-    // Navigate to the appropriate route
+    setIsMenuOpen(false); // Close menu after navigation
     navigate(item === 'Home' ? '/' : `/${item.toLowerCase()}`);
   };
 
   return (
-    <div className="mx-[100px] flex flex-row items-center justify-between">
+    <div className="mx-[20px] sm:mx-[100px] flex flex-row items-center justify-between">
       {/* Logo Section */}
-      <div className="w-52">
+      <div className="w-32 sm:w-52">
         <img src={logo} alt="EventHere Logo" />
       </div>
 
+      {/* Hamburger Menu Icon */}
+      <div className="sm:hidden flex items-center">
+        <button
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+          className="text-white focus:outline-none"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="w-6 h-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            {isMenuOpen ? (
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            ) : (
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+            )}
+          </svg>
+        </button>
+      </div>
+
       {/* Navigation Section */}
-      <div className="relative w-[500px] bg-[#6a927e1d] border border-white rounded-2xl">
-        <ul className="flex flex-row items-center m-4 justify-between h-6 relative">
+      <div
+        className={`${
+          isMenuOpen ? 'block' : 'hidden'
+        } absolute top-[80px] md:top-[initial] left-0 w-full bg-[#1A73E8] sm:relative sm:block sm:w-[500px] sm:bg-transparent sm:border-none border border-white rounded-2xl`}
+      >
+        <ul className="flex flex-col sm:flex-row items-center m-4 sm:justify-between sm:h-6">
           {navItems.map((item) => (
             <li
               key={item}
-              className={`relative px-4 text-white cursor-pointer ${
+              className={`relative px-4 py-2 sm:py-0 text-white cursor-pointer ${
                 activePage === item ? 'font-bold' : 'font-normal'
               }`}
               onClick={() => handleNavigation(item)}
@@ -34,7 +71,8 @@ const Navbar = () => {
               {item}
               {activePage === item && (
                 <span
-                  className="absolute bottom-[-8px] left-0 w-full h-1 bg-white rounded-full transition-all duration-300"
+                className="absolute bottom-[-8px] left-0 w-full h-1 bg-transparent sm:bg-white rounded-full transition-all duration-300 sm:block"
+
                 />
               )}
             </li>
@@ -43,7 +81,7 @@ const Navbar = () => {
       </div>
 
       {/* Right Section */}
-      <div className="flex items-center gap-7">
+      <div className="hidden sm:flex items-center gap-7">
         {/* Search Icon */}
         <div className="w-6 h-6">
           <svg
