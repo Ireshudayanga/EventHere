@@ -17,12 +17,14 @@ const Navbar = () => {
   return (
     <div className="mx-[20px] sm:mx-[100px] flex flex-row items-center justify-between">
       {/* Logo Section */}
-      <div className="w-32 sm:w-52">
+      <div className="flex items-center justify-between w-full md:w-auto">
+
+     <div className="w-36 sm:w-52">
         <img src={logo} alt="EventHere Logo" />
       </div>
 
       {/* Hamburger Menu Icon */}
-      <div className="sm:hidden flex items-center">
+      <div className="sm:hidden flex  items-center">
         <button
           onClick={() => setIsMenuOpen(!isMenuOpen)}
           className="text-white focus:outline-none"
@@ -52,6 +54,7 @@ const Navbar = () => {
           </svg>
         </button>
       </div>
+     </div>
 
       {/* Navigation Section */}
       <div
