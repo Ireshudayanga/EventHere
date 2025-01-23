@@ -7,10 +7,10 @@ const Banner = () => {
   return (
     <div className=" flex flex-row  w-full  mt-44 ">
       {/* Left side - Images */}
-      <div className="relative w-1/2 flex flex-row">
+      <div className="relative md:w-1/2 flex flex-row">
         {/* Frame 1 */}
         <div className="imgframe1  top-[50px] left-0">
-          <img className="w-[180px] transform scale-x-[-1] mt-[50px]" src={feature01} alt="feature01" />
+          <img className=" md:w-[180px] transform scale-x-[-1] mt-[50px]" src={feature01} alt="feature01" />
         </div>
 
         {/* Frame 2 */}
