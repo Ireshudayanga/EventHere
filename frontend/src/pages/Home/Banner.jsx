@@ -27,12 +27,15 @@ const Banner = () => {
 
       {/* Right side - Text Content */}
       <div className="md:w-1/2 text-center md:text-left">
-        <h2 className="md:text-4xl text-3xl font-semibold mb-4 leading-tight">Power Up Your <br /> Events <br />With <span className='primary-color'>Event</span><span className='yellow-color'>Here</span></h2>
-        <p className="my-10 md:my-14 text-gray-700 leading-loose">
+        <h2 className="md:text-6xl text-3xl font-semibold mb-4 leading-snug md:leading-tight">
+          Power Up Your <br /> Events <br />With <span className='primary-color'>Event</span><span className='yellow-color'>Here</span>
+        </h2>
+        <p className="my-10 md:my-14 text-gray-700 leading-loose md:leading-loose">
           EventHere makes finding, attending, and sharing events effortless. Discover events tailored to you, carpool with others, stay organized with a personal calendar, and connect through comments and reviews. Make an impact by volunteering or donating,
           and earn eco-friendly badges along the way. EventHere brings people together.
         </p>
       </div>
+
     </div>
   );
 };
