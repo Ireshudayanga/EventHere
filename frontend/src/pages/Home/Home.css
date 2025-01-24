@@ -136,31 +136,47 @@
 }
 
 /* For small screens (mobile devices) */
+/* For small screens (mobile devices) */
 @media (max-width: 768px) {
-  .bg-image {
-    max-height: 120vh;
-  }
-
   .flex-row {
     flex-direction: column;
   }
 
-  .imgframe1,
-  .imgframe2,
-  .imgframe3 {
-    width: 120px;
-    height: 168px;
-    margin: 10px auto; /* Centers images */
+  .imgframe1 {
+    position: absolute;
     border-radius: 40px;
+    width: 40%;
+    height: 190px;
   }
 
-  .text-5xl {
-    font-size: 2.5rem; /* Adjusted for mobile screens */
+  .imgframe2 {
+    position: absolute;
+    left: 20%;
+    border-radius: 40px;
+    width: 40%;
+    height: 190px;
+    top: 90px;
+  }
+
+  .imgframe3 {
+    position: absolute;
+    left: 60%;
+    transform: translateX(-50%);
+    border-radius: 40px;
+    width: 40%;
+    height: 190px;
+    
+  }
+
+  .text-3xl {
     text-align: center;
   }
 
-  
+  .relative {
+    position: relative;
+  }
 }
+
 
 
 /* For extra small screens (very small devices) */
