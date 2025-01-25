@@ -135,37 +135,54 @@
   }
 }
 
-/* For small screens (mobile devices) */
+
 /* For small screens (mobile devices) */
 @media (max-width: 768px) {
   .flex-row {
     flex-direction: column;
   }
 
+  .imgFrameFullHeight {
+    display: flex;
+    justify-content: center;
+    position: relative; /* Ensure child `absolute` elements position correctly */
+    padding-left: 0; /* Reset any unintended left padding */
+    height: 50vh;
+  }
+
   .imgframe1 {
-    position: absolute;
     border-radius: 40px;
     width: 40%;
     height: 190px;
+    position: absolute;
+    transform: translateX(-55%);
   }
 
   .imgframe2 {
     position: absolute;
-    left: 20%;
+    transform: translateY(50%);
     border-radius: 40px;
     width: 40%;
     height: 190px;
-    top: 90px;
+   
   }
 
   .imgframe3 {
     position: absolute;
-    left: 60%;
-    transform: translateX(-50%);
+    transform: translateX(55%);
     border-radius: 40px;
     width: 40%;
     height: 190px;
     
+  }
+
+  .featureframe {
+    width: 160px;
+    height: 180px;
+    border: 4px solid #34A853;
+    border-radius: 30px;
+    background-color: #bedddb;
+    box-shadow: #5ea38d 0px 0px 10px;
   }
 
   .text-3xl {

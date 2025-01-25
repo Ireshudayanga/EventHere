@@ -7,7 +7,7 @@ const Banner = () => {
   return (
     <div className=" flex flex-row  w-full  mt-44 ">
       {/* Left side - Images */}
-      <div className="relative flex md:flex-row md:w-1/2">
+      <div className="relative imgFrameFullHeight flex md:flex-row md:w-1/2">
         {/* Frame 1 */}
         <div className="imgframe1 flex justify-center items-center ">
           <img className="w-[90px] md:w-[180px] transform scale-x-[-1] mt-[20px]" src={feature01} alt="feature01" />
@@ -25,7 +25,7 @@ const Banner = () => {
       </div>
 
       {/* Right side - Text Content */}
-      <div className="md:w-1/2 text-center md:text-left">
+      <div className="md:w-1/2 text-center md:text-left ">
         <h2 className="md:text-6xl text-3xl font-semibold mb-4 leading-snug md:leading-tight">
           Power Up Your <br /> Events <br />With <span className='primary-color'>Event</span><span className='yellow-color'>Here</span>
         </h2>
