@@ -2,7 +2,7 @@ import React from 'react'
 
 const Hero = () => {
     return (
-        <div className='mt-16 mb-72'>
+        <div className='mt-16 mb-72 hero-section'>
             <div className='text-3xl md:text-7xl text-center  leading-snug font-semibold'>
                 Bring People Together one <span className='yellow-color text-5xl md:text-9xl italicfont'>Event  </span>at a Time
             </div>

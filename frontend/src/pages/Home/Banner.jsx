@@ -5,7 +5,7 @@ import feature03 from '../../assets/svg/feature03.svg';
 
 const Banner = () => {
   return (
-    <div className=" flex flex-row  w-full  mt-44 ">
+    <div className=" flex flex-row  w-full  mt-44 banner">
       {/* Left side - Images */}
       <div className="relative imgFrameFullHeight flex md:flex-row md:w-1/2">
         {/* Frame 1 */}

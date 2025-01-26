@@ -1,82 +1,78 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import the hook for navigation
-import logo from '../assets/images/300PPI.png';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom"; // Import the hook for navigation
+import logo from "../assets/images/300PPI.png";
 
 const Navbar = () => {
-  const [activePage, setActivePage] = useState('Home');
+  const [activePage, setActivePage] = useState("Home");
   const [isMenuOpen, setIsMenuOpen] = useState(false); // State to handle menu toggle
   const navigate = useNavigate(); // Initialize navigate hook
-  const navItems = ['Home', 'Events', 'Calendar', 'Volunteer', 'Explore'];
+  const navItems = ["Home", "Events", "Calendar", "Volunteer", "Explore"];
 
   const handleNavigation = (item) => {
     setActivePage(item);
     setIsMenuOpen(false); // Close menu after navigation
-    navigate(item === 'Home' ? '/' : `/${item.toLowerCase()}`);
+    navigate(item === "Home" ? "/" : `/${item.toLowerCase()}`);
   };
 
   return (
-    <div className="mx-[20px] sm:mx-[100px] flex flex-row items-center justify-between">
+    <div className="mx-4 sm:mx-10 lg:mx-20 flex flex-row items-center justify-between py-4">
       {/* Logo Section */}
-      <div className="flex items-center justify-between w-full md:w-auto">
+      <div className="flex items-center justify-between w-full lg:w-auto">
+        <div className="w-28 sm:w-36 lg:w-52">
+          <img src={logo} alt="EventHere Logo" />
+        </div>
 
-     <div className="w-36 sm:w-52">
-        <img src={logo} alt="EventHere Logo" />
-      </div>
-
-      {/* Hamburger Menu Icon */}
-      <div className="sm:hidden flex  items-center">
-        <button
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-          className="text-white focus:outline-none"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="w-6 h-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
+        {/* Hamburger Menu Icon */}
+        <div className="lg:hidden flex items-center">
+          <button
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="text-white focus:outline-none"
           >
-            {isMenuOpen ? (
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M6 18L18 6M6 6l12 12"
-              />
-            ) : (
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M4 6h16M4 12h16M4 18h16"
-              />
-            )}
-          </svg>
-        </button>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="w-6 h-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              {isMenuOpen ? (
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              ) : (
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
+              )}
+            </svg>
+          </button>
+        </div>
       </div>
-     </div>
 
       {/* Navigation Section */}
       <div
         className={`${
-          isMenuOpen ? 'block' : 'hidden'
-        } absolute top-[80px] md:top-[initial] left-0 w-full bg-[#1A73E8] sm:relative sm:block sm:w-[500px] sm:bg-transparent sm:border-none border border-white rounded-2xl`}
+          isMenuOpen ? "block" : "hidden"
+        } absolute lg:static top-16 left-0 w-full bg-[#1A73E8] lg:bg-transparent lg:block z-50`}
       >
-        <ul className="flex flex-col sm:flex-row items-center m-4 sm:justify-between sm:h-6">
+        <ul className="flex flex-col lg:flex-row items-center lg:gap-6 py-4 lg:py-0">
           {navItems.map((item) => (
             <li
               key={item}
-              className={`relative px-4 py-2 sm:py-0 text-white cursor-pointer ${
-                activePage === item ? 'font-bold' : 'font-normal'
+              className={`relative px-4 py-2 lg:py-0 text-white cursor-pointer ${
+                activePage === item ? "font-bold" : "font-normal"
               }`}
               onClick={() => handleNavigation(item)}
             >
               {item}
               {activePage === item && (
-                <span
-                className="absolute bottom-[-8px] left-0 w-full h-1 bg-transparent sm:bg-white rounded-full transition-all duration-300 sm:block"
-
-                />
+                <span className="absolute bottom-[-4px] left-0 w-full h-1 bg-white rounded-full" />
               )}
             </li>
           ))}
@@ -84,7 +80,7 @@ const Navbar = () => {
       </div>
 
       {/* Right Section */}
-      <div className="hidden sm:flex items-center gap-7">
+      <div className="hidden lg:flex items-center gap-6">
         {/* Search Icon */}
         <div className="w-6 h-6">
           <svg
@@ -104,21 +100,20 @@ const Navbar = () => {
         </div>
 
         {/* Login Button */}
-        <div className="custom-button flex items-center justify-center flex-row gap-4 w-[140px]">
+        <button className="custom-button flex items-center gap-2 px-4 py-2">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"
             height="24"
             viewBox="0 0 24 24"
-            className="gap-4 inline-block"
           >
             <path
               d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm7.753 18.305c-.261-.586-.789-.991-1.871-1.241-2.293-.529-4.428-.993-3.393-2.945 3.145-5.942.833-9.119-2.489-9.119-3.388 0-5.644 3.299-2.489 9.119 1.066 1.964-1.148 2.427-3.393 2.945-1.084.25-1.608.658-1.867 1.246-1.405-1.723-2.251-3.919-2.251-6.31 0-5.514 4.486-10 10-10s10 4.486 10 10c0 2.389-.845 4.583-2.247 6.305z"
               fill="#ffffff"
             />
           </svg>
-          <div>Login</div>
-        </div>
+          <span>Login</span>
+        </button>
       </div>
     </div>
   );

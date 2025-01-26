@@ -3,7 +3,7 @@ import testimonialImage from '../../assets/images/testimonialImage.png';
 
 const Testimonial = () => {
     return (
-        <div className="lg:my-44 flex justify-center items-center px-4 sm:px-8">
+        <div className="lg:my-44 flex justify-center items-center px-4 sm:px-8 testimonial-section ">
             <div className="flex flex-col lg:flex-row items-center gradient-bg max-w-4xl w-full rounded-3xl p-6 lg:p-8">
                 {/* Left side - Text Content */}
                 <div className="w-full lg:w-1/2 lg:pr-8">

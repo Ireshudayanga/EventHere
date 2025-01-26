@@ -8,7 +8,7 @@ import item06 from '../../assets/svg/item06.svg'
 
 const FeatureCard = () => {
     return (
-        <div className="md:my-44 flex gap-6 md:gap-0 justify-center md:flex-col items-center">
+        <div className="md:my-44 flex gap-6 md:gap-0 justify-center md:flex-col items-center feature-frame">
             <div className="flex flex-row gap-16 my-10 justify-center">
                 <div className="featureframe flex flex-col items-center justify-center">
                     <div>

@@ -21,7 +21,7 @@ const UpcommingCard = () => {
   }, []);
 
   return (
-    <div className="flex flex-col items-center h-auto">
+    <div className="flex flex-col items-center h-auto upcoming-card-container">
       {/* Header Section */}
       <div className="text-center px-4 py-6 max-w-3xl">
         <h1 className="text-3xl md:text-4xl primary-color font-bold">
