@@ -135,7 +135,6 @@
   }
 }
 
-/* CSS for Tablet Screen Responsiveness */
 
 /* Tablet Specific Media Query */
 @media (min-width: 768px) and (max-width: 1024px) {
@@ -143,6 +142,10 @@
   .hero-section {
     text-align: center;
     padding: 20px;
+  }
+
+  .bg-image {
+    max-height: 110vh;
   }
 
   .hero-section h1 {
@@ -154,16 +157,56 @@
     font-size: 1rem;
     margin-top: 10px;
   }
+  .imgFrameFullHeight {
+    background-color: #05fbf3;
+    display: flex;
+    position: relative; 
+    height: 40vh;
+   
+  }
 
-  /* Banner adjustments */
+  .imgframe1 {
+    border-radius: 40px;
+    width: 50%;
+    height: 230px;
+    transform: translateX(0%);
+  }
+
+  .imgframe2 {
+    transform: translateY(-23%);
+    transform: translateX(-15%);
+    border-radius: 40px;
+    width: 50%;
+    height: 230px;
+  }
+
+  .imgframe3 {
+    transform: translateX(-50%);
+    border-radius: 40px;
+    width: 50%;
+    height: 230px;
+    
+  }
   .banner {
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
+    text-align: center; /* Center text for tablet */
     gap: 20px;
   }
 
+  .banner h2 {
+    font-size: 2.8rem; /* Adjust heading for tablet size */
+    line-height: 1.3;
+  }
+
+  .banner p {
+    font-size: 1rem;
+    margin-top: 10px;
+    line-height: 1.5;
+  }
+
   .banner img {
-    width: 80%;
+    width: 60%;
     max-width: 300px;
   }
 

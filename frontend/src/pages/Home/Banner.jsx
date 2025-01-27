@@ -14,7 +14,7 @@ const Banner = () => {
         </div>
 
         {/* Frame 2 */}
-        <div className="imgframe2 flex justify-center items-center m-auto absolute   md:top-[160px] md:left-[120px]">
+        <div className="imgframe2 flex justify-center items-center m-auto md:absolute   md:top-[160px] md:left-[120px]">
           <img className="w-[120px] md:w-[200px] mt-4 md:mt-[60px]" src={feature02} alt="feature02" />
         </div>
 
