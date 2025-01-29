@@ -5,21 +5,22 @@ import feature03 from '../../assets/svg/feature03.svg';
 
 const Banner = () => {
   return (
-    <div className=" flex flex-row  w-full  mt-44 banner">
+    <div className=" flex flex-row  w-full banner">
       {/* Left side - Images */}
-      <div className="relative imgFrameFullHeight flex md:flex-row md:w-1/2">
+      <div className="relative  imgFrameFullHeight flex md:flex-row md:w-1/2 ">
         {/* Frame 1 */}
         <div className="imgframe1 flex justify-center items-center ">
           <img className="w-[90px] md:w-[180px] transform scale-x-[-1] mt-[20px]" src={feature01} alt="feature01" />
         </div>
 
         {/* Frame 2 */}
-        <div className="imgframe2 flex justify-center items-center m-auto md:absolute   md:top-[160px] md:left-[120px]">
+        <div className="imgframe2 flex justify-center items-center m-auto absolute lg:top-[160px] lg:left-[120px]">
           <img className="w-[120px] md:w-[200px] mt-4 md:mt-[60px]" src={feature02} alt="feature02" />
         </div>
 
+
         {/* Frame 3 */}
-        <div className="imgframe3 flex justify-center items-center  absolute md:left-[260px]">
+        <div className="imgframe3 flex justify-center items-center  absolute md:left-[260px] ">
           <img className="w-[90px] md:w-[180px] md:ml-6 my-4 md:mt-[50px]" src={feature03} alt="feature03" />
         </div>
       </div>

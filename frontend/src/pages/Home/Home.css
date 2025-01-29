@@ -4,7 +4,7 @@
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
-  max-height: 141vh;
+  max-height: 135vh;
   width: 100%;
 
 }
@@ -139,42 +139,35 @@
 /* Tablet Specific Media Query */
 @media (min-width: 768px) and (max-width: 1024px) {
   /* Adjust hero section */
-  .hero-section {
-    text-align: center;
-    
-  }
+  
 
   .bg-image {
-    max-height: 70vh;
+    max-height: 65vh;
   }
 
-  .hero-section h1 {
-    font-size: 2.5rem;
-    line-height: 1.2;
-  }
-
-  .hero-section p {
-    font-size: 1rem;
-    margin-top: 10px;
-  }
-  
   .banner {
-    flex-direction: column;
-    background-color: blueviolet;
-    
+    flex-direction: row;
+    height: 25vh;
   }
+
+  
+
   .text-center-tablet {
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-items: center;
   }
   
 
   .banner h2 {
-    font-size: 2.8rem; /* Adjust heading for tablet size */
+    font-size: 25px; /* Adjust heading for tablet size */
     line-height: 1.3;
   }
 
   .banner p {
-    font-size: 1rem;
+    font-size: 13px;
     margin-top: 10px;
     line-height: 1.5;
   }
@@ -186,15 +179,33 @@
 
   .imgFrameFullHeight {
     height: 40vh;
-    align-items: center;
     
   }
 
-  /* Feature cards */
-  .feature-frame {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-    padding: 15px;
+  .imgframe1, .imgframe2, .imgframe3 {
+    width: 150px;
+    height: 190px;
+    border-radius: 30px;
+  }
+
+  .imgframe1 {
+    transform: translateX(0%);
+  }
+
+  .imgframe2 {
+   left: 27%;
+   top: 20%;
+
+  }
+
+  .imgframe3 {
+    transform: translateX(-54%);
+  }
+
+  .featureframe {
+    width: 190px;
+    height: 200px;
+   
   }
 
   .feature-frame img {
@@ -203,25 +214,34 @@
 
   .feature-card {
     margin: 10px auto;
-    width: 90%;
     padding: 15px;
     border-radius: 15px;
   }
 
-  /* Upcoming cards */
   .upcoming-card-container {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    align-items: center;
-    padding: 10px;
-  }
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+  
+}
 
-  .upcoming-card {
-    width: 100%;
-    max-width: 400px;
-    padding: 20px;
-  }
+.upcoming-card {
+ 
+  max-width: 200px;
+  
+}
+
+/* Hide scrollbar for Webkit (Chrome, Safari) */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for Firefox */
+.scrollbar-hide {
+  scrollbar-width: none;
+}
+
 
   /* Testimonials */
   .testimonial-section {
