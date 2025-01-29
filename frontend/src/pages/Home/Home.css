@@ -141,11 +141,11 @@
   /* Adjust hero section */
   .hero-section {
     text-align: center;
-    padding: 20px;
+    
   }
 
   .bg-image {
-    max-height: 110vh;
+    max-height: 70vh;
   }
 
   .hero-section h1 {
@@ -157,42 +157,16 @@
     font-size: 1rem;
     margin-top: 10px;
   }
-  .imgFrameFullHeight {
-    background-color: #05fbf3;
-    display: flex;
-    position: relative; 
-    height: 40vh;
-   
-  }
-
-  .imgframe1 {
-    border-radius: 40px;
-    width: 50%;
-    height: 230px;
-    transform: translateX(0%);
-  }
-
-  .imgframe2 {
-    transform: translateY(-23%);
-    transform: translateX(-15%);
-    border-radius: 40px;
-    width: 50%;
-    height: 230px;
-  }
-
-  .imgframe3 {
-    transform: translateX(-50%);
-    border-radius: 40px;
-    width: 50%;
-    height: 230px;
+  
+  .banner {
+    flex-direction: column;
+    background-color: blueviolet;
     
   }
-  .banner {
-    flex-direction: row;
-    align-items: center;
-    text-align: center; /* Center text for tablet */
-    gap: 20px;
+  .text-center-tablet {
+    text-align: center;
   }
+  
 
   .banner h2 {
     font-size: 2.8rem; /* Adjust heading for tablet size */
@@ -208,6 +182,12 @@
   .banner img {
     width: 60%;
     max-width: 300px;
+  }
+
+  .imgFrameFullHeight {
+    height: 40vh;
+    align-items: center;
+    
   }
 
   /* Feature cards */
@@ -315,10 +295,6 @@
     border-radius: 30px;
     background-color: #bedddb;
     box-shadow: #5ea38d 0px 0px 10px;
-  }
-
-  .text-3xl {
-    text-align: center;
   }
 
   .relative {

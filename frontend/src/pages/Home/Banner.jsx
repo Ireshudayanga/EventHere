@@ -25,7 +25,7 @@ const Banner = () => {
       </div>
 
       {/* Right side - Text Content */}
-      <div className="md:w-1/2 text-center md:text-left ">
+      <div className="md:w-1/2 text-center md:text-left text-center-tablet">
         <h2 className="md:text-6xl text-3xl font-semibold mb-4 leading-snug md:leading-tight">
           Power Up Your <br /> Events <br />With <span className='primary-color'>Event</span><span className='yellow-color'>Here</span>
         </h2>
