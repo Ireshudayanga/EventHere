@@ -65,7 +65,7 @@ const Navbar = () => {
           {navItems.map((item) => (
             <li
               key={item}
-              className={`relative px-4 py-2 lg:py-0 text-white cursor-pointer ${
+              className={`ml-4 relative px-5 py-2 lg:py-0 text-white cursor-pointer ${
                 activePage === item ? "font-bold" : "font-normal"
               }`}
               onClick={() => handleNavigation(item)}
