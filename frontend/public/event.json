@@ -4,34 +4,44 @@
         "image": "/images/card01.jpg",
         "title": "Mega Blast",
         "description": "Happening",
-        "category": "entertainment"
+        "category": "entertainment",
+        "date": "2025-02-12",
+        "time": "6:00 PM - 8:00 PM"
     },
     {
         "id": 2,
         "image": "/images/card02.jpg",
         "title": "Vesak Festival",
         "description": "Visit us !!...",
-        "category": "traditional"
+        "category": "traditional",
+        "date": "2025-02-01",
+        "time": "2:00 PM - 10:00 PM"
     },
     {
         "id": 3,
         "image": "/images/card03.jpg",
         "title": "Health Clinic",
         "description": "In your Area.....",
-        "category": "volunteer"
+        "category": "volunteer",
+        "date": "2025-02-22",
+        "time": "2:00 PM - 4:00 PM"
     },
     {
         "id": 4,
         "image": "/images/card04.jpg",
         "title": "Black Friday",
         "description": "In this weekend !!",
-        "category": "traditional"
+        "category": "traditional",
+        "date": "2025-02-15",
+        "time": "1:00 PM - 3:00 PM"
     },
     {
         "id": 5,
         "image": "/images/card05.jpg",
         "title": "Nova Star",
         "description": "31 Night Chill !!",
-        "category": "entertainment"
+        "category": "entertainment",
+        "date": "2025-02-20",
+        "time": "5:00 PM - 7:30 PM"
     }
 ]

@@ -3,7 +3,8 @@ import React, { useEffect, useState } from 'react';
 import SearchBar from '../../components/SearchBar';
 import '../Event/Event.css';
 import { Link } from 'react-router-dom';
-import ArrowFW  from '../../assets/svg/Arrow.svg';
+import ArrowFW from '../../assets/svg/Arrow.svg';
+import Calender from '../../utils/Calender';
 
 const EventPage = () => {
 
@@ -40,7 +41,7 @@ const EventPage = () => {
                 {/* Main Layout */}
                 <div className="flex flex-col md:flex-row h-full p-4 md:p-7 gap-4 md:gap-0">
                     {/* Left Section - Stack on mobile */}
-                    <div className="w-full md:w-[25%] h-auto md:h-full flex flex-col gap-3 md:gap-5">
+                    <div className="w-full md:w-[35%] h-auto md:h-full flex flex-col gap-3 md:gap-5">
                         {/* ------------------------- Left Section - Upcoming -------------------------- */}
                         <div className="bg-white text-black p-4 md:p-5 rounded-xl md:rounded-2xl h-48 md:h-[35%] shadow-lg">
                             <div className="flex flex-col items-start">
@@ -62,19 +63,27 @@ const EventPage = () => {
                                 </div>
                             </div>
                         </div>
+
+                        {/* ------------------------- Left Section - events -------------------------- */}
                         <div className="bg-white text-black p-4 md:p-5 rounded-xl md:rounded-2xl h-64 md:h-[65%] shadow-lg">
                             <div className="flex flex-col items-start h-full">
                                 {/* Flex container for the title and link */}
                                 <div className="flex justify-between items-center w-full">
-                                    <p className="text-2xl font-normal font-sans  px-3 py-1 rounded-md">
-                                        Events
-                                    </p>
-                                    <Link to="/events" className="text-blue-500  px-3 py-1 rounded-md">
-                                       <div className="flex items-center gap-1">
-                                             <p>See all</p>    
-                                             <img className='w-3 ' src={ArrowFW} alt="Arrow" />
-                                       </div>
+                                    <div className="flex flex-col items-start"> {/* Ensure text alignment */}
+                                        <p className="text-2xl font-normal font-sans px-3 py-1 rounded-md">
+                                            Events
+                                        </p>
+                                        <p className="text-[12px] px-3">Join our community</p> {/* Added same px-3 */}
+                                    </div>
+                                    <Link to="/events" className="text-blue-500 px-3 py-1 rounded-md">
+                                        <div className="flex items-center gap-1">
+                                            <p>See all</p>
+                                            <img className='w-3' src={ArrowFW} alt="Arrow" />
+                                        </div>
                                     </Link>
+                                </div>
+                                <div className='px-3 mt-5 overflow-y-scroll'>
+                                    <Calender />
                                 </div>
                             </div>
                         </div>
@@ -82,7 +91,7 @@ const EventPage = () => {
                     </div>
 
                     {/* Right Section - Full width on mobile */}
-                    <div className="w-full md:w-[75%] h-full text-zinc-950 flex flex-col md:pl-6">
+                    <div className="w-full md:w-[65%] h-full text-zinc-950 flex flex-col md:pl-6">
                         <div className="h-[60vh] md:h-2/3 overflow-y-auto">
                             <div className="bg-white text-black p-4 md:p-5 rounded-xl md:rounded-2xl h-full shadow-lg">
                                 {/* Content shortened for example */}
