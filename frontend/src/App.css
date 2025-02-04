@@ -179,8 +179,8 @@ body {
 
 /* 📌 Active Tile */
 .react-calendar__tile--active {
-  background-color: #007bff !important;
-  color: white !important;
+  border: 3px solid #000000;
+  color: black !important;
   border-radius: 8px;
   font-weight: bold;
 }
