@@ -212,3 +212,51 @@ body {
   color: white !important;
   border-radius: 50%;
 }
+
+/* Custom Scrollbar with Neon Glow & Animation */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 5px;
+}
+
+/* Track (Scrollbar Background) */
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #1a1a1a0d; /* Dark background */
+  border-radius: 10px;
+}
+
+/* Scrollbar Thumb (Draggable Part) */
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: linear-gradient(45deg, #00f7ff, #0088ff); /* Neon Blue Gradient */
+  border-radius: 10px;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0px 0px 8px rgba(0, 242, 255, 0.8);
+}
+
+/* Hover Effect */
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(45deg, #00aaff, #0055ff);
+  box-shadow: 0px 0px 12px rgba(0, 140, 255, 0.9);
+  transform: scaleY(1.2); /* Expand slightly */
+}
+
+/* Scrollbar Active (Dragging Effect) */
+.custom-scrollbar::-webkit-scrollbar-thumb:active {
+  background: linear-gradient(45deg, #0077ff, #0044ff);
+  box-shadow: 0px 0px 15px rgba(0, 110, 255, 1);
+}
+
+/* Fade Effect for Scrollbar */
+.custom-scrollbar {
+  scrollbar-color: #001eff37 #1a1a1a00;
+  transition: scrollbar-color 0.5s ease-in-out;
+}
+
+/* Shrinking Effect when Not Hovered */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  transition: width 0.3s ease-in-out;
+}
+
+.custom-scrollbar:hover::-webkit-scrollbar {
+  width: 12px;
+}

@@ -39,7 +39,7 @@ const UpcommingCard = () => {
       {/* Carousel for Mobile & Tablet Screens */}
       <div className=" lg:hidden w-full  overflow-x-auto px-4 mt-6 flex gap-6 scrollbar-hide">
         {cardData.map((card, index) => (
-          <div 
+          <div
             key={card.id}
             className="min-w-[200px] md:min-w-[250px] border-2 border-[#2858b9] h-[300px] rounded-3xl flex flex-col items-center p-4"
           >
@@ -67,14 +67,14 @@ const UpcommingCard = () => {
         ))}
       </div>
 
+
       {/* Grid Layout for Desktop Screens */}
       <div className="hidden lg:grid lg:grid-cols-5 gap-6 px-4 pt-12">
-        {cardData.map((card, index) => (
+        {cardData.slice(0, 5).map((card, index) => ( 
           <div
             key={card.id}
-            className={`border-2 border-[#2858b9] w-full max-w-[200px] mx-auto h-[330px] rounded-3xl flex flex-col items-center p-4 ${
-              index % 2 === 1 ? "translate-y-4" : "-translate-y-4"
-            }`}
+            className={`border-2 border-[#2858b9] w-full max-w-[200px] mx-auto h-[330px] rounded-3xl flex flex-col items-center p-4 ${index % 2 === 1 ? "translate-y-4" : "-translate-y-4"
+              }`}
           >
             <div className="flex justify-center">
               <img
@@ -99,6 +99,7 @@ const UpcommingCard = () => {
           </div>
         ))}
       </div>
+
 
       {/* See All Button */}
       <div className="flex justify-center my-16 md:mt-12">

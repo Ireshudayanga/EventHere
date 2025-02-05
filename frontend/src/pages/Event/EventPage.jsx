@@ -16,7 +16,7 @@ const EventPage = () => {
         traditional: "bg-blue-600 text-white",
     };
 
-
+    const [events, setEvents] = useState([]);
     const [categories, setCategories] = useState([]);
 
     useEffect(() => {
@@ -28,6 +28,7 @@ const EventPage = () => {
                         ...new Set(data.map((event) => event.category)),
                     ];
                     setCategories(uniqueCategories);
+                    setEvents(data);
                 } else {
                     console.error("Invalid data format: Expected an array");
                 }
@@ -39,7 +40,7 @@ const EventPage = () => {
         <div className="h-screen">
             <SearchBar />
             {/* Main Content */}
-            <div className="md:bg-[#d4d3d3] h-[92%] w-full md:w-[94%] mt-0 md:mt-4 rounded-none md:rounded-2xl shadow-xl md:shadow-2xl ml-auto">
+            <div className="h-[92%] w-full md:w-[94%] mt-0 md:mt-4 rounded-none md:rounded-2xl shadow-xl md:shadow-2xl ml-auto">
                 {/* Main Layout */}
                 <div className="flex flex-col md:flex-row h-full p-4 md:p-7 gap-4 md:gap-0">
 
@@ -75,7 +76,7 @@ const EventPage = () => {
                                         <p className="text-2xl font-normal font-sans px-3 py-1 rounded-md">
                                             Events
                                         </p>
-                                        <p className="text-[12px] px-3">Join our community</p> {/* Added same px-3 */}
+                                        <p className="text-[12px] px-3">Join our community</p> 
                                     </div>
                                     <Link to="/events" className="text-blue-500 px-3 py-1 rounded-md">
                                         <div className="flex items-center gap-1">
@@ -84,7 +85,7 @@ const EventPage = () => {
                                         </div>
                                     </Link>
                                 </div>
-                                <div className='px-3 mt-5 overflow-y-scroll'>
+                                <div className='px-3 mt-5 overflow-y-scroll custom-scrollbar rounded-md pr-2 max-h-56'>
                                     <Calender />
                                 </div>
                             </div>
@@ -115,14 +116,27 @@ const EventPage = () => {
                                 <div className='text-[9px] font-sans'>Please be aware about user ratings</div>
                             </div>
 
-                            {/* Second Box */}
+                            {/* Become a Volunteer - Render from Events */}
                             <div className="bg-white text-black rounded-xl md:rounded-2xl w-full md:w-[40%] h-32 md:h-full p-3 md:p-4 shadow-lg flex flex-col items-center justify-center">
                                 <div className='text-2xl font-norma font-sans'>Become a Volunteer</div>
-                                <div className='mt-3'> <ReminderCard /> </div>
+                                <div className="mt-3 overflow-y-scroll custom-scrollbar rounded-md pr-2 max-h-40">
+                                    {events.length > 0 ? events.filter(event => event.category === 'volunteer').map((event, index) => (
+                                            <ReminderCard
+                                                key={index}
+                                                eventTitle={event.title}
+                                                eventTime={event.time}
+                                                eventDate={event.date}
+                                            />
+                                        ))
+                                     : (
+                                        <p className="text-gray-500 text-sm">No events available</p>
+                                    )}
+                                </div>
+
                             </div>
 
                             {/* Third Box */}
-                            <div className="bg-yellow-400 text-black rounded-xl md:rounded-2xl w-full md:w-[30%] h-32 md:h-full p-3 md:p-4 shadow-lg">
+                            <div className="bg-white text-black rounded-xl md:rounded-2xl w-full md:w-[30%] h-32 md:h-full p-3 md:p-4 shadow-lg">
 
                             </div>
 
