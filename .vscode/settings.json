@@ -3,7 +3,11 @@
         "featureframe"
     ],
     "cSpell.words": [
+        "APIKEY",
         "eventspage",
-        "imgframe"
+        "imgframe",
+        "MEASUREMENTID",
+        "MESSAGINGSENDERID",
+        "STORAGEBUCKET"
     ]
 }

@@ -140,13 +140,19 @@ const EventPage = () => {
                             <div className="bg-white text-black rounded-xl md:rounded-2xl w-full md:w-[30%] h-48 md:h-full p-5 md:p-6 shadow-lg flex flex-col items-center justify-center">
                                 <p className="text-lg font-sans text-center">Ask Administration</p>
 
-                                {/* Text Area */}
-                                <textarea
-                                    className="w-full h-24 mt-3 bg-gray-200 rounded-lg p-3 text-gray-700 text-sm outline-none focus:ring-2 focus:ring-gray-400 resize-none"
-                                    placeholder="Enter Your Message .."
-                                ></textarea>
+                                {/* Text Area Container with Send Button */}
+                                <div className="relative w-full mt-3">
+                                    <textarea
+                                        className="w-full h-28 bg-gray-200 rounded-lg p-3 text-gray-700 text-sm outline-none focus:ring-2 focus:ring-gray-400 resize-none"
+                                        placeholder="Enter Your Message .."
+                                    ></textarea>
 
-                               
+                                    {/* Send Button - Positioned Bottom Right */}
+                                    <Button customSize='sm' className="absolute bottom-3 rounded-3xl right-2 px-4 py-1 text-white bg-blue-500 text-sm hover:bg-blue-600 transition">
+                                        Send
+                                    </Button>
+                                </div>
+
                             </div>
 
                         </div>
