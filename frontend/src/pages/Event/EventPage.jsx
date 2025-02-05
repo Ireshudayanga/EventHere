@@ -5,13 +5,14 @@ import '../Event/Event.css';
 import { Link } from 'react-router-dom';
 import ArrowFW from '../../assets/svg/Arrow.svg';
 import Calender from '../../utils/Calender';
+import Button from '../../components/Button';
 
 const EventPage = () => {
 
     const categoryColors = {
         entertainment: "bg-green-500 text-white",
         volunteer: "bg-yellow-400 text-white",
-        "traditional": "bg-blue-600 text-white",
+        traditional: "bg-blue-600 text-white",
     };
 
 
@@ -40,6 +41,7 @@ const EventPage = () => {
             <div className="md:bg-[#d4d3d3] h-[92%] w-full md:w-[94%] mt-0 md:mt-4 rounded-none md:rounded-2xl shadow-xl md:shadow-2xl ml-auto">
                 {/* Main Layout */}
                 <div className="flex flex-col md:flex-row h-full p-4 md:p-7 gap-4 md:gap-0">
+
                     {/* Left Section - Stack on mobile */}
                     <div className="w-full md:w-[35%] h-auto md:h-full flex flex-col gap-3 md:gap-5">
                         {/* ------------------------- Left Section - Upcoming -------------------------- */}
@@ -67,7 +69,6 @@ const EventPage = () => {
                         {/* ------------------------- Left Section - events -------------------------- */}
                         <div className="bg-white text-black p-4 md:p-5 rounded-xl md:rounded-2xl h-64 md:h-[65%] shadow-lg">
                             <div className="flex flex-col items-start h-full">
-                                {/* Flex container for the title and link */}
                                 <div className="flex justify-between items-center w-full">
                                     <div className="flex flex-col items-start"> {/* Ensure text alignment */}
                                         <p className="text-2xl font-normal font-sans px-3 py-1 rounded-md">
@@ -87,26 +88,43 @@ const EventPage = () => {
                                 </div>
                             </div>
                         </div>
-
                     </div>
 
                     {/* Right Section - Full width on mobile */}
                     <div className="w-full md:w-[65%] h-full text-zinc-950 flex flex-col md:pl-6">
                         <div className="h-[60vh] md:h-2/3 overflow-y-auto">
-                            <div className="bg-white text-black p-4 md:p-5 rounded-xl md:rounded-2xl h-full shadow-lg">
+                            <div className="bg-slate-600 text-black p-4 md:p-5 rounded-xl md:rounded-2xl h-full shadow-lg">
                                 {/* Content shortened for example */}
                                 Lorem ipsum dolor sit amet consectetur adipisicing elit...
                             </div>
                         </div>
                         {/* Cards Stack on mobile */}
                         <div className="flex flex-col md:flex-row gap-3 justify-between pt-4 md:pt-5 h-auto md:h-1/3">
-                            {[1, 2, 3].map((item) => (
-                                <div key={item} className="bg-white text-black rounded-xl md:rounded-2xl w-full md:w-1/3 h-32 md:h-full p-3 md:p-4 shadow-lg">
-                                    Lorem ipsum dolor sit amet consectetur...
+
+                            {/* First Box */}
+                            <div className="bg-white text-black rounded-xl md:rounded-2xl w-full md:w-1/3 h-32 md:h-full p-3 md:p-4 shadow-lg flex flex-col items-center justify-center">
+                                <div className='text-2xl font-norma font-sans'>Share Ride </div>
+                                <div className='text-[12px] font-sans'>Choose event for ride</div>
+                                <div className='flex gap-2 my-3'>
+                                    <Button color='bg-blue-600' className='px-4 py-2 rounded-full text-sm text-white'>Share</Button>
+                                    <Button color='bg-green-500' className='px-4 py-2 rounded-full text-sm text-white'>Offer</Button>
                                 </div>
-                            ))}
+                                <div className='text-[9px] font-sans'>Please be aware about user ratings</div>
+                            </div>
+
+                            {/* Second Box */}
+                            <div className="bg-blue-400 text-black rounded-xl md:rounded-2xl w-full md:w-1/3 h-32 md:h-full p-3 md:p-4 shadow-lg">
+
+                            </div>
+
+                            {/* Third Box */}
+                            <div className="bg-yellow-400 text-black rounded-xl md:rounded-2xl w-full md:w-1/3 h-32 md:h-full p-3 md:p-4 shadow-lg">
+
+                            </div>
+
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>
