@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import ArrowFW from '../../assets/svg/Arrow.svg';
 import Calender from '../../utils/Calender';
 import Button from '../../components/Button';
+import ReminderCard from '../../components/ReminderCard';
 
 const EventPage = () => {
 
@@ -115,9 +116,9 @@ const EventPage = () => {
                             </div>
 
                             {/* Second Box */}
-                            <div className="bg-blue-400 text-black rounded-xl md:rounded-2xl w-full md:w-[40%] h-32 md:h-full p-3 md:p-4 shadow-lg flex flex-col items-center justify-center">
+                            <div className="bg-white text-black rounded-xl md:rounded-2xl w-full md:w-[40%] h-32 md:h-full p-3 md:p-4 shadow-lg flex flex-col items-center justify-center">
                                 <div className='text-2xl font-norma font-sans'>Become a Volunteer</div>
-                                <div></div>
+                                <div className='mt-3'> <ReminderCard /> </div>
                             </div>
 
                             {/* Third Box */}
