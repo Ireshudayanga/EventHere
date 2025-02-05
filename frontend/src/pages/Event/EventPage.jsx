@@ -7,6 +7,7 @@ import ArrowFW from '../../assets/svg/Arrow.svg';
 import Calender from '../../utils/Calender';
 import Button from '../../components/Button';
 import ReminderCard from '../../components/ReminderCard';
+import profileImage from '../../assets/svg/User.svg'
 
 const EventPage = () => {
 
@@ -76,7 +77,7 @@ const EventPage = () => {
                                         <p className="text-2xl font-normal font-sans px-3 py-1 rounded-md">
                                             Events
                                         </p>
-                                        <p className="text-[12px] px-3">Join our community</p> 
+                                        <p className="text-[12px] px-3">Join our community</p>
                                     </div>
                                     <Link to="/events" className="text-blue-500 px-3 py-1 rounded-md">
                                         <div className="flex items-center gap-1">
@@ -94,14 +95,14 @@ const EventPage = () => {
 
                     {/* Right Section - Full width on mobile */}
                     <div className="w-full md:w-[65%] h-full text-zinc-950 flex flex-col md:pl-6">
-                        <div className="h-[60vh] md:h-2/3 overflow-y-auto">
+                        <div className="h-[50vh] md:h-2/3 overflow-y-auto">
                             <div className="bg-slate-600 text-black p-4 md:p-5 rounded-xl md:rounded-2xl h-full shadow-lg">
                                 {/* Content shortened for example */}
                                 Lorem ipsum dolor sit amet consectetur adipisicing elit...
                             </div>
                         </div>
                         {/* Cards Stack on mobile */}
-                        <div className="flex flex-col md:flex-row gap-3 justify-between pt-4 md:pt-5 h-auto md:h-1/3">
+                        <div className="flex flex-col md:flex-row gap-3 justify-between pt-4 md:pt-5 h-auto md:h-[38%]">
 
                             {/* First Box */}
                             <div className="bg-white text-black rounded-xl md:rounded-2xl w-full md:w-[30%] h-32 md:h-full p-3 md:p-4 shadow-lg flex flex-col items-center justify-center">
@@ -121,23 +122,31 @@ const EventPage = () => {
                                 <div className='text-2xl font-norma font-sans'>Become a Volunteer</div>
                                 <div className="mt-3 overflow-y-scroll custom-scrollbar rounded-md pr-2 max-h-40">
                                     {events.length > 0 ? events.filter(event => event.category === 'volunteer').map((event, index) => (
-                                            <ReminderCard
-                                                key={index}
-                                                eventTitle={event.title}
-                                                eventTime={event.time}
-                                                eventDate={event.date}
-                                            />
-                                        ))
-                                     : (
-                                        <p className="text-gray-500 text-sm">No events available</p>
-                                    )}
+                                        <ReminderCard
+                                            key={index}
+                                            eventTitle={event.title}
+                                            eventTime={event.time}
+                                            eventDate={event.date}
+                                        />
+                                    ))
+                                        : (
+                                            <p className="text-gray-500 text-sm">No events available</p>
+                                        )}
                                 </div>
 
                             </div>
 
-                            {/* Third Box */}
-                            <div className="bg-white text-black rounded-xl md:rounded-2xl w-full md:w-[30%] h-32 md:h-full p-3 md:p-4 shadow-lg">
+                            {/* Third Box - Ask Administration */}
+                            <div className="bg-white text-black rounded-xl md:rounded-2xl w-full md:w-[30%] h-48 md:h-full p-5 md:p-6 shadow-lg flex flex-col items-center justify-center">
+                                <p className="text-lg font-sans text-center">Ask Administration</p>
 
+                                {/* Text Area */}
+                                <textarea
+                                    className="w-full h-24 mt-3 bg-gray-200 rounded-lg p-3 text-gray-700 text-sm outline-none focus:ring-2 focus:ring-gray-400 resize-none"
+                                    placeholder="Enter Your Message .."
+                                ></textarea>
+
+                               
                             </div>
 
                         </div>
