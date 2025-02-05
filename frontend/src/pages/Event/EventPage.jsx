@@ -102,23 +102,26 @@ const EventPage = () => {
                         <div className="flex flex-col md:flex-row gap-3 justify-between pt-4 md:pt-5 h-auto md:h-1/3">
 
                             {/* First Box */}
-                            <div className="bg-white text-black rounded-xl md:rounded-2xl w-full md:w-1/3 h-32 md:h-full p-3 md:p-4 shadow-lg flex flex-col items-center justify-center">
+                            <div className="bg-white text-black rounded-xl md:rounded-2xl w-full md:w-[30%] h-32 md:h-full p-3 md:p-4 shadow-lg flex flex-col items-center justify-center">
                                 <div className='text-2xl font-norma font-sans'>Share Ride </div>
                                 <div className='text-[12px] font-sans'>Choose event for ride</div>
                                 <div className='flex gap-2 my-3'>
-                                    <Button color='bg-blue-600' className='px-4 py-2 rounded-full text-sm text-white'>Share</Button>
-                                    <Button color='bg-green-500' className='px-4 py-2 rounded-full text-sm text-white'>Offer</Button>
+                                    <Button color='bg-blue-600' className='px-4 py-2 rounded-full text-sm text-white' hoverEffect="hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-500"
+                                    >Share</Button>
+                                    <Button color='bg-green-500' className='px-4 py-2 rounded-full text-sm text-white' hoverEffect="hover:bg-gradient-to-r hover:from-green-500 hover:to-green-300"
+                                    >Offer</Button>
                                 </div>
                                 <div className='text-[9px] font-sans'>Please be aware about user ratings</div>
                             </div>
 
                             {/* Second Box */}
-                            <div className="bg-blue-400 text-black rounded-xl md:rounded-2xl w-full md:w-1/3 h-32 md:h-full p-3 md:p-4 shadow-lg">
-
+                            <div className="bg-blue-400 text-black rounded-xl md:rounded-2xl w-full md:w-[40%] h-32 md:h-full p-3 md:p-4 shadow-lg flex flex-col items-center justify-center">
+                                <div className='text-2xl font-norma font-sans'>Become a Volunteer</div>
+                                <div></div>
                             </div>
 
                             {/* Third Box */}
-                            <div className="bg-yellow-400 text-black rounded-xl md:rounded-2xl w-full md:w-1/3 h-32 md:h-full p-3 md:p-4 shadow-lg">
+                            <div className="bg-yellow-400 text-black rounded-xl md:rounded-2xl w-full md:w-[30%] h-32 md:h-full p-3 md:p-4 shadow-lg">
 
                             </div>
 

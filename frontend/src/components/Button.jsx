@@ -7,9 +7,9 @@ const Button = ({
   children, 
   onClick, 
   className = "", 
-  customSize = "" 
+  customSize = "", 
+  hoverEffect = "hover:bg-opacity-80" // Default hover effect
 }) => {
-
 
   const sizes = {
     sm: "py-1 px-2 text-xs",
@@ -20,7 +20,7 @@ const Button = ({
   return (
     <button
       onClick={onClick}
-      className={` ${color} ${customSize || sizes[size]} text-white  ${className}`}
+      className={`${color} ${customSize || sizes[size]} text-white  ${hoverEffect} ${className} transition duration-300`}
     >
       {children}
     </button>
