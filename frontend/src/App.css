@@ -115,108 +115,27 @@ body {
   filter: brightness(1.25);
 }
 
-/* 📌 Main Calendar Container */
-.calendar-container {
-  max-width: 350px;
-  margin: auto;
-  background: white;
-  padding: 15px;
-  border-radius: 12px;
-  box-shadow: 0px 6px 14px rgba(0, 0, 0, 0.1);
+
+
+/* 📌 Event Color Styling */
+.bg-green-500 {
+  background-color: #34A853 !important;
 }
 
-/* 📌 Base styling for react-calendar */
-.react-calendar {
-  width: 100%;
-  border: none;
-  font-family: 'Poppins', sans-serif;
-  font-size: 0.9rem;
-  color: #333;
+.bg-yellow-400 {
+  background-color: #FBBC05 !important;
 }
 
-/* 📌 Month & Year Navigation */
-.react-calendar__navigation {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 1rem;
-  font-weight: bold;
-  padding: 8px;
+.bg-blue-600 {
+  background-color: #1A73E8 !important;
 }
 
-.react-calendar__navigation button {
-  background: none;
-  border: none;
-  font-size: 1rem;
-  font-weight: bold;
-  cursor: pointer;
-  padding: 6px;
-  transition: 0.3s;
-}
-
-.react-calendar__navigation button:hover {
-  color: #007bff;
-}
-
-/* 📌 Ensure only Month View is Visible */
-.react-calendar__year-view,
-.react-calendar__decade-view,
-.react-calendar__century-view {
-  display: none !important;
-}
-
-/* 📌 Fix Month Name Alignment */
-.react-calendar__year-view__months .react-calendar__tile abbr {
-  background-color: #34A853;
-  font-size: 0.85rem;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-}
-
-/* 📌 Active Tile */
-.react-calendar__tile--active {
-  border: 3px solid #000000;
-  color: black !important;
-  border-radius: 8px;
-  font-weight: bold;
-}
-
-/* 📌 Tile Styling */
-.react-calendar__tile {
-  position: relative;
-  height: 40px;
-  width: 40px;
-  max-width: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 8px;
-  font-size: 0.85rem;
-  font-weight: 500;
-  transition: all 0.3s;
-}
-
-.react-calendar__tile:hover {
-  background-color: rgba(0, 0, 0, 0.1);
-}
-
-
-
-/* 📌 Default Event Styling */
-.event-default {
+.bg-gray-400 {
   background-color: #9E9E9E !important;
-  color: white !important;
-  border-radius: 50%;
 }
 
-/* Custom Scrollbar with Neon Glow & Animation */
-.custom-scrollbar::-webkit-scrollbar {
-  width: 5px;
-}
+
+
 
 /* Track (Scrollbar Background) */
 .custom-scrollbar::-webkit-scrollbar-track {

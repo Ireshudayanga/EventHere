@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Calendar from 'react-calendar';
+import '../utils/Calender.css';
 
 const CustomCalendar = () => {
   const [date, setDate] = useState(new Date());
@@ -35,8 +36,8 @@ const CustomCalendar = () => {
         onChange={setDate}
         value={date}
         tileClassName={tileClassName}
-        view="month" // Only show the month view
-        maxDetail="month" // Prevents navigation to Year or Decade views
+        view="month" 
+        maxDetail="month" 
       />
     </div>
   );
