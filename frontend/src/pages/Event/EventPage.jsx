@@ -8,6 +8,7 @@ import Calender from '../../utils/Calender';
 import Button from '../../components/Button';
 import ReminderCard from '../../components/ReminderCard';
 import profileImage from '../../assets/svg/User.svg'
+import Map from '../../components/Map';
 
 const EventPage = () => {
 
@@ -96,9 +97,8 @@ const EventPage = () => {
                     {/* Right Section - Full width on mobile */}
                     <div className="w-full md:w-[65%] h-full text-zinc-950 flex flex-col md:pl-6">
                         <div className="h-[50vh] md:h-2/3 overflow-y-auto">
-                            <div className="bg-slate-600 text-black p-4 md:p-5 rounded-xl md:rounded-2xl h-full shadow-lg">
-                                {/* Content shortened for example */}
-                                Lorem ipsum dolor sit amet consectetur adipisicing elit...
+                            <div className="bg-white text-black  rounded-xl md:rounded-2xl h-full shadow-lg">
+                               <Map/>
                             </div>
                         </div>
                         {/* Cards Stack on mobile */}
