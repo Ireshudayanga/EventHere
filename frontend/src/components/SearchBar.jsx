@@ -15,7 +15,7 @@ function SearchBar() {
         </Link>
 
         {/* Search Form - Hidden on mobile */}
-        <form className="hidden md:flex items-center gap-4 px-6 md:px-9 py-2 md:py-3 text-base md:text-lg text-black bg-white rounded-xl md:rounded-2xl w-full max-w-[500px]">
+        <form className="hidden hideSearch md:flex items-center gap-4 px-6 md:px-9 py-2 md:py-3 text-base md:text-lg text-black bg-white rounded-xl md:rounded-2xl w-full max-w-[500px]">
           <img
             src={searchIcon}
             className="w-5 h-5 md:w-6 md:h-6"

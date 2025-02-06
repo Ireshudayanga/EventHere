@@ -29,28 +29,31 @@ const SideBar = () => {
     const handleNavigation = (id, path) => {
         setActivePage(id);
         navigate(path);
-        setIsOpen(false); // Close sidebar on mobile selection
+        setIsOpen(false); // Close sidebar on selection
     };
 
     return (
         <>
-            {/* Hamburger Menu Button */}
+            {/* Hamburger Menu Button (For Mobile & Tablet) */}
             <button
-                className={`md:hidden fixed top-4 left-4 z-50 p-2 shadow-lg rounded-md transition-all ${isOpen ? "hidden" : "block"
+                className={`md:hidden lg:hidden fixed top-4 left-4 z-50 p-2 shadow-lg rounded-md transition-all ${isOpen ? "hidden" : "block"
                     }`}
-                onClick={() => setIsOpen(true)}
+                onClick={() => {
+                    setIsOpen(true)
+                    console.log('clicked-------------')
+                }}
             >
                 <FiMenu size={24} />
             </button>
 
-            {/* Sidebar */}
-            <div className={`h-screen w-60 md:w-20 fixed left-0 top-0 bg-white shadow-xl flex flex-col justify-between py-6 transition-transform duration-300 ${isOpen ? "translate-x-0" : "-translate-x-full"
-                } md:translate-x-0 md:block`}>
+            {/* Sidebar (Hidden by default on Mobile & Tablet) */}
+            <div className={`h-screen z-[1500] w-60 fixed left-0 top-0 bg-white shadow-xl flex flex-col justify-between py-6 transition-transform duration-300 
+                ${isOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0 lg:w-20`}>
 
-                {/* Close Button for Mobile */}
+                {/* Close Button for Mobile & Tablet */}
                 {isOpen && (
                     <button
-                        className="md:hidden absolute top-4 right-4 p-2 text-gray-600 hover:text-gray-900"
+                        className="md:hidden lg:hidden absolute top-4 right-4 p-2 text-gray-600 hover:text-gray-900"
                         onClick={() => setIsOpen(false)}
                     >
                         <FiX size={24} />
@@ -68,21 +71,18 @@ const SideBar = () => {
                             onMouseLeave={() => setHoveredItem(null)}
                         >
                             {/* Active Indicator */}
-                            <div className={`absolute left-0 h-6 w-1  rounded-r-full transition-transform duration-300 ${activePage === item.id ? 'translate-y-0' : '-translate-y-2'
-                                } ${hoveredItem === item.id ? 'opacity-30 scale-y-150' : ''}`} />
+                            <div className={`absolute left-0 h-6 w-1  rounded-r-full transition-transform duration-300 
+                                ${activePage === item.id ? 'translate-y-0' : '-translate-y-2'}
+                                ${hoveredItem === item.id ? 'opacity-30 scale-y-150' : ''}`} />
 
                             {/* Icon & Name Container */}
-                            <div className={`flex items-center p-2 rounded-xl transition-all duration-300 ${activePage === item.id
-                                    ? 'bg-[#34a853]/10 transform scale-110'
-                                    : 'hover:bg-gray-100'
-                                }`}>
+                            <div className={`flex items-center p-2 rounded-xl transition-all duration-300 
+                                ${activePage === item.id ? 'bg-[#34a853]/10 transform scale-110' : 'hover:bg-gray-100'}`}>
                                 <img
                                     src={item.icon}
                                     alt={item.alt}
-                                    className={`w-8 h-8 transition-all duration-300 ${activePage === item.id
-                                            ? 'filter brightness-125 saturate-150'
-                                            : 'opacity-70 group-hover:opacity-100'
-                                        }`}
+                                    className={`w-8 h-8 transition-all duration-300 
+                                        ${activePage === item.id ? 'filter brightness-125 saturate-150' : 'opacity-70 group-hover:opacity-100'}`}
                                 />
                                 {isOpen && (
                                     <span className="ml-3 text-gray-700 font-medium">{item.alt}</span>
@@ -103,23 +103,19 @@ const SideBar = () => {
                             onMouseLeave={() => setHoveredItem(null)}
                         >
                             {/* Active Indicator for Bottom Items */}
-                            <div className={`absolute left-0 h-6 w-1  rounded-r-full transition-transform duration-300 ${activePage === item.id
-                                    ? 'translate-y-0'
-                                    : '-translate-y-2'
-                                } ${hoveredItem === item.id ? 'opacity-30 scale-y-150' : ''}`} />
+                            <div className={`absolute left-0 h-6 w-1  rounded-r-full transition-transform duration-300 
+                                ${activePage === item.id ? 'translate-y-0' : '-translate-y-2'}
+                                ${hoveredItem === item.id ? 'opacity-30 scale-y-150' : ''}`} />
 
                             {/* Icon & Name Container */}
-                            <div className={`flex items-center p-2 rounded-xl transition-all duration-300 ${activePage === item.id
-                                    ? 'bg-[#34a853]/10 transform scale-110'
-                                    : 'hover:bg-gray-100'
-                                } ${item.id === 6 ? 'mt-4' : ''}`}>
+                            <div className={`flex items-center p-2 rounded-xl transition-all duration-300 
+                                ${activePage === item.id ? 'bg-[#34a853]/10 transform scale-110' : 'hover:bg-gray-100'} ${item.id === 6 ? 'mt-4' : ''}`}>
                                 <img
                                     src={item.icon}
                                     alt={item.alt}
-                                    className={`w-8 h-8 transition-all duration-300 ${activePage === item.id
-                                            ? 'filter brightness-125 saturate-150'
-                                            : 'opacity-70 group-hover:opacity-100'
-                                        } ${item.id === 6 ? 'w-[49px] h-[49px] -m-1' : ''}`}
+                                    className={`w-8 h-8 transition-all duration-300 
+                                        ${activePage === item.id ? 'filter brightness-125 saturate-150' : 'opacity-70 group-hover:opacity-100'} 
+                                        ${item.id === 6 ? 'w-[49px] h-[49px] -m-1' : ''}`}
                                 />
                                 {isOpen && (
                                     <span className="ml-3 text-gray-700 font-medium">{item.alt}</span>

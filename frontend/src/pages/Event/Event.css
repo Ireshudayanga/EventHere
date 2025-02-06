@@ -1,0 +1,178 @@
+/* ======================
+   General Tablet Styles
+====================== */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .h-screen {
+        height: auto !important;
+    }
+
+    .w-full {
+        width: 100% !important;
+    }
+
+    .md\:w-\[94\%\] {
+        width: 100% !important;
+    }
+
+    .md\:mt-4 {
+        margin-top: 0 !important;
+    }
+
+    .md\:rounded-2xl {
+        border-radius: 1rem !important;
+    }
+
+    .md\:shadow-2xl {
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1) !important;
+    }
+
+    .p-3 {
+        padding: 1rem !important;
+    }
+
+    /* ======================
+       Adjust Main Layout
+    ====================== */
+    .md\:flex-row {
+        flex-direction: column !important;
+    }
+
+    .gap-4 {
+        gap: 1.5rem !important;
+    }
+
+    .md\:gap-0 {
+        gap: 1rem !important;
+    }
+
+    .md\:pl-6 {
+        padding-left: 1rem !important;
+    }
+
+    /* ======================
+       Left Section Styles
+    ====================== */
+    .md\:w-\[35\%\] {
+        width: 100% !important;
+    }
+
+    .md\:h-\[75\%\] {
+        height: auto !important;
+    }
+
+    .custom-scrollbar {
+        overflow-y: auto !important;
+        max-height: 300px;
+    }
+
+    /* ======================
+       Right Section Styles
+    ====================== */
+    .md\:w-\[65\%\] {
+        width: 100% !important;
+    }
+
+    .h-\[50vh\] {
+        height: 40vh !important;
+    }
+
+    .md\:h-2\/3 {
+        height: auto !important;
+    }
+
+    .md\:block {
+        display: block !important;
+    }
+
+    .md\:hidden {
+        display: block !important; /* Ensure hamburger menu is visible */
+    }
+
+    .map-container {
+        width: 100% !important;
+        height: 350px !important;
+        min-height: 350px !important;
+        display: block !important;
+        position: relative !important;
+        overflow: hidden !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        z-index: 50 !important;
+    }
+
+    .map-container iframe {
+        width: 100% !important;
+        height: 100% !important;
+    }
+
+    /* ======================
+       Sidebar Toggle & Animation Fix
+    ====================== */
+    .sidebar {
+        transform: translateX(-100%) !important;
+        transition: transform 0.3s ease-in-out !important;
+        display: block !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 60% !important;
+        height: 100vh !important;
+        background-color: white !important;
+        z-index: 200 !important;
+    }
+
+    .sidebar.open {
+        transform: translateX(0) !important;
+    }
+
+    .button-toggle {
+        display: block !important;
+        position: fixed !important;
+        top: 10px !important;
+        left: 10px !important;
+        z-index: 250 !important;
+        background-color: white !important;
+        padding: 10px !important;
+        border-radius: 8px !important;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1) !important;
+    }
+
+    /* ======================
+       Bottom Card Section
+    ====================== */
+    .md\:flex-row {
+        flex-direction: column !important;
+    }
+
+    .md\:w-\[40\%\] {
+        width: 100% !important;
+    }
+
+    .md\:w-\[30\%\] {
+        width: 100% !important;
+    }
+
+    .md\:rounded-2xl {
+        border-radius: 1rem !important;
+    }
+
+    /* ======================
+       Calendar Adjustments
+    ====================== */
+    .calendar-container {
+        max-width: 100% !important;
+        padding: 1rem !important;
+    }
+
+    .react-calendar {
+        font-size: 1rem !important;
+    }
+
+    .react-calendar__tile {
+        padding: 10px !important;
+    }
+
+    .hideSearch {
+        display: none !important;
+    }
+}

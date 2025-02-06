@@ -93,7 +93,7 @@ const EventPage = () => {
                     <div className="w-full md:w-[65%] flex flex-col gap-4 md:pl-6">
                         {/* Map Section */}
                         <div className="h-[50vh] md:h-2/3">
-                            <div className="bg-white rounded-xl md:rounded-2xl shadow-lg h-full">
+                            <div className="bg-white rounded-xl md:rounded-2xl shadow-lg h-full  map-container">
                                 <Map />
                             </div>
                         </div>
