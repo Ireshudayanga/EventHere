@@ -3,11 +3,9 @@ import SearchBar from '../../components/SearchBar';
 import '../Event/Event.css';
 import { Link } from 'react-router-dom';
 import ArrowFW from '../../assets/svg/Arrow.svg';
-
 import Calender from '../../utils/Calender';
 import Button from '../../components/Button';
 import ReminderCard from '../../components/ReminderCard';
-import profileImage from '../../assets/svg/User.svg'
 import Map from '../../components/Map';
 
 const EventPage = () => {
@@ -16,6 +14,7 @@ const EventPage = () => {
         entertainment: "bg-green-500 text-white",
         volunteer: "bg-yellow-400 text-white",
         traditional: "bg-blue-600 text-white",
+        All: "bg-gray-500 text-white p-6",
     };
 
     const [events, setEvents] = useState([]);
@@ -27,6 +26,7 @@ const EventPage = () => {
             .then((data) => {
                 if (Array.isArray(data)) {
                     const uniqueCategories = [
+                        "All",
                         ...new Set(data.map((event) => event.category)),
                     ];
                     setCategories(uniqueCategories);
@@ -37,6 +37,7 @@ const EventPage = () => {
             })
             .catch((error) => console.error("Error fetching categories:", error));
     }, []);
+    
 
     return (
         <div className="h-screen w-full">
@@ -51,7 +52,7 @@ const EventPage = () => {
 
                         {/* Upcoming Section */}
                         <div className="bg-white p-4 md:p-5 rounded-xl md:rounded-2xl shadow-lg">
-                            <p className="text-2xl font-normal text-black  font-sans">Upcoming ...</p>
+                            <p className="text-2xl text-black font-medium  font-sans">Upcoming ...</p>
                             <div className="flex gap-3 flex-wrap mt-4">
                                 {categories.length > 0 ? (
                                     categories.map((category, index) => (
@@ -72,7 +73,7 @@ const EventPage = () => {
                         <div className="bg-white p-4 md:p-5 rounded-xl md:rounded-2xl shadow-lg  md:h-[75%] lg:h-[80%] xl:h-[85%]">
                             <div className="flex justify-between items-center w-full">
                                 <div>
-                                    <p className="text-2xl font-normal text-black  font-sans">Events</p>
+                                    <p className="text-2xl font-medium text-black  font-sans">Events</p>
                                     <p className="text-[12px] text-black ">Join our community</p>
                                 </div>
                                 <Link to="/events" className="text-blue-500">
@@ -103,7 +104,7 @@ const EventPage = () => {
 
                             {/* Share Ride */}
                             <div className="bg-white rounded-xl md:rounded-2xl shadow-lg p-4 flex flex-col items-center justify-center text-center h-full">
-                                <p className="text-2xl text-black">Share Ride</p>
+                                <p className="text-2xl font-medium text-black">Share Ride</p>
                                 <p className="text-[12px] text-black">Choose event for ride</p>
                                 <div className="flex gap-2 my-3">
                                     <Button color="bg-blue-600" className="px-4 py-2 rounded-full text-sm text-white">
@@ -121,7 +122,7 @@ const EventPage = () => {
 
                             {/* Volunteer Section */}
                             <div className="bg-white rounded-xl md:rounded-2xl shadow-lg p-4 w-full md:w-[40%]">
-                                <p className="text-2xl text-center text-black ">Become a Volunteer</p>
+                                <p className="text-[22px] font-medium text-center text-black ">Become a Volunteer</p>
                                 <div className="mt-3 overflow-y-auto custom-scrollbar max-h-40">
                                     {events.length > 0 ? events
                                         .filter(event => event.category === 'volunteer')
@@ -140,7 +141,7 @@ const EventPage = () => {
 
                             {/* Ask Administration */}
                             <div className="bg-white rounded-xl md:rounded-2xl shadow-lg p-5 w-full md:w-[30%]">
-                                <p className="text-2xl text-center text-black ">Ask Administration</p>
+                                <p className="text-2xl font-medium text-center text-black ">Ask Administration</p>
                                 <div className="relative w-full mt-3">
                                     <textarea
                                         className="w-full h-28 bg-gray-200 rounded-lg p-3 text-gray-700 text-sm outline-none focus:ring-2 focus:ring-gray-400 resize-none"

@@ -58,7 +58,7 @@ const Map = () => {
                         markerRef.current.setLatLng(newLocation);
                     }
 
-                    console.log("Updated Location:", newLocation);
+                    // console.log("Updated Location:", newLocation);
                 },
                 (error) => {
                     console.error("Geolocation error:", error.message);
