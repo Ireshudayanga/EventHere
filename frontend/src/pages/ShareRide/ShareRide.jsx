@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import SearchBar from '../../components/SearchBar';
-import '../Event/Event.css';
-import { Link } from 'react-router-dom';
-import ArrowFW from '../../assets/svg/Arrow.svg';
-import Calender from '../../utils/Calender';
 import Button from '../../components/Button';
-import ReminderCard from '../../components/ReminderCard';
 import Map from '../../components/Map';
+import animationGif from '../../assets/animation/animation.gif';
+import userIcon from '../../assets/svg/User.svg';
+import { FaStar } from "react-icons/fa";
+import "../ShareRide/ShareRide.css";
 
 const ShareRide = () => {
 
@@ -55,39 +54,70 @@ const ShareRide = () => {
           {/* Right Section */}
           <div className="w-full md:w-[50%] flex flex-col gap-3 md:gap-5">
             {/* Pickup - section */}
-            <div className="bg-white rounded-xl md:rounded-2xl shadow-lg p-4 flex flex-col gap-3 items-center justify-center">
+            <div className="bg-white rounded-xl md:rounded-2xl shadow-lg p-4 flex flex-col items-center justify-center">
               <p className="text-2xl font-medium font-sans text-black">Choose Ride</p>
-              <div className="flex  md:flex-row gap-3 my-3 md:my-6 items-center">
+              <div className="flex my-3 md:my-6 items-center">
                 <div className="flex flex-col gap-4 justify-center">
                   <p className="text-sm font-sans  primary-color">Pickup</p>
                   <p className="text-sm font-sans  yellow-color">Event</p>
                 </div>
-                <div className="flex flex-col gap-3 justify-center pl-7">
+                <div className=" w-[200px] flex flex-col gap-3 justify-center ">
                   <input
                     type="text"
                     placeholder="Pickup Location"
                     value={location1}
                     onChange={(e) => setLocation1(e.target.value)}
-                    className="text-base md:text-lg text-black text-center outline-none"
+                    className="text-base md:text-base text-black text-center outline-none"
                   />
-                  <hr className="w-36 md:w-[200px]" />
+                  <hr className=" md:w-[200px]" />
                   <input
                     type="text"
                     placeholder="Drop Location"
                     value={location2}
                     onChange={(e) => setLocation2(e.target.value)}
-                    className="text-base md:text-lg text-black text-center outline-none "
+                    className="text-base md:text-base text-black text-center outline-none "
                   />
                 </div>
-                </div>
-                <div className='flex mt-4 md:mt-auto gap-3'>
-                  <Button className="bg-green-600 md:w-[150px] font-sans text-white px-4 py-2 text-base md:text-lg rounded-3xl">Find Ride</Button>
-                  <Button className="bg-blue-500 md:w-[150px] font-sans text-white px-4 py-2 text-base md:text-lg rounded-3xl">Offer Ride</Button>
-                </div>
+              </div>
+              <div className='flex mt-4 md:mt-auto gap-3'>
+                <Button className="bg-green-600 md:w-[150px] font-sans text-white px-4 py-2 text-base md:text-lg rounded-3xl">Find Ride</Button>
+                <Button className="bg-blue-500 md:w-[150px] font-sans text-white px-4 py-2 text-base md:text-lg rounded-3xl">Offer Ride</Button>
+              </div>
             </div>
 
-            <div className="bg-white rounded-xl md:rounded-2xl shadow-lg p-4 flex flex-col gap-3">
-              <p className="text-2xl font-sans font-medium text-black">Pool Matching</p>
+            {/* Pool Matching - section */}
+            <div className="bg-white rounded-xl md:rounded-2xl shadow-lg p-8 flex flex-col items-center justify-center w-full max-w-3xl mx-auto h-full">
+              <p className="text-2xl font-sans font-medium text-black mb-12">Pool Matching</p>
+              <div className="flex flex-col desktop-flex-row gap-6 items-center">
+
+                {/* Left - Animation GIF */}
+                <div className=" flex items-center justify-center">
+                  <img src={animationGif} alt="animation" className="w-[300px] h-full " />
+                </div>
+
+                {/* Right - User Request Card */} 
+                <div className="bg-gray-100 rounded-2xl shadow-md p-4 flex flex-col w-full items-center justify-center">
+                  <div className="flex items-center gap-4 mb-2">
+                    <img src={userIcon} alt="user" className="w-10 h-10 object-contain" />
+                    <div>
+                      <p className="text-lg font-medium text-gray-800">Michael Smith</p>
+                      <div className="flex items-center gap-1 text-yellow-500">
+                        <FaStar />
+                        <span className="text-sm font-medium text-gray-700">4.3</span>
+                      </div>
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-600 mb-4">Request Ride With You?</p>
+                  <div className="flex gap-3">
+                    <Button className="bg-green-500 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-md hover:bg-gray-400">
+                      Accept
+                    </Button>
+                    <Button className="bg-gray-500 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium shadow-md hover:bg-gray-400">
+                      Cancel
+                    </Button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

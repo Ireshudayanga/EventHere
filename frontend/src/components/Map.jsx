@@ -72,7 +72,7 @@ const Map = () => {
 
     return (
         <div className="relative h-full w-full">
-            <MapContainer center={userLocation} zoom={15} className="h-full w-full rounded-xl relative">
+            <MapContainer center={userLocation} zoom={16} className="h-full w-full rounded-xl relative">
                 <ChangeView coords={userLocation} />
 
                 {/* Layer Control for Multiple Maps */}

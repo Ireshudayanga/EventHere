@@ -1,7 +1,7 @@
 // EventPage.jsx
 import React from 'react';
 import SearchBar from '../../components/SearchBar';
-import '../Event/Event.css';
+
 import { Link } from 'react-router-dom';
 
 const EventPage = () => {
