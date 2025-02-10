@@ -36,14 +36,14 @@ const SideBar = () => {
         <>
             {/* Hamburger Menu Button (For Mobile & Tablet) */}
             <button
-                className={`md:hidden lg:hidden fixed top-4 left-4 z-50 p-2 shadow-lg rounded-md transition-all ${isOpen ? "hidden" : "block"
+                className={`md:hidden lg:hidden text-black  fixed top-4 left-4 z-[1500] p-2 shadow-lg rounded-md transition-all ${isOpen ? "hidden" : "block"
                     }`}
                 onClick={() => {
                     setIsOpen(true)
                     console.log('clicked-------------')
                 }}
             >
-                <FiMenu size={24} />
+                <FiMenu  size={24} />
             </button>
 
             {/* Sidebar (Hidden by default on Mobile & Tablet) */}
