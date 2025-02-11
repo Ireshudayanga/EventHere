@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 // SearchBar.jsx
 import React from 'react';
 import searchIcon from '../assets/svg/Search.svg';
@@ -5,7 +6,9 @@ import { Link } from 'react-router-dom';
 import userIcon from '../assets/svg/User.svg';
 import home from '../assets/svg/Home.svg';
 
-function SearchBar() {
+function SearchBar({ 
+  title = ""
+}) {
   return (
     <div>
       {/* Top Navigation */}
@@ -31,7 +34,7 @@ function SearchBar() {
 
         {/* Mobile Search Icon */}
         <button className="md:hidden p-2">
-          <img src={searchIcon} className="w-6 h-6" alt="Search" />
+         {title? <p className="text-black text-lg font-medium">{title}</p> : <img src={searchIcon} alt="search" className="w-6 h-6" />}
         </button>
 
         {/* User Info */}
