@@ -19,10 +19,12 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     volumes:
-      - ./backend:/app         # Mount local backend code into the container
-      - /app/node_modules      # Prevent overriding node_modules
+      - ./backend:/app
+      - /app/node_modules
     ports:
       - "5000:5000"
-    command: npm run dev        # Run backend with Nodemon
+    command: npm run dev
     environment:
       - NODE_ENV=development
+      - CHOKIDAR_USEPOLLING=true  # Ensures file changes are detected in Docker
+

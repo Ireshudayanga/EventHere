@@ -2,6 +2,8 @@ import React, { useState, useRef, useEffect } from "react";
 import SearchBar from "../../components/SearchBar";
 import { Send, ArrowLeft } from "lucide-react";
 import { motion } from "framer-motion";
+import "../Massage/Message.css";
+
 
 const Massage = () => {
   const contacts = [
@@ -34,8 +36,10 @@ const Massage = () => {
     }, 1000);
   };
 
+  
+
   return (
-    <div className="h-screen w-full">
+    <div className="h-screen tablet-height h- w-full">
       <SearchBar title="Messages" />
       <div className="h-[92%] w-full md:w-[94%] mt-0 md:mt-4 rounded-none md:rounded-2xl shadow-xl md:shadow-2xl ml-auto">
         <div className="flex h-full p-3 md:p-7 gap-4 md:gap-4">

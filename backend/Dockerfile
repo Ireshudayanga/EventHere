@@ -1,20 +1,21 @@
-# Use official Node.js image as the base image
+# Use official Node.js image
 FROM node:20-alpine
 
 # Set the working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json
+# Copy package.json and install dependencies
 COPY package*.json ./
-
-# Install dependencies
 RUN npm install
 
 # Copy the rest of the application
 COPY . .
 
-# Expose the backend port (e.g., 5000)
+# Expose the backend port
 EXPOSE 5000
 
-# Start the application
-CMD ["npm", "run", "start"]
+# Install nodemon globally
+RUN npm install -g nodemon
+
+# Start the application using nodemon
+CMD ["nodemon", "--legacy-watch", "server.js"]
