@@ -8,6 +8,7 @@ import EventPage from '../pages/Event/EventPage';
 import ShareRide from '../pages/ShareRide/ShareRide';
 import Massage from '../pages/Massage/Massage';
 import AddEvent from '../pages/Addevent/AddEvent';
+import Signup from '../components/Signup';
 
 
 
@@ -43,6 +44,11 @@ const router = createBrowserRouter([
            },
         ]
     },
+    {
+        path: "/signup",
+        element: <Signup />,
+    },
+   
     
 ])
 export default router

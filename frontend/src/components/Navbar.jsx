@@ -1,6 +1,8 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; // Import the hook for navigation
+import { Link, useNavigate } from "react-router-dom"; // Import the hook for navigation
 import logo from "../assets/images/300PPI.png";
+import Signup from "./Signup";
+import Modal from "./Modal";
 
 const Navbar = () => {
   const [activePage, setActivePage] = useState("Home");
@@ -100,7 +102,8 @@ const Navbar = () => {
         </div>
 
         {/* Login Button */}
-        <button className="custom-button flex items-center gap-2 px-4 py-2">
+       
+        <button onClick={() => document.getElementById("LoginModel").showModal()} className="custom-button flex items-center gap-2 px-4 py-2">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"
@@ -114,6 +117,8 @@ const Navbar = () => {
           </svg>
           <span>Login</span>
         </button>
+        <Modal/>
+       
       </div>
     </div>
   );
