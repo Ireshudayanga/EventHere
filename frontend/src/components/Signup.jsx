@@ -14,6 +14,32 @@ const Signup = () => {
 
   const onSubmit = (data) => {
     setLoading(true);
+    const email = data.email;
+    const password = data.password;
+    const name = data.name;
+    console.log(data);
+
+    // Call your API endpoint here
+    fetch("https://api.example.com/signup", {
+      method: "POST",
+      headers: {
+      "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email, password, name }),
+    })
+      .then((response) => {
+      if (response.status === 200) {
+        alert("Signup successful!");
+        navigate("/");
+      } else {
+        alert("Signup failed. Please try again.");
+      }
+      })
+      .catch((error) => {
+      console.error("Error:", error);
+      alert("An error occurred. Please try again.");
+      });
+
     setTimeout(() => {
       console.log(data);
       setLoading(false);
