@@ -28,6 +28,7 @@ const Modal = () => {
         }).catch((error) => {
             console.error("Error:", error);
             alert("Login failed. Please try again.");
+            setLoading(false);
         });
     };
 
@@ -40,6 +41,7 @@ const Modal = () => {
         }).catch((error) => {
             console.error("Error:", error);
             alert("Signup failed. Please try again.");
+            setLoading(false);
         });
     }
 

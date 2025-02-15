@@ -32,6 +32,7 @@ const Signup = () => {
       }).catch((error) => {
         console.error("Error:", error);
         alert("Signup failed. Please try again.");
+        setLoading(false);
       });
     }).catch((error) => {
       console.error("Error:", error);
@@ -50,6 +51,7 @@ const Signup = () => {
     }).catch((error) => {
       console.error("Error:", error);
       alert("Signup failed. Please try again.");
+      setLoading(false);
     });
   }
 
