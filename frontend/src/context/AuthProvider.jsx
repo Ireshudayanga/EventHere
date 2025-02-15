@@ -1,14 +1,14 @@
 /* eslint-disable react/prop-types */
 import React, { createContext } from 'react'
 import app from "../firebase/firebase.config"
-import { createUserWithEmailAndPassword, getAuth, GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup, signOut } from "firebase/auth";
+import { createUserWithEmailAndPassword, getAuth, GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup, signOut, updateProfile } from "firebase/auth";
 
 
 // Initialize Firebase Authentication 
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
-const AuthContext = createContext();
+export const AuthContext = createContext(); 
 
 const AuthProvider = ({children}) => {
 
@@ -23,6 +23,13 @@ const AuthProvider = ({children}) => {
   // Sign In with Google
   const signInWithGoogle = () => {
     return signInWithPopup(auth, provider)
+  }
+
+  // Update User Profile
+  const updateUserProfile = (user, name) => {
+    return updateProfile(auth.currentUser, {
+      displayName: name
+    })
   }
 
   // Login Using email and password
@@ -44,7 +51,7 @@ const AuthProvider = ({children}) => {
     return unsubscribe
   }, [])
 
-  const authInfo = {  currentUser, setCurrentUser, loading, setLoading, createUser, signInWithGoogle, login, logout }
+  const authInfo = {  currentUser, setCurrentUser, loading, setLoading, createUser, signInWithGoogle, login, logout, updateUserProfile}
 
   return (
     <AuthContext.Provider value={ authInfo} >

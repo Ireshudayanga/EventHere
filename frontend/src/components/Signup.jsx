@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { AiOutlineClose } from "react-icons/ai";
+import { AuthContext } from "../context/AuthProvider";
 
 const Signup = () => {
   const { register, handleSubmit, watch, formState: { errors } } = useForm();
@@ -12,6 +13,9 @@ const Signup = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
 
+  const { createUser, signInWithGoogle, updateUserProfile, user } = useContext(AuthContext);
+
+  // User Signup Using Email and Password
   const onSubmit = (data) => {
     setLoading(true);
     const email = data.email;
@@ -19,32 +23,36 @@ const Signup = () => {
     const name = data.name;
     console.log(data);
 
-    // Call your API endpoint here
-    fetch("https://api.example.com/signup", {
-      method: "POST",
-      headers: {
-      "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email, password, name }),
-    })
-      .then((response) => {
-      if (response.status === 200) {
-        alert("Signup successful!");
-        navigate("/");
-      } else {
-        alert("Signup failed. Please try again.");
-      }
-      })
-      .catch((error) => {
-      console.error("Error:", error);
-      alert("An error occurred. Please try again.");
-      });
+    createUser(email, password).then((userCredential) => {
+      const user = userCredential.user;
+      console.log(user);
 
-    setTimeout(() => {
-      console.log(data);
+      updateUserProfile(user, name).then(() => {
+        navigate("/");
+      }).catch((error) => {
+        console.error("Error:", error);
+        alert("Signup failed. Please try again.");
+      });
+    }).catch((error) => {
+      console.error("Error:", error);
+      alert("Signup failed. Please try again.");
       setLoading(false);
-    }, 2000);
+    });
   };
+
+  // Google Sign-in
+  const googleSignIn = () => {
+    signInWithGoogle().then((userCredential) => {
+      const user = userCredential.user;
+      console.log(user);
+      alert("Signup successful!");
+      navigate("/events");
+    }).catch((error) => {
+      console.error("Error:", error);
+      alert("Signup failed. Please try again.");
+    });
+  }
+
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-teal-100 to-blue-200 p-6 relative">
@@ -83,9 +91,11 @@ const Signup = () => {
               type="email"
               placeholder="john@example.com"
               className="mt-1 w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400 outline-none text-black"
+              autoComplete="username" // Added autocomplete attribute
             />
             {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
           </div>
+
 
           {/* Password with Eye Icon */}
           <div className="relative">
@@ -98,6 +108,7 @@ const Signup = () => {
               type={showPassword ? "text" : "password"}
               placeholder="••••••••"
               className="mt-1 w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400 outline-none text-black pr-10"
+              autoComplete="new-password" // Added autocomplete attribute
             />
             <button
               type="button"
@@ -120,6 +131,7 @@ const Signup = () => {
               type={showConfirmPassword ? "text" : "password"}
               placeholder="••••••••"
               className="mt-1 w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400 outline-none text-black pr-10"
+              autoComplete="new-password" // Added autocomplete attribute
             />
             <button
               type="button"
@@ -130,6 +142,7 @@ const Signup = () => {
             </button>
             {errors.confirmPassword && <p className="text-red-500 text-sm">{errors.confirmPassword.message}</p>}
           </div>
+
 
           {/* Submit Button */}
           <button
@@ -151,6 +164,7 @@ const Signup = () => {
           <button
             type="button"
             className="w-full flex items-center justify-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition"
+            onClick={googleSignIn}
           >
             <FcGoogle size={22} />
             <span className="text-gray-700 font-medium">Sign in with Google</span>
