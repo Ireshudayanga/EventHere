@@ -23,6 +23,13 @@ mongoose
 .catch((error) => {
     console.log('Error:', error.message);
 }); 
+
+// Import Routes
+const userRoutes = require('./api/routers/UserRoutes');
+app.use('/users', userRoutes);
+
+
+
 // Start the Server
 const PORT = 5000; // Choose your port number
 app.listen(PORT, () => {
