@@ -3,11 +3,13 @@ const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
 const cors = require('cors');
+const port = process.env.PORT || 6001;
 
 require('dotenv').config();
 
 // Middleware (Optional)
 app.use(express.json()); 
+app.use(cors());
 
 // Routes
 app.get('/', (req, res) => {
@@ -23,6 +25,17 @@ mongoose
 .catch((error) => {
     console.log('Error:', error.message);
 }); 
+
+app.use((req, res, next) => {
+    console.log(`Incoming Request: ${req.method} ${req.url}`);
+    if (req.body && Object.keys(req.body).length > 0) {
+        console.log("Request Body:", req.body);
+    } else {
+        console.log("No Request Body Found");
+    }
+    next();
+});
+
 
 // Import Routes
 const userRoutes = require('./api/routers/UserRoutes');

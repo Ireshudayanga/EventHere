@@ -5,7 +5,7 @@ import { FcGoogle } from "react-icons/fc";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { AiOutlineClose } from "react-icons/ai";
 import { AuthContext } from "../context/AuthProvider";
-
+import axios from "axios";
 const Signup = () => {
   const { register, handleSubmit, watch, formState: { errors } } = useForm();
   const [loading, setLoading] = useState(false);
@@ -26,8 +26,22 @@ const Signup = () => {
     createUser(email, password).then((userCredential) => {
       const user = userCredential.user;
       console.log(user);
+      updateUserProfile(
+        data.name,
+        data.email,
+      ).then(() => {
+        const userInfo = {
+          name: data.name,
+          email: data.email,
+        }
+        axios.post("http://localhost:5000/users", userInfo)
+          .then((res) => {
+            alert("SignUp successful!");
+          })
+          .catch((error) => {
+            console.error("Error signing up:", error);
+          });
 
-      updateUserProfile(user, name).then(() => {
         navigate("/");
       }).catch((error) => {
         console.error("Error:", error);
@@ -45,8 +59,18 @@ const Signup = () => {
   const googleSignIn = () => {
     signInWithGoogle().then((userCredential) => {
       const user = userCredential.user;
-      console.log(user);
-      alert("Signup successful!");
+      // console.log(user);
+      const userInfo = {
+        name: user.displayName,
+        email: user.email,
+      }
+      axios.post("http://localhost:5000/users", userInfo)
+        .then((res) => {
+          alert("SignUp successful!");
+        })
+        .catch((error) => {
+          console.error("Error signing up:", error);
+        });
       navigate("/events");
     }).catch((error) => {
       console.error("Error:", error);

@@ -5,6 +5,7 @@ import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { FcGoogle } from 'react-icons/fc';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthProvider';
+import axios from 'axios';
 
 
 const Modal = () => {
@@ -36,7 +37,14 @@ const Modal = () => {
     const googleSignIn = () => {
         signInWithGoogle().then((userCredential) => {
             const user = userCredential.user;
-            console.log(user);
+            const userInfo = { name: user.displayName, email: user.email };
+            axios.post("http://localhost:5000/users", userInfo)
+            .then((res) => {
+              alert("SignUp successful!");
+            })
+            .catch((error) => {
+              console.error("Error signing up:", error);
+            });
             navigate("/events");
         }).catch((error) => {
             console.error("Error:", error);

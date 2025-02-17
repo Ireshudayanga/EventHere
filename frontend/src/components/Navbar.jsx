@@ -25,7 +25,7 @@ const Navbar = () => {
       alert("Logout failed. Please try again.");
     })};
     
-      console.log(currentUser);
+      // console.log(currentUser);
 
     return (
       <div className="mx-4 sm:mx-10 lg:mx-20 flex flex-row items-center justify-between py-4">

@@ -1,14 +1,19 @@
 /* eslint-disable react/prop-types */
 // SearchBar.jsx
-import React from 'react';
+import React, { useContext } from 'react';
 import searchIcon from '../assets/svg/Search.svg';
 import { Link } from 'react-router-dom';
 import userIcon from '../assets/svg/User.svg';
 import home from '../assets/svg/Home.svg';
+import { AuthContext } from '../context/AuthProvider';
 
 function SearchBar({ 
   title = ""
 }) {
+
+  const{currentUser} = useContext(AuthContext);
+  // console.log(currentUser);
+
   return (
     <div>
       {/* Top Navigation */}
@@ -40,7 +45,9 @@ function SearchBar({
         {/* User Info */}
         <div className="flex items-center gap-2">
           <img className="w-6 h-6 md:w-8 md:h-8" src={userIcon} alt="user" />
-          <p className="hidden md:block text-black text-sm md:text-base">John Doe</p>
+          <p className="hidden md:block text-black text-sm md:text-base uppercase">
+            {currentUser ? currentUser.name : ""}
+          </p>
         </div>
       </div>
     </div>
