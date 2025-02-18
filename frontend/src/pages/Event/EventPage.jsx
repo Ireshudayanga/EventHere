@@ -20,6 +20,9 @@ const EventPage = () => {
     const [events, setEvents] = useState([]);
     const [categories, setCategories] = useState([]);
 
+    const [date, setDate] = useState(new Date());
+    const [calenderEvents, setCalenderEvents] = useState([]);
+
     useEffect(() => {
         fetch("/event.json")
             .then((res) => res.json())
@@ -31,13 +34,15 @@ const EventPage = () => {
                     ];
                     setCategories(uniqueCategories);
                     setEvents(data);
+                    setCalenderEvents(data);
+                   
                 } else {
                     console.error("Invalid data format: Expected an array");
                 }
             })
             .catch((error) => console.error("Error fetching categories:", error));
     }, []);
-    
+
 
     return (
         <div className="h-screen w-full">
@@ -84,7 +89,8 @@ const EventPage = () => {
                                 </Link>
                             </div>
                             <div className="mt-4 overflow-y-auto md:overflow-y-scroll custom-scrollbar h-[calc(100vh-250px)] md:h-[calc(100vh-390px)] xl:h-[calc(100vh-350px)]">
-                                <Calender />
+                            <Calender date={date} events={calenderEvents} setDate={setDate} />
+
                             </div>
 
                         </div>

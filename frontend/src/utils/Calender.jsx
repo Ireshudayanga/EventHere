@@ -1,19 +1,14 @@
+/* eslint-disable react/prop-types */
 import React, { useEffect, useState } from 'react';
 import Calendar from 'react-calendar';
 import '../utils/Calender.css';
 
-const CustomCalendar = () => {
-  const [date, setDate] = useState(new Date());
-  const [events, setEvents] = useState([]);
-
-  useEffect(() => {
-    fetch('/event.json')
-      .then((res) => res.json())
-      .then((data) => {
-        setEvents(data);
-      })
-      .catch((error) => console.error('Error fetching events:', error));
-  }, []);
+const CustomCalendar = ({
+  className,
+  setDate,
+  date,
+  events,
+}) => {
 
   const categoryColors = {
     entertainment: 'bg-green-500 text-white',
@@ -23,21 +18,33 @@ const CustomCalendar = () => {
 
   // Function to determine tile class based on events
   const tileClassName = ({ date }) => {
-    const event = events.find((event) => new Date(event.date).toDateString() === date.toDateString());
+    if (!Array.isArray(events) || events.length === 0) return null; // Ensure events is a valid array
+  
+    const event = events.find((event) => 
+      event.date && new Date(event.date).toDateString() === date.toDateString()
+    );
+  
     if (event) {
       return `${categoryColors[event.category] || 'bg-gray-400 text-white'} rounded-full px-2`;
     }
     return null;
   };
 
+  // Function to handle date selection
+  const handleDateChange = (selectedDate) => {
+    console.log("Selected Date from Calender components:", selectedDate.toDateString()); // Log selected date
+    setDate(selectedDate); // Update the state
+  };
+
   return (
-    <div className="calendar-container">
+    <div className="calendar-container ">
       <Calendar
-        onChange={setDate}
+        onChange={handleDateChange} // Trigger console log when date is selected
         value={date}
         tileClassName={tileClassName}
-        view="month" 
-        maxDetail="month" 
+        view="month"
+        maxDetail="month"
+        className={`${className} rounded-xl md:rounded-2xl shadow-lg`}
       />
     </div>
   );
