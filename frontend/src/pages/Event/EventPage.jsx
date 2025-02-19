@@ -101,7 +101,7 @@ const EventPage = () => {
                         {/* Map Section */}
                         <div className="h-[50vh] md:h-2/3">
                             <div className="bg-white rounded-xl md:rounded-2xl shadow-lg h-full  map-container">
-                                <Map />
+                                <Map clickable={false}/>
                             </div>
                         </div>
 

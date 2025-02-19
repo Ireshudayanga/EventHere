@@ -10,7 +10,7 @@ const AddEvent = () => {
   const [events, setEvents] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selectedDate, setSelectedDate] = useState(new Date());
-
+  const [selectedLocation, setSelectedLocation] = useState([7.8731, 80.7718]);
   const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm();
 
   useEffect(() => {
@@ -28,6 +28,11 @@ const AddEvent = () => {
       .catch((error) => console.error("Error fetching categories:", error));
   }, []);
 
+  useEffect(() => {
+    setValue("eventLocation", `Lat: ${selectedLocation[0]}, Lng: ${selectedLocation[1]}`);
+  }, [selectedLocation, setValue]);
+
+
   // ✅ Handle form submission
   const onSubmit = (data) => {
     data.eventDate = selectedDate;
@@ -44,7 +49,7 @@ const AddEvent = () => {
           {/* Left Section */}
           <div className="w-full md:w-[50%] flex flex-col gap-3 md:gap-5">
             <div className="bg-white rounded-xl md:rounded-2xl shadow-lg h-[40vh] flex-grow ">
-              <Map />
+              <Map setSelectedLocation={setSelectedLocation} />
             </div>
             <div className="w-full md:max-h-52 flex flex-row gap-3 md:gap-5">
               <div className="bg-white text-black rounded-xl md:rounded-2xl shadow-lg p-3 flex flex-col flex-[3]">
@@ -106,14 +111,30 @@ const AddEvent = () => {
                   </select>
                   {errors.eventTime && <p className="text-red-500 text-sm">{errors.eventTime.message}</p>}
                 </div>
+                <div>
+
+
+                  <div className="mt-4">
+                    <label className="font-medium font-sans text-black">Event Location (Choose from Map)</label>
+                    <div className="mt-2 border border-gray-400 rounded-lg bg-gray-100 px-4 py-3 shadow-sm flex flex-col items-start">
+                      <div className="flex items-center justify-between w-full">
+                        <span className="text-gray-600 font-medium">Latitude:</span>
+                        <span className="text-gray-800 font-semibold">{selectedLocation[0]}</span>
+                      </div>
+                      <div className="flex items-center justify-between w-full mt-1">
+                        <span className="text-gray-600 font-medium">Longitude:</span>
+                        <span className="text-gray-800 font-semibold">{selectedLocation[1]}</span>
+                      </div>
+                    </div>
+                  </div>
+
+
+
+                </div>
 
                 {/* Calendar Section */}
-                <div className='mt-4 md:max-h-52 overflow-auto custom-scrollbar'>
-                  <Calender
-                    className='bg-gray-200 rounded-xl md:rounded-2xl shadow-lg w-full'
-                    date={selectedDate}
-                    setDate={setSelectedDate}
-                  />
+                <div className="rounded-xl overflow-hidden mt-4  p-4">
+                  <Calender date={selectedDate} setDate={setSelectedDate} />
                 </div>
                 <div className='mt-4'>
                   <textarea
@@ -132,9 +153,12 @@ const AddEvent = () => {
                       className="appearance-none w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-[#797979d9] bg-gray-200"
                     >
                       <option className="text-gray-400" value="">Select Category</option>
-                      {categories.map((category, index) => (
-                        <option key={index} value={category}>{category}</option>
-                      ))}
+                      {categories
+                        .filter(category => category !== "All")
+                        .map((category, index) => (
+                          <option key={index} value={category}>{category}</option>
+                        ))}
+
                     </select>
 
                     {errors.eventCategory && <p className="text-red-500 text-sm">{errors.eventCategory.message}</p>}
@@ -183,9 +207,6 @@ const AddEvent = () => {
                     />
                   </div>
                 )}
-
-
-
                 <div className='mt-4 flex  justify-center'>
                   <Button className='rounded-xl px-20 py-3' type="submit">Add Event</Button>
                 </div>

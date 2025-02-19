@@ -1,10 +1,11 @@
 /* eslint-disable react/prop-types */
-import React, { useEffect, useState, useRef } from "react";
-import { MapContainer, TileLayer, Marker, Polygon, useMap, LayersControl } from "react-leaflet";
+import React, { useEffect, useState } from "react";
+import { MapContainer, TileLayer, Marker, useMapEvents, LayersControl, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import { FaCrosshairs } from "react-icons/fa";
 
-const { BaseLayer, Overlay } = LayersControl;
+const { BaseLayer } = LayersControl;
 
 // Custom marker icon (Red marker)
 const customIcon = new L.Icon({
@@ -16,20 +17,57 @@ const customIcon = new L.Icon({
     shadowSize: [41, 41],
 });
 
-// Component to update the map view dynamically
+// 📌 ChangeView Component (Fly to new location)
 const ChangeView = ({ coords }) => {
     const map = useMap();
-    map.flyTo(coords, 15, { animate: true, duration: 1.5 });
+    useEffect(() => {
+        map.flyTo(coords, 15, { animate: true, duration: 1.5 });
+    }, [coords, map]);
     return null;
 };
 
-// "Locate Me" Button (INSIDE the Map)
-const LocateButton = ({ userLocation }) => {
+// 📌 User Click Handler (Selects Location)
+const LocationMarker = ({ setSelectedLocation, clickable = true }) => {
+    const [markerPosition, setMarkerPosition] = useState(null);
+
+    useMapEvents({
+        click(e) {
+            if (!clickable) return; // Prevent adding marker if not clickable
+            
+            const { lat, lng } = e.latlng;
+            setMarkerPosition([lat, lng]); // Update marker position
+            if (typeof setSelectedLocation === "function") {
+                setSelectedLocation([lat, lng]); // Send location to AddEvent.js
+            }
+            console.log("Selected Location:", lat, lng);
+        },
+    });
+
+    return markerPosition ? <Marker position={markerPosition} icon={customIcon} /> : null;
+};
+
+
+
+{/* 📌 "Locate Me" Button (INSIDE the Map) */}
+const LocateButton = ({ setSelectedLocation }) => {
     const map = useMap();
 
     const handleLocateMe = () => {
-        if (map) {
-            map.flyTo(userLocation, 15, { animate: true, duration: 1.5 });
+        if ("geolocation" in navigator) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const userCoords = [position.coords.latitude, position.coords.longitude];
+                    map.flyTo(userCoords, 15, { animate: true, duration: 1.5 });
+                    if (typeof setSelectedLocation === "function") {
+                        setSelectedLocation(userCoords);
+                    }
+                    console.log("Located at:", userCoords);
+                },
+                (error) => {
+                    console.error("Geolocation error:", error.message);
+                },
+                { enableHighAccuracy: true }
+            );
         }
     };
 
@@ -38,83 +76,59 @@ const LocateButton = ({ userLocation }) => {
             onClick={handleLocateMe}
             className="absolute bottom-4 right-4 bg-white p-3 w-12 h-12 rounded-full shadow-lg flex items-center justify-center hover:bg-gray-200 transition-all z-[1000]"
         >
-            <img src="https://cdn-icons-png.flaticon.com/512/684/684908.png" alt="Locate Me" className="h-6 w-6" />
+            <FaCrosshairs className="h-6 w-6 text-gray-700" />
         </button>
     );
 };
 
-const Map = () => {
-    const [userLocation, setUserLocation] = useState([7.8731, 80.7718]); // Default location (Sri Lanka)
-    const markerRef = useRef(null);
+const Map = ({ setSelectedLocation, clickable = true }) => {
+    const [userLocation, setUserLocation] = useState([7.8731, 80.7718]); // Default: Sri Lanka
 
     useEffect(() => {
         if ("geolocation" in navigator) {
-            const watchId = navigator.geolocation.watchPosition(
+            navigator.geolocation.getCurrentPosition(
                 (position) => {
                     const newLocation = [position.coords.latitude, position.coords.longitude];
                     setUserLocation(newLocation);
-
-                    if (markerRef.current) {
-                        markerRef.current.setLatLng(newLocation);
+                    if (typeof setSelectedLocation === "function") {
+                        setSelectedLocation(newLocation);
                     }
-
-                    // console.log("Updated Location:", newLocation);
                 },
                 (error) => {
                     console.error("Geolocation error:", error.message);
                 },
-                { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+                { enableHighAccuracy: true }
             );
-
-            return () => navigator.geolocation.clearWatch(watchId);
         }
     }, []);
 
     return (
         <div className="relative h-full w-full">
-            <MapContainer center={userLocation} zoom={16} className="h-full w-full rounded-xl relative">
+            <MapContainer center={userLocation} zoom={10} className="h-full w-full rounded-xl relative">
                 <ChangeView coords={userLocation} />
-
-                {/* Layer Control for Multiple Maps */}
+    
+                {/* Base Map Layers */}
                 <LayersControl position="topright">
-                    {/* Base Map Layers */}
                     <BaseLayer checked name="OpenStreetMap">
                         <TileLayer
                             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                         />
                     </BaseLayer>
-
-                    <BaseLayer name="Satellite">
-                        <TileLayer
-                            url="https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}"
-                            subdomains={["mt0", "mt1", "mt2", "mt3"]}
-                            attribution="© Google Maps"
-                        />
-                    </BaseLayer>
-
-                    <BaseLayer name="Terrain">
-                        <TileLayer
-                            url="https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png"
-                            attribution="© OpenTopoMap"
-                        />
-                    </BaseLayer>
-
-                    {/* Overlay Layers */}
-                    <Overlay checked name="My Location">
-                        <Marker position={userLocation} icon={customIcon} ref={markerRef}></Marker>
-                    </Overlay>
-
-                    <Overlay name="Custom Polygon">
-                        <Polygon positions={[[7.87, 80.77], [7.90, 80.80], [7.85, 80.75]]} color="blue" />
-                    </Overlay>
                 </LayersControl>
-
-                {/* "Locate Me" Button INSIDE the map */}
-                <LocateButton userLocation={userLocation} />
+    
+                {/* 📌 Always Show User's Location Marker */}
+                {userLocation && <Marker position={userLocation} icon={customIcon} />}
+    
+                {/* Clickable Location Marker (Only if clickable is true) */}
+                <LocationMarker setSelectedLocation={setSelectedLocation} clickable={clickable} />
+    
+                {/* 📌 "Locate Me" Button (INSIDE the Map) */}
+                <LocateButton setSelectedLocation={setSelectedLocation} />
             </MapContainer>
         </div>
     );
 };
+
 
 export default Map;
