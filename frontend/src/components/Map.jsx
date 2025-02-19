@@ -39,7 +39,7 @@ const LocationMarker = ({ setSelectedLocation, clickable = true }) => {
             if (typeof setSelectedLocation === "function") {
                 setSelectedLocation([lat, lng]); // Send location to AddEvent.js
             }
-            console.log("Selected Location:", lat, lng);
+            // console.log("Selected Location:", lat, lng);
         },
     });
 

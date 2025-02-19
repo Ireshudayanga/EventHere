@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import SearchBar from '../../components/SearchBar';
 import Button from '../../components/Button';
 import Map from '../../components/Map';
@@ -10,8 +10,11 @@ const AddEvent = () => {
   const [events, setEvents] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [selectedLocation, setSelectedLocation] = useState([7.8731, 80.7718]);
-  const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm();
+  const [selectedLocation, setSelectedLocation] = useState([]);
+  const [previewImage, setPreviewImage] = useState(null);
+  const [locationError, setLocationError] = useState(false);
+  const fileInputRef = useRef(null);
+  const { register, handleSubmit, reset, trigger, setError, clearErrors, setValue, formState: { errors } } = useForm();
 
   useEffect(() => {
     fetch("/event.json")
@@ -29,15 +32,76 @@ const AddEvent = () => {
   }, []);
 
   useEffect(() => {
+    if (selectedLocation[0] !== 6.9107712 || selectedLocation[1] !== 79.8851072) {
+      clearErrors("eventLocation");
+      setLocationError(false);
+    }
+    setValue("eventLocation", `Lat: ${selectedLocation[0]}, Lng: ${selectedLocation[1]}`);
+  }, [selectedLocation, setValue, clearErrors]);
+
+  useEffect(() => {
     setValue("eventLocation", `Lat: ${selectedLocation[0]}, Lng: ${selectedLocation[1]}`);
   }, [selectedLocation, setValue]);
 
-
-  // ✅ Handle form submission
-  const onSubmit = (data) => {
-    data.eventDate = selectedDate;
-    console.log("Event Data:", data);
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setValue("eventImage", file);
+      setPreviewImage(URL.createObjectURL(file));
+      trigger("eventImage");
+    }
   };
+
+  const handleRemoveImage = () => {
+    setValue("eventImage", null);
+    setPreviewImage(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ""; // Reset file input
+    }
+  };
+
+
+  const onSubmit = async (data) => {
+    console.log("🚀 Event Data Submitted:", data);
+
+    if (selectedLocation[0] === 6.9107712 && selectedLocation[1] === 79.8851072) {
+      setLocationError(true);
+      setError("eventLocation", { type: "manual", message: "Please choose a location on the map!" });
+      console.error("🚨 Event location is required!");
+      return;
+    }
+
+    clearErrors("eventLocation");
+    setLocationError(false);
+
+    const formData = new FormData();
+    formData.append("eventName", data.eventName);
+    formData.append("eventTime", data.eventTime);
+    formData.append("eventLocation", `Lat: ${selectedLocation[0]}, Lng: ${selectedLocation[1]}`);
+    formData.append("eventDescription", data.eventDescription);
+    formData.append("eventCategory", data.eventCategory);
+    formData.append("signupRequired", data.signupRequired);
+    formData.append("eventImage", data.eventImage);
+
+    console.log("✅ Final Form Data:");
+    for (const pair of formData.entries()) {
+      console.log(pair[0], pair[1]);
+    }
+
+    reset({
+      eventName: "",
+      eventTime: "",
+      eventLocation: "",
+      eventDescription: "",
+      eventCategory: "",
+      signupRequired: "",
+      eventImage: null,
+    });
+
+    setPreviewImage(null);
+  };
+
+
 
   return (
     <div className="h-screen w-full">
@@ -77,6 +141,8 @@ const AddEvent = () => {
             <div className="bg-white rounded-xl md:rounded-2xl shadow-lg p-7 flex flex-col h-full overflow-auto scrollbar-hide">
               <p className="text-2xl text-black font-medium font-sans">Add Event</p>
               <form onSubmit={handleSubmit(onSubmit)} className='mt-4'>
+
+                {/* Event Name & Time */}
                 <div className='flex gap-2'>
                   <input
                     {...register("eventName", { required: "Event name is required" })}
@@ -88,127 +154,88 @@ const AddEvent = () => {
 
                   <select
                     {...register("eventTime", { required: "Event time is required" })}
-                    className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-[#797979d9] bg-gray-200"
+                    className="mt-1 w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-[#797979d9] bg-gray-200"
                   >
                     <option value="">Select Time</option>
-                    <option value="07:00 AM">07:00 AM</option>
-                    <option value="08:00 AM">08:00 AM</option>
-                    <option value="09:00 AM">09:00 AM</option>
-                    <option value="10:00 AM">10:00 AM</option>
-                    <option value="11:00 AM">11:00 AM</option>
-                    <option value="12:00 PM">12:00 PM</option>
-                    <option value="01:00 PM">01:00 PM</option>
-                    <option value="02:00 PM">02:00 PM</option>
-                    <option value="03:00 PM">03:00 PM</option>
-                    <option value="04:00 PM">04:00 PM</option>
-                    <option value="05:00 PM">05:00 PM</option>
-                    <option value="06:00 PM">06:00 PM</option>
-                    <option value="07:00 PM">07:00 PM</option>
-                    <option value="08:00 PM">08:00 PM</option>
-                    <option value="09:00 PM">09:00 PM</option>
-                    <option value="10:00 PM">10:00 PM</option>
-                    <option value="11:00 PM">11:00 PM</option>
+                    {[...Array(24)].map((_, i) => (
+                      <option key={i} value={`${i.toString().padStart(2, "0")}:00`}>
+                        {i.toString().padStart(2, "0")}:00
+                      </option>
+                    ))}
                   </select>
                   {errors.eventTime && <p className="text-red-500 text-sm">{errors.eventTime.message}</p>}
                 </div>
-                <div>
-
-
-                  <div className="mt-4">
-                    <label className="font-medium font-sans text-black">Event Location (Choose from Map)</label>
-                    <div className="mt-2 border border-gray-400 rounded-lg bg-gray-100 px-4 py-3 shadow-sm flex flex-col items-start">
-                      <div className="flex items-center justify-between w-full">
-                        <span className="text-gray-600 font-medium">Latitude:</span>
-                        <span className="text-gray-800 font-semibold">{selectedLocation[0]}</span>
-                      </div>
-                      <div className="flex items-center justify-between w-full mt-1">
-                        <span className="text-gray-600 font-medium">Longitude:</span>
-                        <span className="text-gray-800 font-semibold">{selectedLocation[1]}</span>
-                      </div>
+                <div className="mt-4">
+                  <label className="font-medium font-sans text-black">Event Location (Choose from Map)</label>
+                  <div className="mt-2 border border-gray-400 rounded-lg bg-gray-100 px-4 py-3 shadow-sm flex flex-col items-start">
+                    <div className="flex items-center justify-between w-full">
+                      <span className="text-gray-600 font-medium">Latitude:</span>
+                      <span className="text-gray-800 font-semibold">{selectedLocation[0]}</span>
+                    </div>
+                    <div className="flex items-center justify-between w-full mt-1">
+                      <span className="text-gray-600 font-medium">Longitude:</span>
+                      <span className="text-gray-800 font-semibold">{selectedLocation[1]}</span>
                     </div>
                   </div>
-
-
-
+                  {errors.eventLocation && <p className="text-red-500 text-sm mt-1">{errors.eventLocation.message}</p>}
                 </div>
 
-                {/* Calendar Section */}
-                <div className="rounded-xl overflow-hidden mt-4  p-4">
+
+
+                {/* Calendar */}
+                <div className="rounded-xl overflow-hidden mt-4 p-4">
                   <Calender date={selectedDate} setDate={setSelectedDate} />
                 </div>
-                <div className='mt-4'>
-                  <textarea
-                    {...register("eventDescription", { required: "Event description is required" })}
-                    placeholder="Event Description"
-                    className="mt-1 w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400 outline-none text-black bg-gray-200 resize-none"
-                    rows="4"
-                  />
-                  {errors.eventDescription && <p className="text-red-500 text-sm">{errors.eventDescription.message}</p>}
-                </div>
+
+                {/* Event Description */}
+                <textarea
+                  {...register("eventDescription", { required: "Event description is required" })}
+                  placeholder="Event Description"
+                  className="mt-1 w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400 outline-none text-black bg-gray-200 resize-none"
+                  rows="4"
+                />
+                {errors.eventDescription && <p className="text-red-500 text-sm">{errors.eventDescription.message}</p>}
+
+                {/* Category & Signup Required */}
                 <div className="mt-4 flex gap-3">
-                  {/* Event Category */}
-                  <div className="w-1/2 relative">
-                    <select
-                      {...register("eventCategory", { required: "Event category is required" })}
-                      className="appearance-none w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-[#797979d9] bg-gray-200"
-                    >
-                      <option className="text-gray-400" value="">Select Category</option>
-                      {categories
-                        .filter(category => category !== "All")
-                        .map((category, index) => (
-                          <option key={index} value={category}>{category}</option>
-                        ))}
-
-                    </select>
-
-                    {errors.eventCategory && <p className="text-red-500 text-sm">{errors.eventCategory.message}</p>}
-                  </div>
-
-                  {/* Signup Required */}
-                  <div className="w-1/2 relative">
-                    <select
-                      {...register("signupRequired", { required: "Signup requirement is required" })}
-                      className="appearance-none w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-[#797979d9] bg-gray-200"
-                    >
-                      <option value="">Signup Required</option>
-                      <option value="Yes">Yes</option>
-                      <option value="No">No</option>
-                    </select>
-
-                    {errors.signupRequired && <p className="text-red-500 text-sm">{errors.signupRequired.message}</p>}
-                  </div>
+                  <select {...register("eventCategory", { required: "Event category is required" })} className="w-1/2 px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-[#797979d9] bg-gray-200">
+                    <option value="">Select Category</option>
+                    {categories.map((category, index) => category !== "All" && <option key={index} value={category}>{category}</option>)}
+                  </select>
+                  <select {...register("signupRequired", { required: "Signup requirement is required" })} className="w-1/2 px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-[#797979d9] bg-gray-200">
+                    <option value="">Signup Required?</option>
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                  </select>
                 </div>
 
-                <div className="mt-4">
-                  <label className="block text-gray-700 font-medium">Upload Event Image</label>
-                  <input
-                    {...register("eventImage", { required: "Event image is required" })}
-                    type="file"
-                    accept="image/*"
-                    className="mt-2 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-black bg-gray-200"
-                    onChange={(e) => {
-                      const file = e.target.files[0];
-                      if (file) {
-                        setValue("eventImage", file);
-                      }
-                    }}
-                  />
-                  {errors.eventImage && <p className="text-red-500 text-sm">{errors.eventImage.message}</p>}
+                {/* Image Upload & Preview */}
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="mt-4 w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-[#797979d9] bg-gray-200"
+                />
+
+                <div className="flex justify-center items-center mt-3 flex-col">
+                  {previewImage && (
+                    <>
+                      <img src={previewImage} alt="Event Preview" className="w-40 h-40 object-cover rounded-lg shadow-md" />
+                      <button
+                        type="button"
+                        onClick={handleRemoveImage}
+                        className="mt-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition duration-300"
+                      >
+                        Remove Image
+                      </button>
+                    </>
+                  )}
                 </div>
 
-                {/* Preview Section */}
-                {watch("eventImage") instanceof File && (
-                  <div className="mt-3 flex justify-center">
-                    <img
-                      src={URL.createObjectURL(watch("eventImage"))}
-                      alt="Event Preview"
-                      className="w-40 h-40 object-cover rounded-lg shadow-md"
-                      onLoad={(e) => URL.revokeObjectURL(e.target.src)} // Free memory after loading
-                    />
-                  </div>
-                )}
-                <div className='mt-4 flex  justify-center'>
-                  <Button className='rounded-xl px-20 py-3' type="submit">Add Event</Button>
+
+                <div className='flex justify-center'>
+                  <Button className='mt-4 px-20 py-3 rounded-lg ' type="submit">Add Event</Button>
                 </div>
               </form>
             </div>
