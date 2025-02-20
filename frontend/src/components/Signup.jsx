@@ -67,11 +67,14 @@ const Signup = () => {
       axios.post("http://localhost:5000/users", userInfo)
         .then((res) => {
           alert("SignUp successful!");
+          navigate("/events");
+          console.log(user);
         })
         .catch((error) => {
           console.error("Error signing up:", error);
+          alert("SignUp failed!");
+          console.log(user);
         });
-      navigate("/events");
     }).catch((error) => {
       console.error("Error:", error);
       alert("Signup failed. Please try again.");

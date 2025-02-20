@@ -26,21 +26,12 @@ mongoose
     console.log('Error:', error.message);
 }); 
 
-app.use((req, res, next) => {
-    console.log(`Incoming Request: ${req.method} ${req.url}`);
-    if (req.body && Object.keys(req.body).length > 0) {
-        console.log("Request Body:", req.body);
-    } else {
-        console.log("No Request Body Found");
-    }
-    next();
-});
-
-
-// Import Routes
+// Import User Routes
 const userRoutes = require('./api/routers/UserRoutes');
 app.use('/users', userRoutes);
 
+const eventRoutes = require('./api/routers/EventRoutes');
+app.use('/events', eventRoutes);
 
 
 // Start the Server

@@ -1,27 +1,29 @@
-const User = require('../models/UserModel')
+const User = require('../models/UserModel');
 
 const getAllUsers = async (req, res) => {
     try {
         const users = await User.find();
-        res.stetus(200).json(users)
+        res.status(200).json(users); // ✅ Fixed status typo
     } catch (error) {
-        res.status(500).json({ message: error.message })
+        res.status(500).json({ message: error.message });
     }
-}
+};
 
 const createUser = async (req, res) => {
     const user = req.body;
-    const email = {email: user.email};
-    try{
-        const exitUser = await User.findOne(email);
-        if(exitUser){
-            res.status(400).json({message: 'User already exists'})
-        }
-        const result = await User.create(user);
-        res.status(201).json(result);
-    }catch(error){
-        res.status(500).json({message: error.message})
-    }
-}
+    const email = { email: user.email };
 
-module.exports = {getAllUsers, createUser}
+    try {
+        const existingUser = await User.findOne(email);
+        if (existingUser) {
+            return res.status(400).json({ message: 'User already exists' }); // ✅ Added return
+        }
+
+        const result = await User.create(user);
+        return res.status(201).json(result); // ✅ Added return
+    } catch (error) {
+        return res.status(500).json({ message: error.message }); // ✅ Added return
+    }
+};
+
+module.exports = { getAllUsers, createUser };

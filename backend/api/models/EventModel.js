@@ -34,16 +34,22 @@ const EventSchema = new Schema(
                 }
             }
         },
-        organizer: {
-            type: Schema.Types.ObjectId,
-            ref: 'User',
+        category: {
+            type: String,
             required: true,
         },
+        signupRequired: {
+            type: Boolean,
+            required: true,
+        },
+        organizer: {  
+            type: String, // 🔹 Ensure it's stored as a string (or ObjectId if linked to users)
+            required: true
+        }
     },
-    { timestamps: true }
 );
 
 EventSchema.index({ location: '2dsphere' });
 
-const Events = mongoose.model('Event', EventSchema);
-module.exports = Events
+const Event = mongoose.model('Event', EventSchema);
+module.exports = Event;  

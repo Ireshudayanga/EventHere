@@ -5,6 +5,7 @@ import Map from '../../components/Map';
 import ReminderCard from '../../components/ReminderCard';
 import { useForm } from 'react-hook-form';
 import Calender from '../../utils/Calender';
+import axios from 'axios';
 
 const AddEvent = () => {
   const [events, setEvents] = useState([]);
@@ -63,44 +64,57 @@ const AddEvent = () => {
 
   const onSubmit = async (data) => {
     console.log("🚀 Event Data Submitted:", data);
-
-    if (selectedLocation[0] === 6.9107712 && selectedLocation[1] === 79.8851072) {
+  
+    if (selectedLocation.length === 0) {
       setLocationError(true);
       setError("eventLocation", { type: "manual", message: "Please choose a location on the map!" });
       console.error("🚨 Event location is required!");
       return;
     }
-
+  
     clearErrors("eventLocation");
     setLocationError(false);
-
-    const formData = new FormData();
-    formData.append("eventName", data.eventName);
-    formData.append("eventTime", data.eventTime);
-    formData.append("eventLocation", `Lat: ${selectedLocation[0]}, Lng: ${selectedLocation[1]}`);
-    formData.append("eventDescription", data.eventDescription);
-    formData.append("eventCategory", data.eventCategory);
-    formData.append("signupRequired", data.signupRequired);
-    formData.append("eventImage", data.eventImage);
-
-    console.log("✅ Final Form Data:");
-    for (const pair of formData.entries()) {
-      console.log(pair[0], pair[1]);
+  
+    const eventData = {
+      title: data.eventName,  
+      time: data.eventTime,  
+      location: {  
+        type: "Point",  // 🔹 Required for GeoJSON
+        coordinates: [selectedLocation[1], selectedLocation[0]],  // 🔹 GeoJSON uses [lng, lat]
+      },
+      description: data.eventDescription,  
+      category: data.eventCategory,  
+      signupRequired: data.signupRequired === "true",
+      date: selectedDate.toISOString(),  // 🔹 Ensure `date` is sent in correct format
+      organizer: "user",  // 🔹 Change this dynamically if needed
+    };
+  
+    console.log("✅ Final JSON Data:", JSON.stringify(eventData, null, 2));
+  
+    try {
+      const response = await axios.post("http://localhost:5000/events", eventData, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+  
+      console.log("🚀 Event Created:", response.data);
+      alert("Event created successfully!");
+      reset({
+        eventName: "",
+        eventTime: "",
+        eventLocation: "",
+        eventDescription: "",
+        eventCategory: "",
+        signupRequired: "",
+      });
+    } catch (error) {
+      console.error("🚨 Event Creation Error:", error.response ? error.response.data : error);
+      alert("Failed to create event!");
     }
-
-    reset({
-      eventName: "",
-      eventTime: "",
-      eventLocation: "",
-      eventDescription: "",
-      eventCategory: "",
-      signupRequired: "",
-      eventImage: null,
-    });
-
-    setPreviewImage(null);
   };
-
+  
+  
 
 
   return (
@@ -204,12 +218,12 @@ const AddEvent = () => {
                   </select>
                   <select {...register("signupRequired", { required: "Signup requirement is required" })} className="w-1/2 px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-[#797979d9] bg-gray-200">
                     <option value="">Signup Required?</option>
-                    <option value="Yes">Yes</option>
-                    <option value="No">No</option>
+                    <option value="true">Yes</option>
+                    <option value="false">No</option>
                   </select>
                 </div>
 
-                {/* Image Upload & Preview */}
+                Image Upload & Preview
                 <input
                   ref={fileInputRef}
                   type="file"
