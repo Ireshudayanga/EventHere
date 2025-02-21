@@ -42,10 +42,13 @@ const EventSchema = new Schema(
             type: Boolean,
             required: true,
         },
-        organizer: {  
-            type: String, // 🔹 Ensure it's stored as a string (or ObjectId if linked to users)
+        userEmail: {  
+            type: String, 
             required: true
-        }
+        },
+        imageUrl: {
+            type: String,
+        },
     },
 );
 

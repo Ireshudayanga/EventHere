@@ -1,7 +1,7 @@
 // Import Firebase
 import { initializeApp } from "firebase/app";
+import { getStorage } from "firebase/storage";
 import { getAnalytics } from "firebase/analytics";
-
 
 // Firebase Configuration
 const firebaseConfig = {
@@ -11,12 +11,16 @@ const firebaseConfig = {
   storageBucket: import.meta.env.VITE_STORAGEBUCKET,
   messagingSenderId: import.meta.env.VITE_MESSAGINGSENDERID,
   appId: import.meta.env.VITE_APPID,
-  measurementId: import.meta.env.VITE_MEASUREMENTID
+  measurementId: import.meta.env.VITE_MEASUREMENTID,
 };
-
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+const storage = getStorage(app);
 
+
+// Export Firebase App & Storage
 export default app;
+export { storage };
+
+

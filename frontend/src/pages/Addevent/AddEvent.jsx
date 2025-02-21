@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import SearchBar from '../../components/SearchBar';
 import Button from '../../components/Button';
 import Map from '../../components/Map';
@@ -6,8 +6,11 @@ import ReminderCard from '../../components/ReminderCard';
 import { useForm } from 'react-hook-form';
 import Calender from '../../utils/Calender';
 import axios from 'axios';
+import { use } from 'react';
+import { AuthContext } from '../../context/AuthProvider';
 
 const AddEvent = () => {
+  const {currentUser} = useContext(AuthContext);
   const [events, setEvents] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -16,6 +19,16 @@ const AddEvent = () => {
   const [locationError, setLocationError] = useState(false);
   const fileInputRef = useRef(null);
   const { register, handleSubmit, reset, trigger, setError, clearErrors, setValue, formState: { errors } } = useForm();
+  const [userEmail, setUserEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchUserEmail = async () => {
+      const userEmail = currentUser.email;
+      setUserEmail(userEmail);
+    };
+    fetchUserEmail();
+  }, [currentUser]);
 
   useEffect(() => {
     fetch("/event.json")
@@ -44,14 +57,7 @@ const AddEvent = () => {
     setValue("eventLocation", `Lat: ${selectedLocation[0]}, Lng: ${selectedLocation[1]}`);
   }, [selectedLocation, setValue]);
 
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setValue("eventImage", file);
-      setPreviewImage(URL.createObjectURL(file));
-      trigger("eventImage");
-    }
-  };
+ 
 
   const handleRemoveImage = () => {
     setValue("eventImage", null);
@@ -61,9 +67,11 @@ const AddEvent = () => {
     }
   };
 
+  
 
   const onSubmit = async (data) => {
     console.log("🚀 Event Data Submitted:", data);
+    setLoading(true);
   
     if (selectedLocation.length === 0) {
       setLocationError(true);
@@ -75,46 +83,92 @@ const AddEvent = () => {
     clearErrors("eventLocation");
     setLocationError(false);
   
-    const eventData = {
-      title: data.eventName,  
-      time: data.eventTime,  
-      location: {  
-        type: "Point",  // 🔹 Required for GeoJSON
-        coordinates: [selectedLocation[1], selectedLocation[0]],  // 🔹 GeoJSON uses [lng, lat]
-      },
-      description: data.eventDescription,  
-      category: data.eventCategory,  
-      signupRequired: data.signupRequired === "true",
-      date: selectedDate.toISOString(),  // 🔹 Ensure `date` is sent in correct format
-      organizer: "user",  // 🔹 Change this dynamically if needed
-    };
-  
-    console.log("✅ Final JSON Data:", JSON.stringify(eventData, null, 2));
-  
     try {
-      const response = await axios.post("http://localhost:5000/events", eventData, {
-        headers: {
-          "Content-Type": "application/json",
+      let imageUrl = "";
+  
+      // Upload image to Cloudinary if a file is selected
+      if (fileInputRef.current && fileInputRef.current.files[0]) {
+        imageUrl = await uploadImage(fileInputRef.current.files[0]);
+      }
+  
+      const eventData = {
+        title: data.eventName,
+        time: data.eventTime,
+        location: {
+          type: "Point",
+          coordinates: [selectedLocation[1], selectedLocation[0]],
         },
+        description: data.eventDescription,
+        category: data.eventCategory,
+        signupRequired: data.signupRequired === "true",
+        date: selectedDate.toISOString(),
+        userEmail: userEmail,
+        imageUrl: imageUrl, // Use the uploaded image URL
+      };
+  
+      console.log("✅ Final JSON Data:", JSON.stringify(eventData, null, 2));
+  
+      const response = await axios.post("http://localhost:5000/events", eventData, {
+        headers: { "Content-Type": "application/json" },
       });
   
-      console.log("🚀 Event Created:", response.data);
-      alert("Event created successfully!");
-      reset({
-        eventName: "",
-        eventTime: "",
-        eventLocation: "",
-        eventDescription: "",
-        eventCategory: "",
-        signupRequired: "",
-      });
+      if (response.status === 201) {
+        console.log("🚀 Event Created Successfully:", response.data);
+        setLoading(false);
+        alert("Event created successfully!");
+  
+        reset({
+          eventName: "",
+          eventTime: "",
+          eventLocation: "",
+          eventDescription: "",
+          eventCategory: "",
+          signupRequired: "",
+          eventImage: "",
+        });
+  
+        setPreviewImage(null);
+        if (fileInputRef.current) {
+          fileInputRef.current.value = "";
+        }
+      } else {
+        console.error("🚨 Unexpected Response:", response);
+        alert("Something went wrong!");
+      }
     } catch (error) {
       console.error("🚨 Event Creation Error:", error.response ? error.response.data : error);
       alert("Failed to create event!");
     }
   };
   
+  // Function to upload image to Cloudinary
+  const uploadImage = async (file) => {
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("upload_preset", "eventImage");
   
+      const response = await axios.post(
+        `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/upload`,
+        formData
+      );
+  
+      if (response.data.secure_url) {
+        console.log("✅ Image uploaded successfully:", response.data.secure_url);
+        return response.data.secure_url;
+      } else {
+        throw new Error("Image upload failed");
+      }
+    } catch (error) {
+      console.error("🚨 Image Upload Error:", error);
+      alert("Failed to upload image. Try again.");
+      return "";
+    }
+  };
+  
+  
+
+
 
 
   return (
@@ -223,12 +277,11 @@ const AddEvent = () => {
                   </select>
                 </div>
 
-                Image Upload & Preview
+                {/* Image Upload & Preview */}
                 <input
                   ref={fileInputRef}
                   type="file"
                   accept="image/*"
-                  onChange={handleImageUpload}
                   className="mt-4 w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-[#797979d9] bg-gray-200"
                 />
 
@@ -249,7 +302,7 @@ const AddEvent = () => {
 
 
                 <div className='flex justify-center'>
-                  <Button className='mt-4 px-20 py-3 rounded-lg ' type="submit">Add Event</Button>
+                  <Button className='mt-4 px-20 py-3 rounded-lg ' type="submit">{loading? "Adding Event..." : "Add Event" }</Button>
                 </div>
               </form>
             </div>

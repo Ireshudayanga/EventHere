@@ -15,7 +15,7 @@ const createEvent = async (req, res) => {
         console.log("🚀 Incoming Event Data:", req.body);
 
         // Ensure required fields exist
-        if (!req.body.title || !req.body.date || !req.body.location || !req.body.organizer) {
+        if (!req.body.title || !req.body.date || !req.body.location ) {
             console.log("🚨 Missing required fields!");
             return res.status(400).json({ message: "Missing required fields" });
         }
