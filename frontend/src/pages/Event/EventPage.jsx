@@ -6,7 +6,8 @@ import ArrowFW from '../../assets/svg/Arrow.svg';
 import Calender from '../../utils/Calender';
 import Button from '../../components/Button';
 import ReminderCard from '../../components/ReminderCard';
-import Map from '../../components/Map';
+import Map from '../../components/mapType/Map';
+import ShowEventMap from '../../components/mapType/ShowEventMap';
 
 const EventPage = () => {
 
@@ -35,7 +36,7 @@ const EventPage = () => {
                     setCategories(uniqueCategories);
                     setEvents(data);
                     setCalenderEvents(data);
-                   
+
                 } else {
                     console.error("Invalid data format: Expected an array");
                 }
@@ -89,7 +90,7 @@ const EventPage = () => {
                                 </Link>
                             </div>
                             <div className="mt-4 overflow-y-auto md:overflow-y-scroll custom-scrollbar h-[calc(100vh-250px)] md:h-[calc(100vh-390px)] xl:h-[calc(100vh-350px)]">
-                            <Calender date={date} events={calenderEvents} setDate={setDate} />
+                                <Calender date={date} events={calenderEvents} setDate={setDate} />
 
                             </div>
 
@@ -98,68 +99,70 @@ const EventPage = () => {
 
                     {/* Right Section */}
                     <div className="w-full md:w-[65%] flex flex-col gap-4 md:pl-6">
-                        {/* Map Section */}
-                        <div className="h-[50vh] md:h-2/3">
-                            <div className="bg-white rounded-xl md:rounded-2xl shadow-lg h-full  map-container">
-                                <Map clickable={false}/>
+
+                        {/* Map Section - Increased Height */}
+                        <div className="h-[60vh] md:h-[75vh] flex-grow">
+                            <div className="bg-white rounded-xl md:rounded-2xl shadow-lg h-full">
+                                <ShowEventMap clickable="true" />
                             </div>
                         </div>
 
+                      
                         {/* Bottom Card Section */}
-                        <div className="flex flex-col md:flex-row gap-3 md:gap-4">
+                       {/* Bottom Card Section */}
+<div className="flex flex-col md:flex-row gap-4">
 
-                            {/* Share Ride */}
-                            <div className="bg-white rounded-xl md:rounded-2xl shadow-lg p-4 flex flex-col items-center justify-center text-center h-full">
-                                <p className="text-2xl font-medium text-black">Share Ride</p>
-                                <p className="text-[12px] text-black">Choose event for ride</p>
-                                <div className="flex gap-2 my-3">
-                                    <Button color="bg-blue-600" className="px-4 py-2 rounded-full text-sm text-white">
-                                        Share
-                                    </Button>
-                                    <Button color="bg-green-500" className="px-4 py-2 rounded-full text-sm text-white">
-                                        Offer
-                                    </Button>
-                                </div>
-                                {/* Centered Text */}
-                                <p className="text-[9px] text-black w-full">Please be aware about user ratings</p>
-                            </div>
+{/* Share Ride */}
+<div className="bg-white rounded-xl md:rounded-2xl shadow-lg p-5 flex flex-col items-center justify-between text-center flex-1 min-h-[150px]">
+    <p className="text-lg font-semibold text-black">Share Ride</p>
+    <p className="text-xs text-gray-600">Choose event for ride</p>
+    <div className="flex gap-3">
+        <Button className="bg-blue-600 text-white px-4 py-2 rounded-full text-sm">
+            Share
+        </Button>
+        <Button className="bg-green-500 text-white px-4 py-2 rounded-full text-sm">
+            Offer
+        </Button>
+    </div>
+    <p className="text-[10px] text-gray-500">Please be aware about user ratings</p>
+</div>
+
+{/* Become a Volunteer */}
+<div className="bg-white rounded-xl md:rounded-2xl shadow-lg p-5 flex flex-col justify-between flex-2 min-h-[150px]">
+    <p className="text-lg font-semibold text-center text-black">Become a Volunteer</p>
+    <div className="mt-2 overflow-y-auto custom-scrollbar max-h-[75px]">
+        {events.length > 0 ? events
+            .filter(event => event.category === 'volunteer')
+            .map((event, index) => (
+                <ReminderCard
+                    key={index}
+                    eventTitle={event.title}
+                    eventTime={event.time}
+                    eventDate={event.date}
+                />
+            )) : (
+            <p className="text-gray-500 text-sm text-center">No events available</p>
+        )}
+    </div>
+</div>
+
+{/* Ask Administration */}
+<div className="bg-white rounded-xl md:rounded-2xl shadow-lg p-5 flex flex-col justify-between flex-1 min-h-[150px]">
+    <p className="text-lg font-semibold text-center text-black">Ask Administration</p>
+    <div className="relative flex-1">
+        <textarea
+            className="w-full h-full bg-gray-200 rounded-lg p-3 text-gray-700 text-sm outline-none focus:ring-2 focus:ring-gray-400 resize-none"
+            placeholder="Enter Your Message .."
+        ></textarea>
+        <Button className="absolute bottom-2 right-2 px-4 py-1 text-white bg-blue-500 text-sm rounded-3xl">
+            Send
+        </Button>
+    </div>
+</div>
+
+</div>
 
 
-
-                            {/* Volunteer Section */}
-                            <div className="bg-white rounded-xl md:rounded-2xl shadow-lg p-4 w-full md:w-[40%]">
-                                <p className="text-[22px] font-medium text-center text-black ">Become a Volunteer</p>
-                                <div className="mt-3 overflow-y-auto custom-scrollbar max-h-40">
-                                    {events.length > 0 ? events
-                                        .filter(event => event.category === 'volunteer')
-                                        .map((event, index) => (
-                                            <ReminderCard
-                                                key={index}
-                                                eventTitle={event.title}
-                                                eventTime={event.time}
-                                                eventDate={event.date}
-                                            />
-                                        )) : (
-                                        <p className="text-gray-500 text-sm">No events available</p>
-                                    )}
-                                </div>
-                            </div>
-
-                            {/* Ask Administration */}
-                            <div className="bg-white rounded-xl md:rounded-2xl shadow-lg p-5 w-full md:w-[30%]">
-                                <p className="text-2xl font-medium text-center text-black ">Ask Administration</p>
-                                <div className="relative w-full mt-3">
-                                    <textarea
-                                        className="w-full h-28 bg-gray-200 rounded-lg p-3 text-gray-700 text-sm outline-none focus:ring-2 focus:ring-gray-400 resize-none"
-                                        placeholder="Enter Your Message .."
-                                    ></textarea>
-                                    <Button className="absolute bottom-3 right-2 px-4 py-1 text-white bg-blue-500 text-sm rounded-3xl">
-                                        Send
-                                    </Button>
-                                </div>
-                            </div>
-
-                        </div>
                     </div>
 
                 </div>

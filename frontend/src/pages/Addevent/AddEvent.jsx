@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import SearchBar from '../../components/SearchBar';
 import Button from '../../components/Button';
-import Map from '../../components/Map';
+import Map from '../../components/mapType/Map';
 import ReminderCard from '../../components/ReminderCard';
 import { useForm } from 'react-hook-form';
 import Calender from '../../utils/Calender';

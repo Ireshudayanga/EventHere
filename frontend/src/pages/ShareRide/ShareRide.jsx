@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import SearchBar from '../../components/SearchBar';
 import Button from '../../components/Button';
-import Map from '../../components/Map';
+import Map from '../../components/mapType/Map';
 import animationGif from '../../assets/animation/animation.gif';
 import { FaStar } from "react-icons/fa";
 import "../ShareRide/ShareRide.css";
