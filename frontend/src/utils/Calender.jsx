@@ -32,7 +32,7 @@ const CustomCalendar = ({
 
   // Function to handle date selection
   const handleDateChange = (selectedDate) => {
-    console.log("Selected Date from Calender components:", selectedDate.toDateString()); // Log selected date
+    // console.log("Selected Date from Calender components:", selectedDate.toDateString()); // Log selected date
     setDate(selectedDate); // Update the state
   };
 

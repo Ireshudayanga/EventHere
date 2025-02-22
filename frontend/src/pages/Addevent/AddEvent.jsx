@@ -10,7 +10,7 @@ import { use } from 'react';
 import { AuthContext } from '../../context/AuthProvider';
 
 const AddEvent = () => {
-  const {currentUser} = useContext(AuthContext);
+  const { currentUser } = useContext(AuthContext);
   const [events, setEvents] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -57,7 +57,7 @@ const AddEvent = () => {
     setValue("eventLocation", `Lat: ${selectedLocation[0]}, Lng: ${selectedLocation[1]}`);
   }, [selectedLocation, setValue]);
 
- 
+
 
   const handleRemoveImage = () => {
     setValue("eventImage", null);
@@ -67,30 +67,30 @@ const AddEvent = () => {
     }
   };
 
-  
+
 
   const onSubmit = async (data) => {
-    console.log("🚀 Event Data Submitted:", data);
+    // console.log("🚀 Event Data Submitted:", data);
     setLoading(true);
-  
+
     if (selectedLocation.length === 0) {
       setLocationError(true);
       setError("eventLocation", { type: "manual", message: "Please choose a location on the map!" });
       console.error("🚨 Event location is required!");
       return;
     }
-  
+
     clearErrors("eventLocation");
     setLocationError(false);
-  
+
     try {
       let imageUrl = "";
-  
+
       // Upload image to Cloudinary if a file is selected
       if (fileInputRef.current && fileInputRef.current.files[0]) {
         imageUrl = await uploadImage(fileInputRef.current.files[0]);
       }
-  
+
       const eventData = {
         title: data.eventName,
         time: data.eventTime,
@@ -105,18 +105,18 @@ const AddEvent = () => {
         userEmail: userEmail,
         imageUrl: imageUrl, // Use the uploaded image URL
       };
-  
-      console.log("✅ Final JSON Data:", JSON.stringify(eventData, null, 2));
-  
+
+      // console.log("✅ Final JSON Data:", JSON.stringify(eventData, null, 2));
+
       const response = await axios.post("http://localhost:5000/events", eventData, {
         headers: { "Content-Type": "application/json" },
       });
-  
+
       if (response.status === 201) {
-        console.log("🚀 Event Created Successfully:", response.data);
+        // console.log("🚀 Event Created Successfully:", response.data);
         setLoading(false);
         alert("Event created successfully!");
-  
+
         reset({
           eventName: "",
           eventTime: "",
@@ -126,7 +126,7 @@ const AddEvent = () => {
           signupRequired: "",
           eventImage: "",
         });
-  
+
         setPreviewImage(null);
         if (fileInputRef.current) {
           fileInputRef.current.value = "";
@@ -140,19 +140,19 @@ const AddEvent = () => {
       alert("Failed to create event!");
     }
   };
-  
+
   // Function to upload image to Cloudinary
   const uploadImage = async (file) => {
     try {
       const formData = new FormData();
       formData.append("file", file);
       formData.append("upload_preset", "eventImage");
-  
+
       const response = await axios.post(
         `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/upload`,
         formData
       );
-  
+
       if (response.data.secure_url) {
         console.log("✅ Image uploaded successfully:", response.data.secure_url);
         return response.data.secure_url;
@@ -165,8 +165,8 @@ const AddEvent = () => {
       return "";
     }
   };
-  
-  
+
+
 
 
 
@@ -206,7 +206,7 @@ const AddEvent = () => {
 
           {/* Right Section */}
           <div className="w-full md:w-[50%] h-full flex flex-col gap-3 md:gap-5">
-            <div className="bg-white rounded-xl md:rounded-2xl shadow-lg p-7 flex flex-col h-full overflow-auto scrollbar-hide">
+            <div className="bg-white rounded-xl md:rounded-2xl shadow-lg p-7 flex flex-col  md:overflow-auto scrollbar-hide">
               <p className="text-2xl text-black font-medium font-sans">Add Event</p>
               <form onSubmit={handleSubmit(onSubmit)} className='mt-4'>
 
@@ -256,13 +256,27 @@ const AddEvent = () => {
                 </div>
 
                 {/* Event Description */}
+                {/* Event Description */}
                 <textarea
-                  {...register("eventDescription", { required: "Event description is required" })}
-                  placeholder="Event Description"
+                  {...register("eventDescription", {
+                    required: "Event description is required",
+                    validate: (value) => {
+                      const wordCount = value.trim().split(/\s+/).length;
+                      return wordCount <= 30 || "Event description cannot exceed 30 words.";
+                    },
+                  })}
+                  placeholder="Event Description (Max 30 words)"
                   className="mt-1 w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400 outline-none text-black bg-gray-200 resize-none"
                   rows="4"
+                  onInput={(e) => {
+                    const wordCount = e.target.value.trim().split(/\s+/).length;
+                    if (wordCount > 30) {
+                      e.target.value = e.target.value.split(/\s+/).slice(0, 30).join(" ");
+                    }
+                  }}
                 />
                 {errors.eventDescription && <p className="text-red-500 text-sm">{errors.eventDescription.message}</p>}
+
 
                 {/* Category & Signup Required */}
                 <div className="mt-4 flex gap-3">
@@ -277,12 +291,23 @@ const AddEvent = () => {
                   </select>
                 </div>
 
+                
                 {/* Image Upload & Preview */}
                 <input
                   ref={fileInputRef}
                   type="file"
                   accept="image/*"
                   className="mt-4 w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-[#797979d9] bg-gray-200"
+                  onChange={(e) => {
+                    if (e.target.files && e.target.files[0]) {
+                      const file = e.target.files[0];
+                      const reader = new FileReader();
+                      reader.onloadend = () => {
+                        setPreviewImage(reader.result);
+                      };
+                      reader.readAsDataURL(file);
+                    }
+                  }}
                 />
 
                 <div className="flex justify-center items-center mt-3 flex-col">
@@ -301,8 +326,9 @@ const AddEvent = () => {
                 </div>
 
 
+
                 <div className='flex justify-center'>
-                  <Button className='mt-4 px-20 py-3 rounded-lg ' type="submit">{loading? "Adding Event..." : "Add Event" }</Button>
+                  <Button className='mt-4 px-20 py-3 rounded-lg ' type="submit">{loading ? "Adding Event..." : "Add Event"}</Button>
                 </div>
               </form>
             </div>

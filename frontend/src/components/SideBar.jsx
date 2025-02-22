@@ -40,7 +40,7 @@ const SideBar = () => {
                     }`}
                 onClick={() => {
                     setIsOpen(true)
-                    console.log('clicked-------------')
+                    // console.log('clicked-------------')
                 }}
             >
                 <FiMenu  size={24} />

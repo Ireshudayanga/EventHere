@@ -1,24 +1,20 @@
 import React, { useState, useEffect } from "react";
 import forwardArrow from "../../assets/svg/ForwardArrow.svg";
+import axios from "axios";
 
 const UpcommingCard = () => {
   const [cardData, setCardData] = useState([]);
 
   useEffect(() => {
-    fetch("/event.json")
+    axios.get("http://localhost:5000/events")
       .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        setCardData(data);
+        setCardData(response.data); // Axios automatically parses JSON
       })
       .catch((error) => {
-        console.error("Error fetching event data:", error);
+        console.error("Error fetching event data:", error.message);
       });
   }, []);
+
 
   return (
     <div className="flex flex-col items-center h-auto upcoming-card-container">
@@ -40,58 +36,59 @@ const UpcommingCard = () => {
       <div className=" lg:hidden w-full  overflow-x-auto px-4 mt-6 flex gap-6 scrollbar-hide">
         {cardData.map((card, index) => (
           <div
-            key={card.id}
+            key={card.id ? card.id : `event-${index}`} // Ensure unique keys
             className="min-w-[200px] md:min-w-[250px] border-2 border-[#2858b9] h-[300px] rounded-3xl flex flex-col items-center p-4"
           >
             <div className="flex justify-center">
               <img
                 className="w-[100px] h-[100px] md:w-[120px] md:h-[120px] rounded-full object-cover"
                 loading="lazy"
-                src={card.image}
+                src={card.imageUrl}
                 alt={card.title}
               />
             </div>
             <h2 className="mt-4 text-lg md:text-xl primary-color font-semibold">
-              {card.title}
+              {card.title.length > 15 ? card.title.slice(0, 15) + "..." : card.title}
             </h2>
-            <p className="mt-2 text-sm md:text-base text-zinc-700">
-              {card.description}
+            <p className="mt-2 text-sm md:text-base text-zinc-700 text-center">
+              {card.description.length > 30 ? card.description.slice(0, 30) + "..." : card.description}
             </p>
             <div className="flex justify-center items-center gap-2 mt-6">
-              <button className="secondary-color text-sm md:text-base">
-                Explore
-              </button>
+              <button className="secondary-color text-sm md:text-base">Explore</button>
               <img src={forwardArrow} className="w-4 md:w-6" alt="Arrow" />
             </div>
           </div>
         ))}
+
       </div>
 
 
       {/* Grid Layout for Desktop Screens */}
       <div className="hidden lg:grid lg:grid-cols-5 gap-6 px-4 pt-12">
-        {cardData.slice(0, 5).map((card, index) => ( 
+        {cardData.slice(0, 5).map((card, index) => (
           <div
-            key={card.id}
-            className={`border-2 border-[#2858b9] w-full max-w-[200px] mx-auto h-[330px] rounded-3xl flex flex-col items-center p-4 ${index % 2 === 1 ? "translate-y-4" : "-translate-y-4"
+            key={card.id || `event-${index}`}
+            className={`border-2 border-[#2858b9] w-full max-w-[200px] mx-auto h-[380px] rounded-3xl flex flex-col items-center p-4 ${index % 2 === 1 ? "translate-y-4" : "-translate-y-4"
               }`}
           >
             <div className="flex justify-center">
               <img
                 className="w-[100px] h-[100px] md:w-[150px] md:h-[150px] rounded-full object-cover"
                 loading="lazy"
-                src={card.image}
+                src={card.imageUrl}
                 alt={card.title}
               />
             </div>
-            <h2 className="mt-4 text-lg md:text-xl primary-color font-semibold">
-              {card.title}
+            <h2 className="mt-4 text-lg md:text-xl primary-color font-semibold text-center">
+              {card.title.length > 15 ? card.title.slice(0, 15) + "..." : card.title}
             </h2>
-            <p className="mt-2 text-sm md:text-base text-zinc-700">
-              {card.description}
+            <p className="mt-2 text-sm md:text-md text-zinc-700 text-center">
+              {card.description.length > 30 ? card.description.slice(0, 30) + "..." : card.description}
             </p>
+
+
             <div className="flex justify-center items-center gap-2 mt-6">
-              <button className="secondary-color text-sm md:text-base">
+              <button className="secondary-color text-sm md:text-base text-center">
                 Explore
               </button>
               <img src={forwardArrow} className="w-4 md:w-6" alt="Arrow" />
@@ -112,3 +109,4 @@ const UpcommingCard = () => {
 };
 
 export default UpcommingCard;
+

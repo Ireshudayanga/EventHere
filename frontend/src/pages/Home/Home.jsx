@@ -5,7 +5,7 @@ import Banner from './Banner'
 import FeatureCard from './FeatureCard'
 import UpcommingCard from './UpcommingCard'
 import Testimonial from './Testimonial'
-import ImageUpload from '../../components/ImageUpload'
+
 
 
 const Home = () => {
@@ -27,7 +27,6 @@ const Home = () => {
       <div className="px-2 md:px-6">
        <UpcommingCard/>
       </div>
-      <ImageUpload/>
       <div className="px-2 md:px-6">
        <Testimonial/>
       </div>
