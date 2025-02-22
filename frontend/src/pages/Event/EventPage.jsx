@@ -148,7 +148,7 @@ const EventPage = () => {
 
 {/* Ask Administration */}
 <div className="bg-white rounded-xl md:rounded-2xl shadow-lg p-5 flex flex-col justify-between flex-1 min-h-[150px]">
-    <p className="text-lg font-semibold text-center text-black">Ask Administration</p>
+    <p className="text-lg font-semibold text-center text-black">Ask from Admin</p>
     <div className="relative flex-1">
         <textarea
             className="w-full h-full bg-gray-200 rounded-lg p-3 text-gray-700 text-sm outline-none focus:ring-2 focus:ring-gray-400 resize-none"
