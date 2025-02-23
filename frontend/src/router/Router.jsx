@@ -9,6 +9,7 @@ import ShareRide from '../pages/ShareRide/ShareRide';
 import Massage from '../pages/Massage/Massage';
 import AddEvent from '../pages/Addevent/AddEvent';
 import Signup from '../components/Signup';
+import AdminPanel from '../pages/admin/AdminPanel';
 
 
 
@@ -19,6 +20,10 @@ const router = createBrowserRouter([
         children: [            {
                 path: "/",
                 element: <Home />,
+            },
+            {
+                path: "/admin",
+                element: <AdminPanel />,
             },
            
         ]

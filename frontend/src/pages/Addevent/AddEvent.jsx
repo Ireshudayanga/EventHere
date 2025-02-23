@@ -21,6 +21,8 @@ const AddEvent = () => {
   const { register, handleSubmit, reset, trigger, setError, clearErrors, setValue, formState: { errors } } = useForm();
   const [userEmail, setUserEmail] = useState("");
   const [loading, setLoading] = useState(false);
+  const [specialCategory, setSpecialCategory] = useState(null);
+
 
   useEffect(() => {
     const fetchUserEmail = async () => {
@@ -31,19 +33,28 @@ const AddEvent = () => {
   }, [currentUser]);
 
   useEffect(() => {
-    fetch("/event.json")
-      .then((res) => res.json())
-      .then((data) => {
-        if (Array.isArray(data)) {
-          const uniqueCategories = ["All", ...new Set(data.map((event) => event.category))];
-          setCategories(uniqueCategories);
-          setEvents(data);
+    // Define default categories
+    const defaultCategories = ["entertainment", "volunteer", "traditional"];
+
+    // Fetch the special category from the backend
+    axios.get("http://localhost:5000/api/special-category/active")
+      .then((res) => {
+        if (res.data.success) {
+          setSpecialCategory(res.data.category);
+
+          // Update the category list dynamically
+          setCategories([...defaultCategories, res.data.category]);
         } else {
-          console.error("Invalid data format: Expected an array");
+          setCategories([...defaultCategories]); // No special category, use defaults
         }
       })
-      .catch((error) => console.error("Error fetching categories:", error));
+      .catch((err) => {
+        console.error("Error fetching special category:", err);
+        setCategories([...defaultCategories]); // If error, fallback to default categories
+      });
   }, []);
+
+
 
   useEffect(() => {
     if (selectedLocation[0] !== 6.9107712 || selectedLocation[1] !== 79.8851072) {
@@ -255,7 +266,7 @@ const AddEvent = () => {
                   <Calender date={selectedDate} setDate={setSelectedDate} />
                 </div>
 
-                {/* Event Description */}
+
                 {/* Event Description */}
                 <textarea
                   {...register("eventDescription", {
@@ -280,10 +291,16 @@ const AddEvent = () => {
 
                 {/* Category & Signup Required */}
                 <div className="mt-4 flex gap-3">
-                  <select {...register("eventCategory", { required: "Event category is required" })} className="w-1/2 px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-[#797979d9] bg-gray-200">
+                  <select
+                    {...register("eventCategory", { required: "Event category is required" })}
+                    className="w-1/2 px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-[#797979d9] bg-gray-200"
+                  >
                     <option value="">Select Category</option>
-                    {categories.map((category, index) => category !== "All" && <option key={index} value={category}>{category}</option>)}
+                    {categories.map((category, index) => (
+                      <option key={index} value={category}>{category}</option>
+                    ))}
                   </select>
+
                   <select {...register("signupRequired", { required: "Signup requirement is required" })} className="w-1/2 px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-[#797979d9] bg-gray-200">
                     <option value="">Signup Required?</option>
                     <option value="true">Yes</option>
@@ -291,7 +308,7 @@ const AddEvent = () => {
                   </select>
                 </div>
 
-                
+
                 {/* Image Upload & Preview */}
                 <input
                   ref={fileInputRef}

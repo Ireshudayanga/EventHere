@@ -8,6 +8,8 @@ import Button from '../../components/Button';
 import ReminderCard from '../../components/ReminderCard';
 import Map from '../../components/mapType/Map';
 import ShowEventMap from '../../components/mapType/ShowEventMap';
+import axios from 'axios';
+import { Handler } from 'leaflet';
 
 const EventPage = () => {
 
@@ -20,29 +22,51 @@ const EventPage = () => {
 
     const [events, setEvents] = useState([]);
     const [categories, setCategories] = useState([]);
-
     const [date, setDate] = useState(new Date());
     const [calenderEvents, setCalenderEvents] = useState([]);
+    const [selectedCategory, setSelectedCategory] = useState("");
+    const [specialCategory, setSpecialCategory] = useState(null);
+
+    console.log("Special category:", specialCategory);
+
+    const HandleCategoryFilter = (e) => {
+        const category = e.target.innerText;
+        setSelectedCategory(category === "All" ? "" : category);
+    };
 
     useEffect(() => {
-        fetch("/event.json")
-            .then((res) => res.json())
-            .then((data) => {
-                if (Array.isArray(data)) {
-                    const uniqueCategories = [
-                        "All",
-                        ...new Set(data.map((event) => event.category)),
-                    ];
-                    setCategories(uniqueCategories);
-                    setEvents(data);
-                    setCalenderEvents(data);
-
-                } else {
-                    console.error("Invalid data format: Expected an array");
+        axios.get("http://localhost:5000/api/special-category/active")
+            .then((res) => {
+                if (res.data.success) {
+                    setSpecialCategory(res.data.category);
+                    console.log("Special category:", res.data.category);
                 }
             })
-            .catch((error) => console.error("Error fetching categories:", error));
+            .catch((err) => console.error("Error fetching special category:", err));
     }, []);
+
+    useEffect(() => {
+        axios.get("http://localhost:5000/events")
+            .then((res) => {
+                setEvents(res.data);
+                const uniqueCategories = [
+                    "All",
+                    'volunteer',
+                    'traditional',
+                    'entertainment',
+                    ...(specialCategory ? [specialCategory] : []),
+                ];
+                setCalenderEvents(res.data);
+                setCategories(uniqueCategories);
+                console.log("Categories:", uniqueCategories
+                );
+            })
+            .catch((err) => {
+                console.error("Error fetching events:", err);
+            });
+    }, [specialCategory]); 
+
+
 
 
     return (
@@ -63,8 +87,9 @@ const EventPage = () => {
                                 {categories.length > 0 ? (
                                     categories.map((category, index) => (
                                         <button
+                                            onClick={HandleCategoryFilter}
                                             key={index}
-                                            className={`px-4 py-2 rounded-full text-sm ${categoryColors[category] || "text-black"}`}
+                                            className={`px-4 py-2 rounded-full text-sm ${categoryColors[category] || "bg-purple-800 text-white"}`}
                                         >
                                             {category}
                                         </button>
@@ -103,64 +128,65 @@ const EventPage = () => {
                         {/* Map Section - Increased Height */}
                         <div className="h-[60vh] md:h-[75vh] flex-grow">
                             <div className="bg-white rounded-xl md:rounded-2xl shadow-lg h-full">
-                                <ShowEventMap clickable="true" />
+                                <ShowEventMap categoryType={selectedCategory} />
+
                             </div>
                         </div>
 
-                      
+
+
                         {/* Bottom Card Section */}
-                       {/* Bottom Card Section */}
-<div className="flex flex-col md:flex-row gap-4">
+                        <div className="flex flex-col md:flex-row gap-4">
 
-{/* Share Ride */}
-<div className="bg-white rounded-xl md:rounded-2xl shadow-lg p-5 flex flex-col items-center justify-between text-center flex-1 min-h-[150px]">
-    <p className="text-lg font-semibold text-black">Share Ride</p>
-    <p className="text-xs text-gray-600">Choose event for ride</p>
-    <div className="flex gap-3">
-        <Button className="bg-blue-600 text-white px-4 py-2 rounded-full text-sm">
-            Share
-        </Button>
-        <Button className="bg-green-500 text-white px-4 py-2 rounded-full text-sm">
-            Offer
-        </Button>
-    </div>
-    <p className="text-[10px] text-gray-500">Please be aware about user ratings</p>
-</div>
+                            {/* Share Ride */}
+                            <div className="bg-white rounded-xl md:rounded-2xl shadow-lg p-5 flex flex-col items-center justify-between text-center flex-1 min-h-[150px]">
+                                <p className="text-lg font-semibold text-black">Share Ride</p>
+                                <p className="text-xs text-gray-600">Choose event for ride</p>
+                                <div className="flex gap-3">
+                                    <Button className="bg-blue-600 text-white px-4 py-2 rounded-full text-sm">
+                                        Share
+                                    </Button>
+                                    <Button className="bg-green-500 text-white px-4 py-2 rounded-full text-sm">
+                                        Offer
+                                    </Button>
+                                </div>
 
-{/* Become a Volunteer */}
-<div className="bg-white rounded-xl md:rounded-2xl shadow-lg p-5 flex flex-col justify-between flex-2 min-h-[150px]">
-    <p className="text-lg font-semibold text-center text-black">Become a Volunteer</p>
-    <div className="mt-2 overflow-y-auto custom-scrollbar max-h-[75px]">
-        {events.length > 0 ? events
-            .filter(event => event.category === 'volunteer')
-            .map((event, index) => (
-                <ReminderCard
-                    key={index}
-                    eventTitle={event.title}
-                    eventTime={event.time}
-                    eventDate={event.date}
-                />
-            )) : (
-            <p className="text-gray-500 text-sm text-center">No events available</p>
-        )}
-    </div>
-</div>
+                            </div>
 
-{/* Ask Administration */}
-<div className="bg-white rounded-xl md:rounded-2xl shadow-lg p-5 flex flex-col justify-between flex-1 min-h-[150px]">
-    <p className="text-lg font-semibold text-center text-black">Ask from Admin</p>
-    <div className="relative flex-1">
-        <textarea
-            className="w-full h-full bg-gray-200 rounded-lg p-3 text-gray-700 text-sm outline-none focus:ring-2 focus:ring-gray-400 resize-none"
-            placeholder="Enter Your Message .."
-        ></textarea>
-        <Button className="absolute bottom-2 right-2 px-4 py-1 text-white bg-blue-500 text-sm rounded-3xl">
-            Send
-        </Button>
-    </div>
-</div>
+                            {/* Become a Volunteer */}
+                            <div className="bg-white rounded-xl md:rounded-2xl shadow-lg p-5 flex flex-col justify-between flex-2 min-h-[150px]">
+                                <p className="text-lg font-semibold text-center text-black">Become a Volunteer</p>
+                                <div className="mt-2 overflow-y-auto custom-scrollbar max-h-[75px]">
+                                    {events.length > 0 ? events
+                                        .filter(event => event.category === 'volunteer')
+                                        .map((event, index) => (
+                                            <ReminderCard
+                                                key={index}
+                                                eventTitle={event.title}
+                                                eventTime={event.time}
+                                                eventDate={event.date}
+                                            />
+                                        )) : (
+                                        <p className="text-gray-500 text-sm text-center">No events available</p>
+                                    )}
+                                </div>
+                            </div>
 
-</div>
+                            {/* Ask Administration */}
+                            <div className="bg-white rounded-xl md:rounded-2xl shadow-lg p-5 flex flex-col justify-between flex-1 min-h-[150px]">
+                                <p className="text-lg font-semibold text-center text-black">Ask from Admin</p>
+                                <div className="relative flex-1">
+                                    <textarea
+                                        className="w-full h-full bg-gray-200 rounded-lg p-3 text-gray-700 text-sm outline-none focus:ring-2 focus:ring-gray-400 resize-none"
+                                        placeholder="Enter Your Message .."
+                                    ></textarea>
+                                    <Button className="absolute bottom-2 right-2 px-4 py-1 text-white bg-blue-500 text-sm rounded-3xl">
+                                        Send
+                                    </Button>
+                                </div>
+                            </div>
+
+                        </div>
 
 
                     </div>

@@ -134,9 +134,16 @@ const LocateButton = ({ setSelectedLocation }) => {
     );
 };
 
-const ShowEventMap = ({ setSelectedLocation }) => {
+const ShowEventMap = ({ setSelectedLocation, categoryType }) => {
     const [userLocation, setUserLocation] = useState([7.8731, 80.7718]); // Default: Sri Lanka
     const [events, setEvents] = useState([]);
+    const [filteredCategory, setFilteredCategory] = useState("");
+
+    // Filter Events by Category
+    useEffect(() => {
+        setFilteredCategory(categoryType);
+    }
+        , [categoryType]);
 
     // Get User Location
     useEffect(() => {
@@ -172,11 +179,7 @@ const ShowEventMap = ({ setSelectedLocation }) => {
         entertainment: markerIcons.green,
         volunteer: markerIcons.yellow,
         traditional: markerIcons.blue,
-      };
-      
-    
-     
-      
+    };
 
     return (
         <div className="relative h-full w-full">
@@ -194,40 +197,57 @@ const ShowEventMap = ({ setSelectedLocation }) => {
                 </LayersControl>
 
                 {/* 📌 Show Event Markers */}
-                {events.map((event) => (
-                    <Marker 
-                        key={event._id} 
-                        position={[event.location.coordinates[1], event.location.coordinates[0]]} 
-                        icon={categoryIcons[event.category] || markerIcons.violet}
-                    >
-                  <Popup>
-    <div className="w-48 p-2 bg-white rounded-md shadow-md">
-        <h3 className="font-bold text-sm text-gray-800">{event.title}</h3>
+                {events
+                    .filter(event => {
+                        // Get today's date and normalize the time
+                        const today = new Date();
+                        today.setHours(0, 0, 0, 0);
 
-        {/* Scrollable Description */}
-        <div className="max-h-16 overflow-y-auto text-gray-600 text-xs mt-1">
-            {event.description}
-        </div>
+                        // Normalize event date
+                        const eventDate = new Date(event.date);
+                        eventDate.setHours(0, 0, 0, 0);
 
-        <div className="mt-1 text-xs">
-            <p><span className="font-semibold text-gray-700">Category:</span> {event.category}</p>
-            <p><span className="font-semibold text-gray-700">Date:</span> {new Date(event.date).toLocaleDateString()}</p>
-        </div>
+                        // Filter by date (today and future events)
+                        const isUpcoming = eventDate >= today;
 
-        {event.imageUrl && (
-            <img 
-                src={event.imageUrl} 
-                alt={event.title} 
-                className="w-full h-16 mt-1 rounded object-cover"
-            />
-        )}
-    </div>
-</Popup>
+                        // Filter by category if a specific category is selected
+                        const isCategoryMatch = !filteredCategory || event.category === filteredCategory;
+
+                        return isUpcoming && isCategoryMatch;
+                    })
+                    .map(event => (
+                        <Marker
+                            key={event._id}
+                            position={[event.location.coordinates[1], event.location.coordinates[0]]}
+                            icon={categoryIcons[event.category] || markerIcons.violet}
+                        >
+                            <Popup>
+                                <div className="w-48 p-2 bg-white rounded-md shadow-md">
+                                    <h3 className="font-bold text-sm text-gray-800">{event.title}</h3>
+
+                                    {/* Scrollable Description */}
+                                    <div className="max-h-16 overflow-y-auto text-gray-600 text-xs mt-1">
+                                        {event.description}
+                                    </div>
+
+                                    <div className="mt-1 text-xs">
+                                        <p><span className="font-semibold text-gray-700">Category:</span> {event.category}</p>
+                                        <p><span className="font-semibold text-gray-700">Date:</span> {new Date(event.date).toLocaleDateString()}</p>
+                                    </div>
+
+                                    {event.imageUrl && (
+                                        <img
+                                            src={event.imageUrl}
+                                            alt={event.title}
+                                            className="w-full h-16 mt-1 rounded object-cover"
+                                        />
+                                    )}
+                                </div>
+                            </Popup>
+                        </Marker>
+                    ))}
 
 
-
-                    </Marker>
-                ))}
 
                 {/* 📌 Always Show User's Location Marker */}
                 {userLocation && <Marker position={userLocation} icon={eventIcon} />}

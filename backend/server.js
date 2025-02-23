@@ -33,6 +33,10 @@ app.use('/users', userRoutes);
 const eventRoutes = require('./api/routers/EventRoutes');
 app.use('/events', eventRoutes);
 
+const specialCategoryRoutes = require("./api/routers/SpecialCategoryRoutes");
+app.use("/api/special-category", specialCategoryRoutes);
+
+
 
 // Start the Server
 const PORT = 5000; // Choose your port number
