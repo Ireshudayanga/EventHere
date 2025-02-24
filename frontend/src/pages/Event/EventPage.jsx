@@ -1,4 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchEvents } from '../../../redux/eventSlice';
+import { fetchSpecialCategory } from '../../../redux/specialCategorySlice';
+import { ClipLoader } from "react-spinners"; // ✅ Import spinner
 import SearchBar from '../../components/SearchBar';
 import '../Event/Event.css';
 import { Link } from 'react-router-dom';
@@ -6,12 +10,16 @@ import ArrowFW from '../../assets/svg/Arrow.svg';
 import Calender from '../../utils/Calender';
 import Button from '../../components/Button';
 import ReminderCard from '../../components/ReminderCard';
-import Map from '../../components/mapType/Map';
 import ShowEventMap from '../../components/mapType/ShowEventMap';
-import axios from 'axios';
-import { Handler } from 'leaflet';
 
 const EventPage = () => {
+    const dispatch = useDispatch();
+    const { events, status, error } = useSelector((state) => state.events);
+    const { category: specialCategory, status: categoryStatus } = useSelector(
+        (state) => state.specialCategory 
+    );
+
+
 
     const categoryColors = {
         entertainment: "bg-green-500 text-white",
@@ -20,14 +28,10 @@ const EventPage = () => {
         All: "bg-gray-500 text-white p-6",
     };
 
-    const [events, setEvents] = useState([]);
     const [categories, setCategories] = useState([]);
     const [date, setDate] = useState(new Date());
     const [calenderEvents, setCalenderEvents] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState("");
-    const [specialCategory, setSpecialCategory] = useState(null);
-
-    console.log("Special category:", specialCategory);
 
     const HandleCategoryFilter = (e) => {
         const category = e.target.innerText;
@@ -35,54 +39,33 @@ const EventPage = () => {
     };
 
     useEffect(() => {
-        axios.get("http://localhost:5000/api/special-category/active")
-            .then((res) => {
-                if (res.data.success) {
-                    setSpecialCategory(res.data.category);
-                    console.log("Special category:", res.data.category);
-                }
-            })
-            .catch((err) => console.error("Error fetching special category:", err));
-    }, []);
+        dispatch(fetchEvents());
+        dispatch(fetchSpecialCategory());
+    }, [dispatch]);
 
     useEffect(() => {
-        axios.get("http://localhost:5000/events")
-            .then((res) => {
-                setEvents(res.data);
-                const uniqueCategories = [
-                    "All",
-                    'volunteer',
-                    'traditional',
-                    'entertainment',
-                    ...(specialCategory ? [specialCategory] : []),
-                ];
-                setCalenderEvents(res.data);
-                setCategories(uniqueCategories);
-                console.log("Categories:", uniqueCategories
-                );
-            })
-            .catch((err) => {
-                console.error("Error fetching events:", err);
-            });
-    }, [specialCategory]); 
-
-
-
+        if (status === "succeeded" && categoryStatus === "succeeded") {
+            console.log(events);
+            setCalenderEvents(events);
+            const uniqueCategories = [
+                "All",
+                "volunteer",
+                "traditional",
+                "entertainment",
+                ...(specialCategory ? [specialCategory] : []),
+            ];
+            setCategories(uniqueCategories);
+        }
+    }, [status, categoryStatus, events, specialCategory]);
 
     return (
         <div className="h-screen w-full">
             <SearchBar />
-            {/* Main Content */}
             <div className="h-[92%] w-full md:w-[94%] mt-0 md:mt-4 rounded-none md:rounded-2xl shadow-xl md:shadow-2xl ml-auto">
-                {/* Main Layout */}
                 <div className="flex flex-col md:flex-row h-full p-3 md:p-7 gap-4 md:gap-0">
-
-                    {/* Left Section */}
                     <div className="w-full md:w-[35%] flex flex-col gap-3 md:gap-5">
-
-                        {/* Upcoming Section */}
                         <div className="bg-white p-4 md:p-5 rounded-xl md:rounded-2xl shadow-lg">
-                            <p className="text-2xl text-black font-medium  font-sans">Upcoming ...</p>
+                            <p className="text-2xl text-black font-medium font-sans">Upcoming ...</p>
                             <div className="flex gap-3 flex-wrap mt-4">
                                 {categories.length > 0 ? (
                                     categories.map((category, index) => (
@@ -100,12 +83,12 @@ const EventPage = () => {
                             </div>
                         </div>
 
-                        {/* Events Section */}
-                        <div className="bg-white p-4 md:p-5 rounded-xl md:rounded-2xl shadow-lg  md:h-[75%] lg:h-[80%] xl:h-[85%]">
+                        {/* ✅ Show Loading Spinner Instead of "Loading events..." */}
+                        <div className="bg-white p-4 md:p-5 rounded-xl md:rounded-2xl shadow-lg md:h-[75%] lg:h-[80%] xl:h-[85%]">
                             <div className="flex justify-between items-center w-full">
                                 <div>
-                                    <p className="text-2xl font-medium text-black  font-sans">Events</p>
-                                    <p className="text-[12px] text-black ">Join our community</p>
+                                    <p className="text-2xl font-medium text-black font-sans">Events</p>
+                                    <p className="text-[12px] text-black">Join our community</p>
                                 </div>
                                 <Link to="/events" className="text-blue-500">
                                     <div className="flex items-center gap-1">
@@ -115,30 +98,27 @@ const EventPage = () => {
                                 </Link>
                             </div>
                             <div className="mt-4 overflow-y-auto md:overflow-y-scroll custom-scrollbar h-[calc(100vh-250px)] md:h-[calc(100vh-390px)] xl:h-[calc(100vh-350px)]">
-                                <Calender date={date} events={calenderEvents} setDate={setDate} />
-
+                                {status === "loading" ? (
+                                    <div className="flex justify-center items-center h-full">
+                                        <ClipLoader size={50} color={"#3498db"} loading={true} />
+                                    </div>
+                                ) : status === "failed" ? (
+                                    <p className="text-red-500 text-sm">Error fetching events: {error}</p>
+                                ) : (
+                                    <Calender date={date} events={calenderEvents}  />
+                                )}
                             </div>
-
                         </div>
                     </div>
 
-                    {/* Right Section */}
                     <div className="w-full md:w-[65%] flex flex-col gap-4 md:pl-6">
-
-                        {/* Map Section - Increased Height */}
                         <div className="h-[60vh] md:h-[75vh] flex-grow">
                             <div className="bg-white rounded-xl md:rounded-2xl shadow-lg h-full">
                                 <ShowEventMap categoryType={selectedCategory} />
-
                             </div>
                         </div>
 
-
-
-                        {/* Bottom Card Section */}
                         <div className="flex flex-col md:flex-row gap-4">
-
-                            {/* Share Ride */}
                             <div className="bg-white rounded-xl md:rounded-2xl shadow-lg p-5 flex flex-col items-center justify-between text-center flex-1 min-h-[150px]">
                                 <p className="text-lg font-semibold text-black">Share Ride</p>
                                 <p className="text-xs text-gray-600">Choose event for ride</p>
@@ -150,29 +130,30 @@ const EventPage = () => {
                                         Offer
                                     </Button>
                                 </div>
-
                             </div>
 
-                            {/* Become a Volunteer */}
                             <div className="bg-white rounded-xl md:rounded-2xl shadow-lg p-5 flex flex-col justify-between flex-2 min-h-[150px]">
                                 <p className="text-lg font-semibold text-center text-black">Become a Volunteer</p>
                                 <div className="mt-2 overflow-y-auto custom-scrollbar max-h-[75px]">
-                                    {events.length > 0 ? events
-                                        .filter(event => event.category === 'volunteer')
-                                        .map((event, index) => (
-                                            <ReminderCard
-                                                key={index}
-                                                eventTitle={event.title}
-                                                eventTime={event.time}
-                                                eventDate={event.date}
-                                            />
-                                        )) : (
-                                        <p className="text-gray-500 text-sm text-center">No events available</p>
+                                    {status === "loading" ? (
+                                        <div className="flex justify-center items-center">
+                                            <ClipLoader size={40} color={"#3498db"} loading={true} />
+                                        </div>
+                                    ) : (
+                                        events
+                                            .filter((event) => event.category === 'volunteer')
+                                            .map((event, index) => (
+                                                <ReminderCard
+                                                    key={index}
+                                                    eventTitle={event.title}
+                                                    eventTime={event.time}
+                                                    eventDate={event.date}
+                                                />
+                                            ))
                                     )}
                                 </div>
                             </div>
 
-                            {/* Ask Administration */}
                             <div className="bg-white rounded-xl md:rounded-2xl shadow-lg p-5 flex flex-col justify-between flex-1 min-h-[150px]">
                                 <p className="text-lg font-semibold text-center text-black">Ask from Admin</p>
                                 <div className="relative flex-1">
@@ -185,12 +166,8 @@ const EventPage = () => {
                                     </Button>
                                 </div>
                             </div>
-
                         </div>
-
-
                     </div>
-
                 </div>
             </div>
         </div>

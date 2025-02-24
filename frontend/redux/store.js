@@ -1,10 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
 import eventReducer from "./eventSlice"; // Import the event slice
-
+import specialCategoryReducer from "./specialCategorySlice"; // Import the special category slice
 // Create Redux Store
 export const store = configureStore({
   reducer: {
-    events: eventReducer, // Add event reducer to the store
+    events: eventReducer, 
+    specialCategory: specialCategoryReducer,
   },
 });
 

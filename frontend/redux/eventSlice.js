@@ -15,8 +15,7 @@ const eventSlice = createSlice({
     status: "idle", // 'idle' | 'loading' | 'succeeded' | 'failed'
     error: null,
   },
-  reducers: {}, // No extra reducers needed
-
+  reducers: {}, 
   // Handle async thunk actions
   extraReducers: (builder) => {
     builder

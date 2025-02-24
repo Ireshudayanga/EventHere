@@ -5,6 +5,8 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { FaCrosshairs } from "react-icons/fa";
 import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchSpecialCategory } from "../../../redux/specialCategorySlice";
 
 const { BaseLayer } = LayersControl;
 
@@ -136,14 +138,17 @@ const LocateButton = ({ setSelectedLocation }) => {
 
 const ShowEventMap = ({ setSelectedLocation, categoryType }) => {
     const [userLocation, setUserLocation] = useState([7.8731, 80.7718]); // Default: Sri Lanka
-    const [events, setEvents] = useState([]);
     const [filteredCategory, setFilteredCategory] = useState("");
 
-    // Filter Events by Category
+    const dispatch = useDispatch();
+    const { events, status, error } = useSelector((state) => state.events);
+    useEffect(() => {
+        dispatch(fetchSpecialCategory());
+    }, [dispatch]);
+    
     useEffect(() => {
         setFilteredCategory(categoryType);
-    }
-        , [categoryType]);
+    },[categoryType]);
 
     // Get User Location
     useEffect(() => {
@@ -164,16 +169,7 @@ const ShowEventMap = ({ setSelectedLocation, categoryType }) => {
         }
     }, []);
 
-    // Fetch Events from API
-    useEffect(() => {
-        axios.get("http://localhost:5000/events")
-            .then((res) => {
-                setEvents(res.data); // Store events in state
-            })
-            .catch((err) => {
-                console.error("Error fetching events:", err);
-            });
-    }, []);
+    
 
     const categoryIcons = {
         entertainment: markerIcons.green,
