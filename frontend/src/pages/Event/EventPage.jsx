@@ -16,7 +16,7 @@ const EventPage = () => {
     const dispatch = useDispatch();
     const { events, status, error } = useSelector((state) => state.events);
     const { category: specialCategory, status: categoryStatus } = useSelector(
-        (state) => state.specialCategory 
+        (state) => state.specialCategory
     );
 
 
@@ -26,10 +26,11 @@ const EventPage = () => {
         volunteer: "bg-yellow-400 text-white",
         traditional: "bg-blue-600 text-white",
         All: "bg-gray-500 text-white p-6",
+
     };
 
     const [categories, setCategories] = useState([]);
-    const [date, setDate] = useState(new Date());
+   
     const [calenderEvents, setCalenderEvents] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState("");
 
@@ -67,20 +68,30 @@ const EventPage = () => {
                         <div className="bg-white p-4 md:p-5 rounded-xl md:rounded-2xl shadow-lg">
                             <p className="text-2xl text-black font-medium font-sans">Upcoming ...</p>
                             <div className="flex gap-3 flex-wrap mt-4">
-                                {categories.length > 0 ? (
-                                    categories.map((category, index) => (
-                                        <button
+                                {categoryStatus === "loading" ? (
+                                    <div className="flex justify-center items-center">
+                                        <ClipLoader size={40} color={"#3498db"} loading={true} />
+                                    </div>
+                                ) : categoryStatus === "failed" ? (
+                                    <p className="text-red-500 text-sm">Error fetching special category: {error}</p>
+                                )  : (categories.length > 0 && (
+                                    categories.map((category, index) => {
+                                        const isSelected = selectedCategory === category || (selectedCategory === "" && category === "All");
+                                        const categoryClass = categoryColors[category] || "bg-purple-600 text-white"; // Default purple for dynamic categories
+                                        return (
+                                            <button
                                             onClick={HandleCategoryFilter}
                                             key={index}
-                                            className={`px-4 py-2 rounded-full text-sm ${categoryColors[category] || "bg-purple-800 text-white"}`}
+                                            className={`px-4 py-2 rounded-full text-sm transition-all duration-300 
+                                                ${isSelected ? `${categoryClass} font-bold shadow-lg` : "bg-gray-300 text-gray-500 opacity-50 hover:opacity-80"}`}
                                         >
                                             {category}
                                         </button>
-                                    ))
-                                ) : (
-                                    <p className="text-gray-500 text-sm">No categories available</p>
-                                )}
+                                        );
+                                    })
+                                ))}
                             </div>
+
                         </div>
 
                         {/* ✅ Show Loading Spinner Instead of "Loading events..." */}
@@ -105,7 +116,7 @@ const EventPage = () => {
                                 ) : status === "failed" ? (
                                     <p className="text-red-500 text-sm">Error fetching events: {error}</p>
                                 ) : (
-                                    <Calender date={date} events={calenderEvents}  />
+                                    <Calender  events={calenderEvents} />
                                 )}
                             </div>
                         </div>

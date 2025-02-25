@@ -29,7 +29,6 @@ const CustomCalendar = ({
     }
     return null;
   };
-
   // Function to handle date selection
   const handleDateChange = (selectedDate) => {
     // console.log("Selected Date from Calender components:", selectedDate.toDateString()); // Log selected date
