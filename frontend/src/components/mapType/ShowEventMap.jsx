@@ -136,19 +136,24 @@ const LocateButton = ({ setSelectedLocation }) => {
     );
 };
 
-const ShowEventMap = ({ setSelectedLocation, categoryType }) => {
-    const [userLocation, setUserLocation] = useState([7.8731, 80.7718]); // Default: Sri Lanka
+const ShowEventMap = ({ setSelectedLocation, categoryType, filterDate, specialCategoryName }) => {
+    const [userLocation, setUserLocation] = useState([7.8731, 80.7718]); // Default location: Sri Lanka
+
     const [filteredCategory, setFilteredCategory] = useState("");
+    console.log("Filter category name ",filteredCategory);
 
     const dispatch = useDispatch();
     const { events, status, error } = useSelector((state) => state.events);
     useEffect(() => {
         dispatch(fetchSpecialCategory());
     }, [dispatch]);
-    
+
+    // console.log(filterDate);
+
     useEffect(() => {
         setFilteredCategory(categoryType);
-    },[categoryType]);
+    }, [categoryType, filterDate,]);
+
 
     // Get User Location
     useEffect(() => {
@@ -169,7 +174,7 @@ const ShowEventMap = ({ setSelectedLocation, categoryType }) => {
         }
     }, []);
 
-    
+
 
     const categoryIcons = {
         entertainment: markerIcons.green,
@@ -193,55 +198,64 @@ const ShowEventMap = ({ setSelectedLocation, categoryType }) => {
                 </LayersControl>
 
                 {/* 📌 Show Event Markers */}
-                {events
-                    .filter(event => {
-                        // Get today's date and normalize the time
+                {
+                    events.filter(event => {
+
+                        console.log(events);
                         const today = new Date();
                         today.setHours(0, 0, 0, 0);
 
-                        // Normalize event date
                         const eventDate = new Date(event.date);
                         eventDate.setHours(0, 0, 0, 0);
 
-                        // Filter by date (today and future events)
                         const isUpcoming = eventDate >= today;
+                       
+                        const isCategoryMatch =  !filteredCategory || event.category === filteredCategory || (filteredCategory === specialCategoryName && event.category === specialCategoryName);
+                    
+                        const isDateMatch = filterDate && eventDate.toDateString() === new Date(filterDate).toDateString();
 
-                        // Filter by category if a specific category is selected
-                        const isCategoryMatch = !filteredCategory || event.category === filteredCategory;
+                       
+                        if (filterDate) {
+                            return isDateMatch;
+                        }
 
-                        return isUpcoming && isCategoryMatch;
+                        else {
+                            return isUpcoming && isCategoryMatch || (filteredCategory === specialCategoryName && event.category === specialCategoryName);
+                        }
                     })
-                    .map(event => (
-                        <Marker
-                            key={event._id}
-                            position={[event.location.coordinates[1], event.location.coordinates[0]]}
-                            icon={categoryIcons[event.category] || markerIcons.violet}
-                        >
-                            <Popup>
-                                <div className="w-48 p-2 bg-white rounded-md shadow-md">
-                                    <h3 className="font-bold text-sm text-gray-800">{event.title}</h3>
 
-                                    {/* Scrollable Description */}
-                                    <div className="max-h-16 overflow-y-auto text-gray-600 text-xs mt-1">
-                                        {event.description}
+
+                        .map(event => (
+                            <Marker
+                                key={event._id}
+                                position={[event.location.coordinates[1], event.location.coordinates[0]]}
+                                icon={categoryIcons[event.category] || markerIcons.violet}
+                            >
+                                <Popup>
+                                    <div className="w-48 p-2 bg-white rounded-md shadow-md">
+                                        <h3 className="font-bold text-sm text-gray-800">{event.title}</h3>
+
+                                        {/* Scrollable Description */}
+                                        <div className="max-h-16 overflow-y-auto text-gray-600 text-xs mt-1">
+                                            {event.description}
+                                        </div>
+
+                                        <div className="mt-1 text-xs">
+                                            <p><span className="font-semibold text-gray-700">Category:</span> {event.category}</p>
+                                            <p><span className="font-semibold text-gray-700">Date:</span> {new Date(event.date).toLocaleDateString()}</p>
+                                        </div>
+
+                                        {event.imageUrl && (
+                                            <img
+                                                src={event.imageUrl}
+                                                alt={event.title}
+                                                className="w-full h-16 mt-1 rounded object-cover"
+                                            />
+                                        )}
                                     </div>
-
-                                    <div className="mt-1 text-xs">
-                                        <p><span className="font-semibold text-gray-700">Category:</span> {event.category}</p>
-                                        <p><span className="font-semibold text-gray-700">Date:</span> {new Date(event.date).toLocaleDateString()}</p>
-                                    </div>
-
-                                    {event.imageUrl && (
-                                        <img
-                                            src={event.imageUrl}
-                                            alt={event.title}
-                                            className="w-full h-16 mt-1 rounded object-cover"
-                                        />
-                                    )}
-                                </div>
-                            </Popup>
-                        </Marker>
-                    ))}
+                                </Popup>
+                            </Marker>
+                        ))}
 
 
 

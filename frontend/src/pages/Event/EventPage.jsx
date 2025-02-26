@@ -18,8 +18,10 @@ const EventPage = () => {
     const { category: specialCategory, status: categoryStatus } = useSelector(
         (state) => state.specialCategory
     );
+    const [selectedDate, setSelectedDate] = useState(null);
 
-
+    
+    
 
     const categoryColors = {
         entertainment: "bg-green-500 text-white",
@@ -30,13 +32,19 @@ const EventPage = () => {
     };
 
     const [categories, setCategories] = useState([]);
-   
+
     const [calenderEvents, setCalenderEvents] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState("");
+    
+    const handleDateChange = (newDate) => {
+        setSelectedDate(newDate);
+        setSelectedCategory(''); // Reset category when date is selected
+    };
 
     const HandleCategoryFilter = (e) => {
         const category = e.target.innerText;
-        setSelectedCategory(category === "All" ? "" : category);
+        setSelectedCategory(category === "All" ? "" : category)
+        setSelectedDate(null); // Reset date when category is selected
     };
 
     useEffect(() => {
@@ -46,7 +54,7 @@ const EventPage = () => {
 
     useEffect(() => {
         if (status === "succeeded" && categoryStatus === "succeeded") {
-            console.log(events);
+            //console.log(events);
             setCalenderEvents(events);
             const uniqueCategories = [
                 "All",
@@ -74,19 +82,21 @@ const EventPage = () => {
                                     </div>
                                 ) : categoryStatus === "failed" ? (
                                     <p className="text-red-500 text-sm">Error fetching special category: {error}</p>
-                                )  : (categories.length > 0 && (
+                                ) : (categories.length > 0 && (
                                     categories.map((category, index) => {
-                                        const isSelected = selectedCategory === category || (selectedCategory === "" && category === "All");
-                                        const categoryClass = categoryColors[category] || "bg-purple-600 text-white"; // Default purple for dynamic categories
+                                        const isCategoryAll = category === "All";
+                                        const isCategorySelected = isCategoryAll ? (selectedCategory === "") : (selectedCategory === category);
+                                        const isSelected = isCategorySelected && !selectedDate; // Only selected if no date is chosen
+                                        const categoryClass = categoryColors[category] || "bg-purple-600 text-white";
                                         return (
                                             <button
-                                            onClick={HandleCategoryFilter}
-                                            key={index}
-                                            className={`px-4 py-2 rounded-full text-sm transition-all duration-300 
+                                                onClick={HandleCategoryFilter}
+                                                key={index}
+                                                className={`px-4 py-2 rounded-full text-sm transition-all duration-300 
                                                 ${isSelected ? `${categoryClass} font-bold shadow-lg` : "bg-gray-300 text-gray-500 opacity-50 hover:opacity-80"}`}
-                                        >
-                                            {category}
-                                        </button>
+                                            >
+                                                {category}
+                                            </button>
                                         );
                                     })
                                 ))}
@@ -116,7 +126,8 @@ const EventPage = () => {
                                 ) : status === "failed" ? (
                                     <p className="text-red-500 text-sm">Error fetching events: {error}</p>
                                 ) : (
-                                    <Calender  events={calenderEvents} />
+                                  
+                                    <Calender date={selectedDate} setDate={handleDateChange} events={calenderEvents} />
                                 )}
                             </div>
                         </div>
@@ -125,7 +136,7 @@ const EventPage = () => {
                     <div className="w-full md:w-[65%] flex flex-col gap-4 md:pl-6">
                         <div className="h-[60vh] md:h-[75vh] flex-grow">
                             <div className="bg-white rounded-xl md:rounded-2xl shadow-lg h-full">
-                                <ShowEventMap categoryType={selectedCategory} />
+                                <ShowEventMap filterDate={selectedDate} categoryType={selectedCategory} specialCategoryName={specialCategory}/>
                             </div>
                         </div>
 

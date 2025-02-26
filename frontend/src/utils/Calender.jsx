@@ -10,6 +10,8 @@ const CustomCalendar = ({
   events,
 }) => {
 
+  
+
   const categoryColors = {
     entertainment: 'bg-green-500 text-white',
     volunteer: 'bg-yellow-400 text-white',
@@ -29,16 +31,16 @@ const CustomCalendar = ({
     }
     return null;
   };
-  // Function to handle date selection
+
+
   const handleDateChange = (selectedDate) => {
-    // console.log("Selected Date from Calender components:", selectedDate.toDateString()); // Log selected date
-    setDate(selectedDate); // Update the state
-  };
+    setDate(selectedDate); // This calls handleDateChange in EventPage
+};
 
   return (
     <div className="calendar-container ">
       <Calendar
-        onChange={handleDateChange} // Trigger console log when date is selected
+        onChange={handleDateChange}
         value={date}
         tileClassName={tileClassName}
         view="month"
