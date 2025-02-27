@@ -104,28 +104,29 @@ const ChangeView = ({ coords }) => {
 };
 
 // 📌 User Click Handler (Selects Location)
-const LocationMarker = ({ setSelectedLocation, clickable = true }) => {
+const LocationMarker = ({ setSelectedLocation, clickable = true, type }) => {
     const [markerPosition, setMarkerPosition] = useState(null);
 
     useMapEvents({
         click(e) {
             if (!clickable) return; // Prevent adding marker if not clickable
-            
+
             const { lat, lng } = e.latlng;
             setMarkerPosition([lat, lng]); // Update marker position
             if (typeof setSelectedLocation === "function") {
                 setSelectedLocation([lat, lng]); // Send location to AddEvent.js
             }
-            // console.log("Selected Location:", lat, lng);
+            console.log("Selected Location:", lat, lng);
         },
     });
 
-    return markerPosition ? <Marker position={markerPosition} icon={markerIcons.black} /> : null;
+    return markerPosition ? <Marker position={markerPosition} icon={markerIcons[type] || markerIcons.black} /> : null;
 };
 
 
 
-{/* 📌 "Locate Me" Button (INSIDE the Map) */}
+
+{/* 📌 "Locate Me" Button (INSIDE the Map) */ }
 const LocateButton = ({ setSelectedLocation }) => {
     const map = useMap();
 
@@ -158,7 +159,7 @@ const LocateButton = ({ setSelectedLocation }) => {
     );
 };
 
-const Map = ({ setSelectedLocation, clickable = true }) => {
+const Map = ({ setSelectedLocation, clickable = true, setPickup, setDropoff, activeField }) => {
     const [userLocation, setUserLocation] = useState([7.8731, 80.7718]); // Default: Sri Lanka
 
     useEffect(() => {
@@ -183,7 +184,7 @@ const Map = ({ setSelectedLocation, clickable = true }) => {
         <div className="relative h-full w-full">
             <MapContainer center={userLocation} zoom={10} className="h-full w-full rounded-xl relative">
                 <ChangeView coords={userLocation} />
-    
+
                 {/* Base Map Layers */}
                 <LayersControl position="topright">
                     <BaseLayer checked name="OpenStreetMap">
@@ -193,15 +194,30 @@ const Map = ({ setSelectedLocation, clickable = true }) => {
                         />
                     </BaseLayer>
                 </LayersControl>
-    
+
                 {/* 📌 Always Show User's Location Marker */}
                 {userLocation && <Marker position={userLocation} icon={customIcon} />}
-    
+
                 {/* Clickable Location Marker (Only if clickable is true) */}
                 <LocationMarker setSelectedLocation={setSelectedLocation} clickable={clickable} />
-    
+
                 {/* 📌 "Locate Me" Button (INSIDE the Map) */}
                 <LocateButton setSelectedLocation={setSelectedLocation} />
+
+                {activeField === "pickup" && (
+                    <LocationMarker
+                        setSelectedLocation={setPickup} // Pass setPickup as setSelectedLocation
+                        clickable={true}
+                        type="blue"
+                    />
+                )}
+                {activeField === "event" && (
+                    <LocationMarker
+                        setSelectedLocation={setDropoff} // Pass setDropoff as setSelectedLocation
+                        clickable={true}
+                        type="green"
+                    />
+                )}
             </MapContainer>
         </div>
     );

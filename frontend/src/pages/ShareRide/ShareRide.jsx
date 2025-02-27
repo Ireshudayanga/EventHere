@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import SearchBar from '../../components/SearchBar';
 import Button from '../../components/Button';
 import Map from '../../components/mapType/Map';
@@ -8,10 +8,10 @@ import "../ShareRide/ShareRide.css";
 import RideCard from './RideCard';
 
 const ShareRide = () => {
-
   const [location1, setLocation1] = useState('');
   const [location2, setLocation2] = useState('');
   const [availableRides, setAvailableRides] = useState(false); 
+  const [activeField, setActiveField] = useState(null);
 
   return (
     <div className="h-screen w-full">
@@ -20,15 +20,27 @@ const ShareRide = () => {
       <div className="h-[92%] w-full md:w-[94%] mt-0 md:mt-4 rounded-none md:rounded-2xl shadow-xl md:shadow-2xl ml-auto">
         {/* Main Layout */}
         <div className="flex flex-col md:flex-row h-full p-3 md:p-7 gap-4 md:gap-4">
-
           <div className="w-full md:w-[50%] flex flex-col gap-3 md:gap-5">
-            {/* Map Section - Ensuring Visibility on Mobile */}
-            <div className="bg-white rounded-xl md:rounded-2xl shadow-lg h-[40vh] flex-grow ">
-              <Map />
+            {/* Map Section */}
+            <div className="bg-white rounded-xl md:rounded-2xl shadow-lg h-[40vh] flex-grow">
+            
+<Map 
+  activeField={activeField}
+  setPickup={(coords) => { // Accept coordinates as an array
+    const lat = coords[0];
+    const lng = coords[1];
+    setLocation1(`Lat: ${lat.toFixed(5)}, Lng: ${lng.toFixed(5)}`);
+  }}
+  setDropoff={(coords) => { // Accept coordinates as an array
+    const lat = coords[0];
+    const lng = coords[1];
+    setLocation2(`Lat: ${lat.toFixed(5)}, Lng: ${lng.toFixed(5)}`);
+  }}
+/>
             </div>
 
             <div className="w-full md:max-h-52 flex flex-row gap-3 md:gap-5">
-              {/* Expanded Chat Box */}
+              {/* Chat Box */}
               <div className="bg-white text-black rounded-xl md:rounded-2xl shadow-lg p-4 flex flex-col items-center justify-center text-center flex-[2] md:w-2/3">
                 <p className="text-2xl font-medium font-sans text-black">Contact Your Partner</p>
                 <div className="relative w-full mt-3">
@@ -50,66 +62,61 @@ const ShareRide = () => {
             </div>
           </div>
 
-
-
           {/* Right Section */}
           <div className="w-full md:w-[50%] flex flex-col gap-3 md:gap-5">
-            {/* Pickup - section */}
+            {/* Pickup & Event Section */}
             <div className="bg-white rounded-xl md:rounded-2xl shadow-lg p-4 flex flex-col items-center justify-center">
               <p className="text-2xl font-medium font-sans text-black">Choose Ride</p>
               <div className="flex my-3 md:my-6 items-center">
                 <div className="flex flex-col gap-4 justify-center">
-                  <p className="text-sm font-sans  primary-color">Pickup</p>
-                  <p className="text-sm font-sans  yellow-color">Event</p>
+                  <p className="text-sm font-sans primary-color">Pickup</p>
+                  <p className="text-sm font-sans yellow-color">Event</p>
                 </div>
-                <div className=" w-[200px] flex flex-col gap-3 justify-center ">
+                <div className="w-[200px] flex flex-col gap-3 justify-center">
                   <input
                     type="text"
                     placeholder="Pickup Location"
                     value={location1}
-                    onChange={(e) => setLocation1(e.target.value)}
+                    onClick={() => setActiveField('pickup')}
                     className="text-base md:text-base text-black text-center outline-none"
                   />
-                  <hr className=" md:w-[200px]" />
+                  <hr className="md:w-[200px]" />
                   <input
                     type="text"
                     placeholder="Drop Location"
                     value={location2}
-                    onChange={(e) => setLocation2(e.target.value)}
-                    className="text-base md:text-base text-black text-center outline-none "
+                    onClick={() => setActiveField('event')}
+                    className="text-base md:text-base text-black text-center outline-none"
                   />
                 </div>
               </div>
-              <div className='flex mt-4 md:mt-auto gap-3'>
+              <div className="flex mt-4 md:mt-auto gap-3">
                 <Button className="bg-green-600 md:w-[150px] font-sans text-white px-4 py-2 text-base md:text-lg rounded-3xl">Find Ride</Button>
                 <Button className="bg-blue-500 md:w-[150px] font-sans text-white px-4 py-2 text-base md:text-lg rounded-3xl">Offer Ride</Button>
               </div>
             </div>
 
-            {/* Pool Matching - section */}
+            {/* Pool Matching Section */}
             <div className="bg-white rounded-xl md:rounded-2xl shadow-lg p-8 flex flex-col items-center justify-center w-full max-w-3xl mx-auto h-full">
               <p className="text-2xl font-sans font-medium text-black mb-12">Pool Matching</p>
               <div className="flex flex-col desktop-flex-row gap-6 items-center">
-
-                {/* Left - Animation GIF */}
-                <div className=" flex items-center justify-center">
-                  <img src={animationGif} alt="animation" className="w-[300px] md:w-[150px] h-full " />
+                <div className="flex items-center justify-center">
+                  <img src={animationGif} alt="animation" className="w-[300px] md:w-[150px] h-full" />
                 </div>
-
-                {/* Right - User Request Card */} 
                 {availableRides ? (
                   <RideCard />
-                ) : ( <div className=" p-4  text-center">
-                  <p className="text-gray-400">No rides available at the moment</p>
-                </div>)}
-
+                ) : (
+                  <div className="p-4 text-center">
+                    <p className="text-gray-400">No rides available at the moment</p>
+                  </div>
+                )}
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default ShareRide
+export default ShareRide;

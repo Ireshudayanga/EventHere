@@ -140,7 +140,7 @@ const ShowEventMap = ({ setSelectedLocation, categoryType, filterDate, specialCa
     const [userLocation, setUserLocation] = useState([7.8731, 80.7718]); // Default location: Sri Lanka
 
     const [filteredCategory, setFilteredCategory] = useState("");
-    console.log("Filter category name ",filteredCategory);
+    //console.log("Filter category name ",filteredCategory);
 
     const dispatch = useDispatch();
     const { events, status, error } = useSelector((state) => state.events);
@@ -201,7 +201,7 @@ const ShowEventMap = ({ setSelectedLocation, categoryType, filterDate, specialCa
                 {
                     events.filter(event => {
 
-                        console.log(events);
+                       // console.log(events);
                         const today = new Date();
                         today.setHours(0, 0, 0, 0);
 

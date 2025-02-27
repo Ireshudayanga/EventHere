@@ -262,7 +262,7 @@ const AddEvent = () => {
 
 
                 {/* Calendar */}
-                <div className="rounded-xl overflow-hidden mt-4 p-4">
+                <div className="rounded-xl overflow-hidden mt-4">
                   <Calender date={selectedDate} setDate={setSelectedDate} />
                 </div>
 
