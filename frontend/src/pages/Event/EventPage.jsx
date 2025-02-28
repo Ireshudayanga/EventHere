@@ -70,7 +70,7 @@ const EventPage = () => {
     return (
         <div className="h-screen w-full">
             <SearchBar />
-            <div className="h-[92%] w-full md:w-[94%] mt-0 md:mt-4 rounded-none md:rounded-2xl shadow-xl md:shadow-2xl ml-auto">
+            <div className="h-[92%] w-full md:w-[94%] mt-0 md:mt-4 rounded-none md:rounded-2xl shadow-xl  ml-auto">
                 <div className="flex flex-col md:flex-row h-full p-3 md:p-7 gap-4 md:gap-0">
                     <div className="w-full md:w-[35%] flex flex-col gap-3 md:gap-5">
                         <div className="bg-white p-4 md:p-5 rounded-xl md:rounded-2xl shadow-lg">
@@ -105,7 +105,7 @@ const EventPage = () => {
                         </div>
 
                         {/* ✅ Show Loading Spinner Instead of "Loading events..." */}
-                        <div className="bg-white p-4 md:p-5 rounded-xl md:rounded-2xl shadow-lg md:h-[75%] lg:h-[80%] xl:h-[85%]">
+                        <div className="bg-white p-4 md:p-5 rounded-xl md:rounded-2xl shadow-lg md:h-[77%] lg:h-[70%] xl:h-[70%]">
                             <div className="flex justify-between items-center w-full">
                                 <div>
                                     <p className="text-2xl font-medium text-black font-sans">Events</p>
@@ -118,7 +118,7 @@ const EventPage = () => {
                                     </div>
                                 </Link>
                             </div>
-                            <div className="mt-4 overflow-y-auto md:overflow-y-scroll custom-scrollbar h-[calc(100vh-250px)] md:h-[calc(100vh-390px)] xl:h-[calc(100vh-350px)]">
+                            <div className="mt-4 overflow-y-auto md:overflow-y-scroll custom-scrollbar h-[calc(100vh-550px)] md:h-[calc(100vh-390px)] xl:h-[calc(100vh-390px)]">
                                 {status === "loading" ? (
                                     <div className="flex justify-center items-center h-full">
                                         <ClipLoader size={50} color={"#3498db"} loading={true} />

@@ -27,7 +27,7 @@ const CustomCalendar = ({
     );
   
     if (event) {
-      return `${categoryColors[event.category] || 'bg-gray-400 text-white'} rounded-full px-2`;
+      return `${categoryColors[event.category] || 'bg-purple-600 text-white'} rounded-full px-2`;
     }
     return null;
   };
