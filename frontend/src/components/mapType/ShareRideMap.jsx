@@ -8,6 +8,8 @@ import { FaCrosshairs } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchSpecialCategory } from "../../../redux/specialCategorySlice";
 import Button from "../Button";
+import { Polyline } from "react-leaflet";
+import polyline from "polyline";
 
 const { BaseLayer } = LayersControl;
 
@@ -170,6 +172,47 @@ const ShareRideMap = ({
     const [filteredCategory, setFilteredCategory] = useState("");
     const dispatch = useDispatch();
     const { events } = useSelector((state) => state.events);
+    const [routeCoords, setRouteCoords] = useState(null);
+    // Add this state along with your other state variables
+    const [routeDistance, setRouteDistance] = useState(null);
+
+    console.log("Route Distance:", routeDistance);
+
+    useEffect(() => {
+        const calculateRoute = async () => {
+            if (pickupLocation && dropLocation) {
+                try {
+                    // Parse coordinates from strings
+                    const [startLat, startLng] = pickupLocation.split(',').map(Number);
+                    const [endLat, endLng] = dropLocation.split(',').map(Number);
+
+                    // Fetch route from OSRM API
+                    const response = await fetch(
+                        `https://router.project-osrm.org/route/v1/driving/${startLng},${startLat};${endLng},${endLat}?overview=full&geometries=geojson`
+                    );
+
+                    const data = await response.json();
+
+                    if (data.routes?.[0]?.geometry) {
+                        // Convert GeoJSON coordinates to Leaflet's [lat, lng] format
+                        const coords = data.routes[0].geometry.coordinates.map(coord => [coord[1], coord[0]]);
+                        setRouteCoords(coords);
+
+                        // Set the route distance (in meters)
+                        setRouteDistance(data.routes[0].distance);
+                    }
+                } catch (error) {
+                    console.error("Error fetching route:", error);
+                }
+            } else {
+                setRouteCoords(null);
+                setRouteDistance(null);
+            }
+        };
+
+        calculateRoute();
+    }, [pickupLocation, dropLocation]);
+
 
     useEffect(() => {
         dispatch(fetchSpecialCategory());
@@ -315,13 +358,29 @@ const ShareRideMap = ({
 
                 {/* show the user's location marker */}
                 {!(pickupLocation && dropLocation) && userLocation && <Marker position={userLocation} icon={eventIcon} />}
-            
+
                 {/* If drop (event) location exists, render its marker */}
                 {dropCoords && (
                     <Marker position={dropCoords} icon={markerIcons.orange}>
                         <Popup>Event Location</Popup>
                     </Marker>
                 )}
+
+                {routeCoords && (
+                    <Polyline
+                        positions={routeCoords}
+                        color="#3b82f6"
+                        weight={4}
+                        opacity={0.7}
+                    />
+                )}
+
+                {routeDistance && (
+                    <div className="absolute bottom-4 left-4 bg-[#45c541] p-2 rounded shadow text-white z-[1500]">
+                        Distance: {(routeDistance / 1000).toFixed(2)} km
+                    </div>
+                )}
+
 
                 <LocateButton onPickupSelect={onPickupSelect} />
             </MapContainer>
