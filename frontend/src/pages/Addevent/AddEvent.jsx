@@ -101,7 +101,7 @@ const AddEvent = () => {
             imageUrl = await uploadImage(fileInputRef.current.files[0]);
         }
 
-        // ✅ Format the date correctly in local time (YYYY-MM-DD)
+        
         const formattedDate = `${selectedDate.getFullYear()}-${(selectedDate.getMonth() + 1).toString().padStart(2, "0")}-${selectedDate.getDate().toString().padStart(2, "0")}`;
 
         const eventData = {
