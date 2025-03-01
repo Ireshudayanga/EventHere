@@ -12,6 +12,7 @@ import Button from '../../components/Button';
 import ReminderCard from '../../components/ReminderCard';
 import ShowEventMap from '../../components/mapType/ShowEventMap';
 
+
 const EventPage = () => {
     const dispatch = useDispatch();
     const { events, status, error } = useSelector((state) => state.events);

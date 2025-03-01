@@ -5,13 +5,14 @@ import { MapContainer, TileLayer, Marker, useMapEvents, LayersControl, useMap } 
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { FaCrosshairs } from "react-icons/fa";
+import locationIcon from '../../assets/images/location.png';
 
 const { BaseLayer } = LayersControl;
 
 // Custom marker icon (Red marker)
 const customIcon = new L.Icon({
-    iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png",
-    iconSize: [25, 41],
+    iconUrl: locationIcon,
+    iconSize: [39, 41],
     iconAnchor: [12, 41],
     popupAnchor: [1, -34],
     shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",

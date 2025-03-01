@@ -7,12 +7,13 @@ import { FaCrosshairs } from "react-icons/fa";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchSpecialCategory } from "../../../redux/specialCategorySlice";
+import locationIcon from '../../assets/images/location.png';
 
 const { BaseLayer } = LayersControl;
 
 // Custom marker icon (Red marker)
 const eventIcon = new L.Icon({
-    iconUrl: "https://img.icons8.com/ios-filled/50/order-delivered.png",
+    iconUrl: locationIcon,
     iconSize: [39, 41],
     iconAnchor: [12, 41],
     popupAnchor: [1, -34],
