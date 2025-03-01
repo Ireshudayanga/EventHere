@@ -141,6 +141,8 @@ const AddEvent = () => {
             if (fileInputRef.current) {
                 fileInputRef.current.value = "";
             }
+            setSelectedLocation([]);
+
         } else {
             console.error("🚨 Unexpected Response:", response);
             alert("Something went wrong!");
