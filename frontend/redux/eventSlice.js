@@ -4,7 +4,10 @@ import axios from "axios";
 // Async Thunk to fetch events from API
 export const fetchEvents = createAsyncThunk("events/fetchEvents", async () => {
   const response = await axios.get("http://localhost:5000/events"); // API call
-  return response.data; // Return fetched data
+  return response.data.map(event => ({
+    ...event,
+    date: new Date(event.date).toISOString().split('T')[0], // Convert to YYYY-MM-DD
+  }));
 });
 
 // Create a Redux Slice
@@ -24,7 +27,7 @@ const eventSlice = createSlice({
       })
       .addCase(fetchEvents.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.events = action.payload; // Store fetched events
+        state.events = action.payload; // Store formatted events
       })
       .addCase(fetchEvents.rejected, (state, action) => {
         state.status = "failed";

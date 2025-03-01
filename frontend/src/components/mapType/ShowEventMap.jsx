@@ -12,8 +12,8 @@ const { BaseLayer } = LayersControl;
 
 // Custom marker icon (Red marker)
 const eventIcon = new L.Icon({
-    iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png",
-    iconSize: [25, 41],
+    iconUrl: "https://img.icons8.com/ios-filled/50/order-delivered.png",
+    iconSize: [39, 41],
     iconAnchor: [12, 41],
     popupAnchor: [1, -34],
     shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
@@ -201,7 +201,7 @@ const ShowEventMap = ({ setSelectedLocation, categoryType, filterDate, specialCa
                 {
                     events.filter(event => {
 
-                       // console.log(events);
+                        // console.log(events);
                         const today = new Date();
                         today.setHours(0, 0, 0, 0);
 
@@ -209,12 +209,12 @@ const ShowEventMap = ({ setSelectedLocation, categoryType, filterDate, specialCa
                         eventDate.setHours(0, 0, 0, 0);
 
                         const isUpcoming = eventDate >= today;
-                       
-                        const isCategoryMatch =  !filteredCategory || event.category === filteredCategory || (filteredCategory === specialCategoryName && event.category === specialCategoryName);
-                    
+
+                        const isCategoryMatch = !filteredCategory || event.category === filteredCategory || (filteredCategory === specialCategoryName && event.category === specialCategoryName);
+
                         const isDateMatch = filterDate && eventDate.toDateString() === new Date(filterDate).toDateString();
 
-                       
+
                         if (filterDate) {
                             return isDateMatch;
                         }
@@ -242,7 +242,9 @@ const ShowEventMap = ({ setSelectedLocation, categoryType, filterDate, specialCa
 
                                         <div className="mt-1 text-xs">
                                             <p><span className="font-semibold text-gray-700">Category:</span> {event.category}</p>
-                                            <p><span className="font-semibold text-gray-700">Date:</span> {new Date(event.date).toLocaleDateString()}</p>
+                                            <p><span className="font-semibold text-gray-700">Date:</span>
+                                                {new Date(event.date).toISOString().split('T')[0]}
+                                            </p>
                                         </div>
 
                                         {event.imageUrl && (

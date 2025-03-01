@@ -105,7 +105,7 @@ const EventPage = () => {
                         </div>
 
                         {/* ✅ Show Loading Spinner Instead of "Loading events..." */}
-                        <div className="bg-white p-4 md:p-5 rounded-xl md:rounded-2xl shadow-lg md:h-[77%] lg:h-[70%] xl:h-[70%]">
+                        <div className="bg-white p-4 md:p-5 rounded-xl md:rounded-2xl">
                             <div className="flex justify-between items-center w-full">
                                 <div>
                                     <p className="text-2xl font-medium text-black font-sans">Events</p>
@@ -118,7 +118,7 @@ const EventPage = () => {
                                     </div>
                                 </Link>
                             </div>
-                            <div className="mt-4 overflow-y-auto md:overflow-y-scroll custom-scrollbar h-[calc(100vh-550px)] md:h-[calc(100vh-390px)] xl:h-[calc(100vh-390px)]">
+                            <div className="mt-4 overflow-y-auto md:overflow-y-scroll custom-scrollbar h-[calc(100vh-550px)] md:h-[calc(100vh-370px)] ">
                                 {status === "loading" ? (
                                     <div className="flex justify-center items-center h-full">
                                         <ClipLoader size={50} color={"#3498db"} loading={true} />

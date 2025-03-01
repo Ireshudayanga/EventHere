@@ -81,76 +81,76 @@ const AddEvent = () => {
 
 
   const onSubmit = async (data) => {
-    // console.log("🚀 Event Data Submitted:", data);
     setLoading(true);
 
     if (selectedLocation.length === 0) {
-      setLocationError(true);
-      setError("eventLocation", { type: "manual", message: "Please choose a location on the map!" });
-      console.error("🚨 Event location is required!");
-      return;
+        setLocationError(true);
+        setError("eventLocation", { type: "manual", message: "Please choose a location on the map!" });
+        console.error("🚨 Event location is required!");
+        return;
     }
 
     clearErrors("eventLocation");
     setLocationError(false);
 
     try {
-      let imageUrl = "";
+        let imageUrl = "";
 
-      // Upload image to Cloudinary if a file is selected
-      if (fileInputRef.current && fileInputRef.current.files[0]) {
-        imageUrl = await uploadImage(fileInputRef.current.files[0]);
-      }
+        // Upload image to Cloudinary if a file is selected
+        if (fileInputRef.current && fileInputRef.current.files[0]) {
+            imageUrl = await uploadImage(fileInputRef.current.files[0]);
+        }
 
-      const eventData = {
-        title: data.eventName,
-        time: data.eventTime,
-        location: {
-          type: "Point",
-          coordinates: [selectedLocation[1], selectedLocation[0]],
-        },
-        description: data.eventDescription,
-        category: data.eventCategory,
-        signupRequired: data.signupRequired === "true",
-        date: selectedDate.toISOString(),
-        userEmail: userEmail,
-        imageUrl: imageUrl, // Use the uploaded image URL
-      };
+        // ✅ Format the date correctly in local time (YYYY-MM-DD)
+        const formattedDate = `${selectedDate.getFullYear()}-${(selectedDate.getMonth() + 1).toString().padStart(2, "0")}-${selectedDate.getDate().toString().padStart(2, "0")}`;
 
-      // console.log("✅ Final JSON Data:", JSON.stringify(eventData, null, 2));
+        const eventData = {
+            title: data.eventName,
+            time: data.eventTime,
+            location: {
+                type: "Point",
+                coordinates: [selectedLocation[1], selectedLocation[0]],
+            },
+            description: data.eventDescription,
+            category: data.eventCategory,
+            signupRequired: data.signupRequired === "true",
+            date: formattedDate, // ✅ Now correctly formatted without time zone issues
+            userEmail: userEmail,
+            imageUrl: imageUrl, 
+        };
 
-      const response = await axios.post("http://localhost:5000/events", eventData, {
-        headers: { "Content-Type": "application/json" },
-      });
-
-      if (response.status === 201) {
-        // console.log("🚀 Event Created Successfully:", response.data);
-        setLoading(false);
-        alert("Event created successfully!");
-
-        reset({
-          eventName: "",
-          eventTime: "",
-          eventLocation: "",
-          eventDescription: "",
-          eventCategory: "",
-          signupRequired: "",
-          eventImage: "",
+        const response = await axios.post("http://localhost:5000/events", eventData, {
+            headers: { "Content-Type": "application/json" },
         });
 
-        setPreviewImage(null);
-        if (fileInputRef.current) {
-          fileInputRef.current.value = "";
+        if (response.status === 201) {
+            setLoading(false);
+            alert("Event created successfully!");
+
+            reset({
+                eventName: "",
+                eventTime: "",
+                eventLocation: "",
+                eventDescription: "",
+                eventCategory: "",
+                signupRequired: "",
+                eventImage: "",
+            });
+
+            setPreviewImage(null);
+            if (fileInputRef.current) {
+                fileInputRef.current.value = "";
+            }
+        } else {
+            console.error("🚨 Unexpected Response:", response);
+            alert("Something went wrong!");
         }
-      } else {
-        console.error("🚨 Unexpected Response:", response);
-        alert("Something went wrong!");
-      }
     } catch (error) {
-      console.error("🚨 Event Creation Error:", error.response ? error.response.data : error);
-      alert("Failed to create event!");
+        console.error("🚨 Event Creation Error:", error.response ? error.response.data : error);
+        alert("Failed to create event!");
     }
-  };
+};
+
 
   // Function to upload image to Cloudinary
   const uploadImage = async (file) => {

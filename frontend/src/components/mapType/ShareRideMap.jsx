@@ -15,8 +15,8 @@ const { BaseLayer } = LayersControl;
 
 // Custom marker icon for the user's location
 const eventIcon = new L.Icon({
-    iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png",
-    iconSize: [25, 41],
+    iconUrl: "https://img.icons8.com/ios-filled/50/order-delivered.png",
+    iconSize: [39, 41],
     iconAnchor: [12, 41],
     popupAnchor: [1, -34],
     shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",

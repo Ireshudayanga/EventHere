@@ -18,19 +18,29 @@ const CustomCalendar = ({
     traditional: 'bg-blue-600 text-white',
   };
 
-  // Function to determine tile class based on events
   const tileClassName = ({ date }) => {
-    if (!Array.isArray(events) || events.length === 0) return null; // Ensure events is a valid array
+    if (!Array.isArray(events) || events.length === 0) return null;
+
   
-    const event = events.find((event) => 
-      event.date && new Date(event.date).toDateString() === date.toDateString()
-    );
-  
-    if (event) {
-      return `${categoryColors[event.category] || 'bg-purple-600 text-white'} rounded-full px-2`;
+    const tileDate = new Date(date);
+    tileDate.setHours(0, 0, 0, 0);
+
+    const eventForTile = events.find((event) => {
+        if (!event.date) return false;
+
+        // Convert event date to local midnight time
+        const eventDate = new Date(event.date);
+        eventDate.setHours(0, 0, 0, 0); // Normalize to avoid time zone shifts
+
+        return eventDate.getTime() === tileDate.getTime();
+    });
+
+    if (eventForTile) {
+        return `${categoryColors[eventForTile.category] || 'bg-purple-600 text-white'} rounded-full px-2`;
     }
     return null;
-  };
+};
+
 
 
   const handleDateChange = (selectedDate) => {
