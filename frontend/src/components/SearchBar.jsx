@@ -7,12 +7,12 @@ import userIcon from '../assets/svg/User.svg';
 import home from '../assets/svg/Home.svg';
 import { AuthContext } from '../context/AuthProvider';
 
-function SearchBar({ 
+function SearchBar({
   title = ""
 }) {
 
-  const{currentUser} = useContext(AuthContext);
-  // console.log(currentUser);
+  const { currentUser } = useContext(AuthContext);
+  console.log(currentUser);
 
   return (
     <div>
@@ -39,14 +39,14 @@ function SearchBar({
 
         {/* Mobile Search Icon */}
         <button className="md:hidden p-2">
-         {title? <p className="text-black text-lg font-medium">{title}</p> : <img src={searchIcon} alt="search" className="w-6 h-6" />}
+          {title ? <p className="text-black text-lg font-medium">{title}</p> : <img src={searchIcon} alt="search" className="w-6 h-6" />}
         </button>
 
         {/* User Info */}
         <div className="flex items-center gap-2">
           <img className="w-6 h-6 md:w-8 md:h-8" src={userIcon} alt="user" />
           <p className="hidden md:block text-black text-sm md:text-base uppercase">
-            {currentUser ? currentUser.name : ""}
+            {currentUser ? currentUser.displayName : ""}
           </p>
         </div>
       </div>

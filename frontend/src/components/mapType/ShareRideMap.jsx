@@ -13,6 +13,7 @@ import locationIcon from '../../assets/images/location.png';
 
 const { BaseLayer } = LayersControl;
 
+
 // Custom marker icon for the user's location
 const eventIcon = new L.Icon({
     iconUrl: locationIcon,
@@ -145,13 +146,15 @@ const LocateButton = ({ setUserLocation }) => {
 
 
 // Component that listens for map clicks to select a pickup point
-const MapClickHandler = ({ onPickupSelect, activeField, isPickupSelected , setIsPickupSelected}) => {
+const MapClickHandler = ({ onPickupSelect, activeField, isPickupSelected, setIsPickupSelected }) => {
     const [pickupPosition, setPickupPosition] = useState(null);
+    console.log("Pickup Position:", pickupPosition);
 
     useMapEvent("click", (e) => {
         if (activeField === "pickup" && !isPickupSelected) {
             const { lat, lng } = e.latlng;
             const newPosition = [lat, lng];
+            console.log("New Pickup Position:", newPosition);
             setPickupPosition(newPosition);
             setIsPickupSelected(true);
             if (typeof onPickupSelect === "function") {
@@ -273,7 +276,7 @@ const ShareRideMap = ({
                     </BaseLayer>
                 </LayersControl>
                 {/* Listen for map clicks when the pickup field is active */}
-                <MapClickHandler onPickupSelect={onPickupSelect} activeField={activeField} isPickupSelected={isPickupSelected} setIsPickupSelected={setIsPickupSelected}  />
+                <MapClickHandler onPickupSelect={onPickupSelect} activeField={activeField} isPickupSelected={isPickupSelected} setIsPickupSelected={setIsPickupSelected} />
 
                 {/* Conditionally render event markers only if pickup and drop are not both selected */}
                 {!(pickupLocation && dropLocation) &&
@@ -297,67 +300,84 @@ const ShareRideMap = ({
                                 position={[event.location.coordinates[1], event.location.coordinates[0]]}
                                 icon={categoryIcons[event.category] || markerIcons.violet}
                             >
-                                <Popup>
-                                    <div className="w-48 p-2 bg-white rounded-md shadow-md">
-                                        <h3 className="font-bold text-sm text-gray-800">{event.title}</h3>
-                                        <div className="max-h-16 overflow-y-auto text-gray-600 text-xs mt-1">
-                                            {event.description}
-                                        </div>
-                                        <div className="mt-1 text-xs">
-                                            <p>
-                                                <span className="font-semibold text-gray-700">Category:</span> {event.category}
-                                            </p>
-                                            <p>
-                                                <span className="font-semibold text-gray-700">Date:</span>{" "}
-                                                {new Date(event.date).toLocaleDateString()}
-                                            </p>
-                                        </div>
-                                        {event.imageUrl && (
-                                            <img
-                                                src={event.imageUrl}
-                                                alt={event.title}
-                                                className="w-full h-16 mt-1 rounded object-cover"
-                                            />
-                                        )}
-                                        {onPickupSelect ? <Button
-                                            onClick={() => {
-                                                const eventLat = event.location.coordinates[1];
-                                                const eventLng = event.location.coordinates[0];
-                                                if (typeof onDropSelect === "function") {
-                                                    onDropSelect(`${eventLat.toFixed(4)}, ${eventLng.toFixed(4)}`);
-                                                }
-                                            }}
-                                            className="flex justify-center items-center bg-purple-600 font-sans text-white px-4 py-2 text-xs  rounded-3xl"
-                                        >
-                                            Select Event
-                                        </Button> : <div className="flex mt-3 gap-3 justify-center">
-                                            <Button
-                                                onClick={() => {
-                                                    const eventLat = event.location.coordinates[1];
-                                                    const eventLng = event.location.coordinates[0];
-                                                    if (typeof onDropSelect === "function") {
-                                                        onDropSelect(`${eventLat.toFixed(4)}, ${eventLng.toFixed(4)}`);
-                                                    }
-                                                }}
-                                                className="bg-green-600 font-sans text-white px-4 py-2 text-xs md:w-16 rounded-3xl"
-                                            >
-                                                Find
-                                            </Button>
-                                            <Button
-                                                onClick={() => {
-                                                    const eventLat = event.location.coordinates[1];
-                                                    const eventLng = event.location.coordinates[0];
-                                                    if (typeof onDropSelect === "function") {
-                                                        onDropSelect(`${eventLat.toFixed(4)}, ${eventLng.toFixed(4)}`);
-                                                    }
-                                                }}
-                                                className="bg-blue-500 font-sans text-white px-4 py-2 text-xs md:w-16 rounded-3xl"
-                                            >
-                                                Offer
-                                            </Button>
-                                        </div>}
-                                    </div>
-                                </Popup>
+                               <Popup>
+  <div className="w-56 p-3 bg-white rounded-lg shadow-lg border border-gray-200">
+    {/* Event Title */}
+    <h3 className="font-semibold text-base text-gray-900 truncate">{event.title}</h3>
+
+    {/* Event Description */}
+    <p className="text-xs text-gray-600 mt-1 line-clamp-3">
+      {event.description}
+    </p>
+
+    {/* Event Details */}
+    <div className="mt-2 text-xs text-gray-700 space-y-1">
+      <p>
+        <span className="font-medium text-gray-800">Category:</span> {event.category}
+      </p>
+      <p>
+        <span className="font-medium text-gray-800">Date:</span> {new Date(event.date).toLocaleDateString()}
+      </p>
+    </div>
+
+    {/* Event Image */}
+    {event.imageUrl && (
+      <div className="mt-2">
+        <img
+          src={event.imageUrl}
+          alt={event.title}
+          className="w-full h-20 object-cover rounded-md shadow-sm"
+        />
+      </div>
+    )}
+
+    {/* Action Buttons */}
+    <div className="mt-3 flex gap-2 justify-center">
+      {onPickupSelect ? (
+        <Button
+          onClick={() => {
+            const eventLat = event.location.coordinates[1];
+            const eventLng = event.location.coordinates[0];
+            if (typeof onDropSelect === "function") {
+              onDropSelect(`${eventLat.toFixed(4)}, ${eventLng.toFixed(4)}`);
+            }
+          }}
+          className="bg-purple-600 hover:bg-purple-700 text-white font-medium px-4 py-2 text-xs rounded-lg shadow-md transition-all"
+        >
+          Select Event
+        </Button>
+      ) : (
+        <>
+          <Button
+            onClick={() => {
+              const eventLat = event.location.coordinates[1];
+              const eventLng = event.location.coordinates[0];
+              if (typeof onDropSelect === "function") {
+                onDropSelect(`${eventLat.toFixed(4)}, ${eventLng.toFixed(4)}`);
+              }
+            }}
+            className="bg-green-600 hover:bg-green-700 text-white font-medium px-4 py-2 text-xs rounded-lg shadow-md transition-all"
+          >
+            Find
+          </Button>
+          <Button
+            onClick={() => {
+              const eventLat = event.location.coordinates[1];
+              const eventLng = event.location.coordinates[0];
+              if (typeof onDropSelect === "function") {
+                onDropSelect(`${eventLat.toFixed(4)}, ${eventLng.toFixed(4)}`);
+              }
+            }}
+            className="bg-blue-500 hover:bg-blue-600 text-white font-medium px-4 py-2 text-xs rounded-lg shadow-md transition-all"
+          >
+            Offer
+          </Button>
+        </>
+      )}
+    </div>
+  </div>
+</Popup>
+
                             </Marker>
                         ))
                 }
@@ -388,7 +408,7 @@ const ShareRideMap = ({
                 )}
 
 
-<LocateButton setUserLocation={setUserLocation} />
+                <LocateButton setUserLocation={setUserLocation} />
 
             </MapContainer>
         </div>
