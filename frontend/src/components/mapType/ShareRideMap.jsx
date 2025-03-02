@@ -9,13 +9,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchSpecialCategory } from "../../../redux/specialCategorySlice";
 import Button from "../Button";
 import { Polyline } from "react-leaflet";
-import polyline from "polyline";
+import locationIcon from '../../assets/images/location.png';
 
 const { BaseLayer } = LayersControl;
 
 // Custom marker icon for the user's location
 const eventIcon = new L.Icon({
-    iconUrl: "https://img.icons8.com/ios-filled/50/order-delivered.png",
+    iconUrl: locationIcon,
     iconSize: [39, 41],
     iconAnchor: [12, 41],
     popupAnchor: [1, -34],
@@ -108,7 +108,7 @@ const ChangeView = ({ coords }) => {
 };
 
 // "Locate Me" Button (updates pickup location)
-const LocateButton = ({ onPickupSelect }) => {
+const LocateButton = ({ setUserLocation }) => {
     const map = useMap();
 
     const handleLocateMe = () => {
@@ -116,9 +116,13 @@ const LocateButton = ({ onPickupSelect }) => {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
                     const userCoords = [position.coords.latitude, position.coords.longitude];
+
+                    // Update map view but do NOT change pickup/drop locations
                     map.flyTo(userCoords, 16, { animate: true, duration: 1.5 });
-                    if (typeof onPickupSelect === "function") {
-                        onPickupSelect(`${userCoords[0].toFixed(4)}, ${userCoords[1].toFixed(4)}`);
+
+                    // Update userLocation state
+                    if (typeof setUserLocation === "function") {
+                        setUserLocation(userCoords);
                     }
                 },
                 (error) => {
@@ -139,15 +143,17 @@ const LocateButton = ({ onPickupSelect }) => {
     );
 };
 
+
 // Component that listens for map clicks to select a pickup point
-const MapClickHandler = ({ onPickupSelect, activeField }) => {
+const MapClickHandler = ({ onPickupSelect, activeField, isPickupSelected , setIsPickupSelected}) => {
     const [pickupPosition, setPickupPosition] = useState(null);
 
     useMapEvent("click", (e) => {
-        if (activeField === "pickup") {
+        if (activeField === "pickup" && !isPickupSelected) {
             const { lat, lng } = e.latlng;
             const newPosition = [lat, lng];
             setPickupPosition(newPosition);
+            setIsPickupSelected(true);
             if (typeof onPickupSelect === "function") {
                 onPickupSelect(`${lat.toFixed(4)}, ${lng.toFixed(4)}`);
             }
@@ -173,7 +179,7 @@ const ShareRideMap = ({
     const dispatch = useDispatch();
     const { events } = useSelector((state) => state.events);
     const [routeCoords, setRouteCoords] = useState(null);
-    // Add this state along with your other state variables
+    const [isPickupSelected, setIsPickupSelected] = useState(false);
     const [routeDistance, setRouteDistance] = useState(null);
 
     console.log("Route Distance:", routeDistance);
@@ -267,7 +273,7 @@ const ShareRideMap = ({
                     </BaseLayer>
                 </LayersControl>
                 {/* Listen for map clicks when the pickup field is active */}
-                <MapClickHandler onPickupSelect={onPickupSelect} activeField={activeField} />
+                <MapClickHandler onPickupSelect={onPickupSelect} activeField={activeField} isPickupSelected={isPickupSelected} setIsPickupSelected={setIsPickupSelected}  />
 
                 {/* Conditionally render event markers only if pickup and drop are not both selected */}
                 {!(pickupLocation && dropLocation) &&
@@ -382,7 +388,8 @@ const ShareRideMap = ({
                 )}
 
 
-                <LocateButton onPickupSelect={onPickupSelect} />
+<LocateButton setUserLocation={setUserLocation} />
+
             </MapContainer>
         </div>
     );
