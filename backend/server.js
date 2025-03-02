@@ -36,7 +36,8 @@ app.use('/events', eventRoutes);
 const specialCategoryRoutes = require("./api/routers/SpecialCategoryRoutes");
 app.use("/api/special-category", specialCategoryRoutes);
 
-
+const rideRoutes = require('./api/routers/ShareRideRoutes');
+app.use('/rides', rideRoutes);
 
 // Start the Server
 const PORT = 5000; // Choose your port number

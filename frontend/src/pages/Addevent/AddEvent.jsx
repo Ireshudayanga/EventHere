@@ -8,6 +8,10 @@ import Calender from '../../utils/Calender';
 import axios from 'axios';
 import { use } from 'react';
 import { AuthContext } from '../../context/AuthProvider';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+
 
 const AddEvent = () => {
   const { currentUser } = useContext(AuthContext);
@@ -86,7 +90,7 @@ const AddEvent = () => {
     if (selectedLocation.length === 0) {
         setLocationError(true);
         setError("eventLocation", { type: "manual", message: "Please choose a location on the map!" });
-        console.error("🚨 Event location is required!");
+        toast.error("Please choose a location on the map!", { position: "top-center" });
         return;
     }
 
@@ -96,12 +100,11 @@ const AddEvent = () => {
     try {
         let imageUrl = "";
 
-        // Upload image to Cloudinary if a file is selected
+        // Upload image if a file is selected
         if (fileInputRef.current && fileInputRef.current.files[0]) {
             imageUrl = await uploadImage(fileInputRef.current.files[0]);
         }
 
-        
         const formattedDate = `${selectedDate.getFullYear()}-${(selectedDate.getMonth() + 1).toString().padStart(2, "0")}-${selectedDate.getDate().toString().padStart(2, "0")}`;
 
         const eventData = {
@@ -114,9 +117,9 @@ const AddEvent = () => {
             description: data.eventDescription,
             category: data.eventCategory,
             signupRequired: data.signupRequired === "true",
-            date: formattedDate, // ✅ Now correctly formatted without time zone issues
+            date: formattedDate,
             userEmail: userEmail,
-            imageUrl: imageUrl, 
+            imageUrl: imageUrl,
         };
 
         const response = await axios.post("http://localhost:5000/events", eventData, {
@@ -125,7 +128,14 @@ const AddEvent = () => {
 
         if (response.status === 201) {
             setLoading(false);
-            alert("Event created successfully!");
+            toast.success("🎉 Event added successfully!", { 
+                position: "top-center",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
 
             reset({
                 eventName: "",
@@ -138,18 +148,15 @@ const AddEvent = () => {
             });
 
             setPreviewImage(null);
-            if (fileInputRef.current) {
-                fileInputRef.current.value = "";
-            }
+            if (fileInputRef.current) fileInputRef.current.value = "";
             setSelectedLocation([]);
-
         } else {
             console.error("🚨 Unexpected Response:", response);
-            alert("Something went wrong!");
+            toast.error("Something went wrong! Please try again.", { position: "top-center" });
         }
     } catch (error) {
         console.error("🚨 Event Creation Error:", error.response ? error.response.data : error);
-        alert("Failed to create event!");
+        toast.error("Failed to create event! Try again later.", { position: "top-center" });
     }
 };
 
@@ -186,6 +193,7 @@ const AddEvent = () => {
 
   return (
     <div className="h-screen w-full">
+      <ToastContainer /> 
       <SearchBar />
       {/* Main Content */}
       <div className="h-[92%] w-full md:w-[94%] mt-0 md:mt-4 rounded-none md:rounded-2xl md:shadow-2xl ml-auto">

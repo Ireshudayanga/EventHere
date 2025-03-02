@@ -11,6 +11,7 @@ import "../ShareRide/ShareRide.css";
 import { AuthContext } from "../../context/AuthProvider";
 import { addRide } from "../../../redux/rideShareSlice";
 import { unwrapResult } from "@reduxjs/toolkit";
+import { toast, ToastContainer } from "react-toastify";
 
 const ShareRide = () => {
 
@@ -62,7 +63,9 @@ const ShareRide = () => {
     dispatch(addRide(rideData))
     .then(unwrapResult)
     .then(() => {
-      alert("Ride added successfully to Redux");
+      toast.success("Ride added successfully");
+      setLocation1("");
+      setLocation2("");
     })
     .catch((err) => console.error(err));
   };
@@ -70,6 +73,7 @@ const ShareRide = () => {
 
   return (
     <div className="h-screen w-full">
+      <ToastContainer />
       <SearchBar />
       <div className="h-full w-full md:w-[94%] mt-0 md:mt-4 rounded-none md:rounded-2xl shadow-xl md:shadow-2xl ml-auto">
         <div className="flex flex-col md:flex-row h-full p-3 md:p-7 gap-4 md:gap-5">

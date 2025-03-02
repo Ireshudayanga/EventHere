@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
 export const addRide = createAsyncThunk("rides/addRide", async (rideData) => {
-    const response = await axios.post("http://localhost:5000/rides", rideData);
+    const response = await axios.post("http://localhost:5000/rides/set-ride", rideData);
     return response.data;
 });
 
