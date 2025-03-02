@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import SearchBar from "../../components/SearchBar";
 import Button from "../../components/Button";
 import ShareRideMap from "../../components/mapType/ShareRideMap";
@@ -8,8 +8,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchEvents } from "../../../redux/eventSlice";
 import { fetchSpecialCategory } from "../../../redux/specialCategorySlice";
 import "../ShareRide/ShareRide.css";
+import { AuthContext } from "../../context/AuthProvider";
+import { addRide } from "../../../redux/rideShareSlice";
+import { unwrapResult } from "@reduxjs/toolkit";
 
 const ShareRide = () => {
+
+  const {currentUser } = useContext(AuthContext);
+
   // Pickup and Drop location states
   const [location1, setLocation1] = useState("");
   const [location2, setLocation2] = useState("");
@@ -26,6 +32,41 @@ const ShareRide = () => {
     dispatch(fetchEvents());
     dispatch(fetchSpecialCategory());
   }, [dispatch]);
+
+  const handleConfirmRide = async (type) => {
+    if (!location1 || !location2) {
+      alert("Please select both Pickup and Event locations.");
+      return;
+    }
+  
+    // Convert location strings to GeoJSON format
+    const pickupCoords = location1.split(',').map(Number);
+    const dropCoords = location2.split(',').map(Number);
+
+    console.log(pickupCoords, dropCoords);
+  
+    const rideData = {
+      userId: currentUser?.uid,  // Ensure user is logged in
+      rideType: type,
+      pickupLocation: {
+        type: "Point",
+        coordinates: [pickupCoords[1], pickupCoords[0]],  // MongoDB requires [lng, lat]
+      },
+      eventLocation: {
+        type: "Point",
+        coordinates: [dropCoords[1], dropCoords[0]],
+      },
+    };
+    
+    // Dispatch addRide action
+    dispatch(addRide(rideData))
+    .then(unwrapResult)
+    .then(() => {
+      alert("Ride added successfully to Redux");
+    })
+    .catch((err) => console.error(err));
+  };
+  
 
   return (
     <div className="h-screen w-full">
@@ -108,10 +149,10 @@ const ShareRide = () => {
 
               {/* Ride Buttons */}
               <div className="flex mt-4 md:mt-auto gap-3">
-                <Button className="bg-green-600 md:w-[150px] text-white px-4 py-2 text-base md:text-lg rounded-3xl">
+                <Button onClick={()=>handleConfirmRide("find")} className="bg-green-600 md:w-[150px] text-white px-4 py-2 text-base md:text-lg rounded-3xl">
                   Find Ride
                 </Button>
-                <Button className="bg-blue-500 md:w-[150px] text-white px-4 py-2 text-base md:text-lg rounded-3xl">
+                <Button onClick={()=>handleConfirmRide("offer")} className="bg-blue-500 md:w-[150px] text-white px-4 py-2 text-base md:text-lg rounded-3xl">
                   Offer Ride
                 </Button>
               </div>

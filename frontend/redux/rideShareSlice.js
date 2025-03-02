@@ -1,0 +1,31 @@
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
+
+export const addRide = createAsyncThunk("rides/addRide", async (rideData) => {
+    const response = await axios.post("http://localhost:5000/rides", rideData);
+    return response.data;
+});
+
+const rideShareSlice = createSlice({
+    name: "rideShare",
+    initialState: {
+        status: "idle",
+        error: null,
+    },
+    reducers: {},
+    extraReducers: (builder) => {
+        builder
+            .addCase(addRide.pending, (state) => {
+                state.status = "loading";
+            })
+            .addCase(addRide.fulfilled, (state) => {
+                state.status = "succeeded";
+            })
+            .addCase(addRide.rejected, (state, action) => {
+                state.status = "failed";
+                state.error = action.error.message;
+            });
+    },
+});
+
+export default rideShareSlice.reducer;

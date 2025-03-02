@@ -185,7 +185,7 @@ const ShareRideMap = ({
     const [isPickupSelected, setIsPickupSelected] = useState(false);
     const [routeDistance, setRouteDistance] = useState(null);
 
-    console.log("Route Distance:", routeDistance);
+    // console.log("Route Distance:", routeDistance);
 
     useEffect(() => {
         const calculateRoute = async () => {
@@ -263,6 +263,8 @@ const ShareRideMap = ({
         ? dropLocation.split(",").map((val) => parseFloat(val.trim()))
         : null;
 
+console.log("Drop Coords:", dropCoords);
+
     return (
         <div className="relative h-full w-full">
             <MapContainer center={userLocation} zoom={8} className="h-full w-full rounded-xl relative">
@@ -300,83 +302,83 @@ const ShareRideMap = ({
                                 position={[event.location.coordinates[1], event.location.coordinates[0]]}
                                 icon={categoryIcons[event.category] || markerIcons.violet}
                             >
-                               <Popup>
-  <div className="w-56 p-3 bg-white rounded-lg shadow-lg border border-gray-200">
-    {/* Event Title */}
-    <h3 className="font-semibold text-base text-gray-900 truncate">{event.title}</h3>
+                                <Popup>
+                                    <div className="w-56 p-3 bg-white rounded-lg shadow-lg border border-gray-200">
+                                        {/* Event Title */}
+                                        <h3 className="font-semibold text-base text-gray-900 truncate">{event.title}</h3>
 
-    {/* Event Description */}
-    <p className="text-xs text-gray-600 mt-1 line-clamp-3">
-      {event.description}
-    </p>
+                                        {/* Event Description */}
+                                        <p className="text-xs text-gray-600 mt-1 line-clamp-3">
+                                            {event.description}
+                                        </p>
 
-    {/* Event Details */}
-    <div className="mt-2 text-xs text-gray-700 space-y-1">
-      <p>
-        <span className="font-medium text-gray-800">Category:</span> {event.category}
-      </p>
-      <p>
-        <span className="font-medium text-gray-800">Date:</span> {new Date(event.date).toLocaleDateString()}
-      </p>
-    </div>
+                                        {/* Event Details */}
+                                        <div className="mt-2 text-xs text-gray-700 space-y-1">
+                                            <p>
+                                                <span className="font-medium text-gray-800">Category:</span> {event.category}
+                                            </p>
+                                            <p>
+                                                <span className="font-medium text-gray-800">Date:</span> {new Date(event.date).toLocaleDateString()}
+                                            </p>
+                                        </div>
 
-    {/* Event Image */}
-    {event.imageUrl && (
-      <div className="mt-2">
-        <img
-          src={event.imageUrl}
-          alt={event.title}
-          className="w-full h-20 object-cover rounded-md shadow-sm"
-        />
-      </div>
-    )}
+                                        {/* Event Image */}
+                                        {event.imageUrl && (
+                                            <div className="mt-2">
+                                                <img
+                                                    src={event.imageUrl}
+                                                    alt={event.title}
+                                                    className="w-full h-20 object-cover rounded-md shadow-sm"
+                                                />
+                                            </div>
+                                        )}
 
-    {/* Action Buttons */}
-    <div className="mt-3 flex gap-2 justify-center">
-      {onPickupSelect ? (
-        <Button
-          onClick={() => {
-            const eventLat = event.location.coordinates[1];
-            const eventLng = event.location.coordinates[0];
-            if (typeof onDropSelect === "function") {
-              onDropSelect(`${eventLat.toFixed(4)}, ${eventLng.toFixed(4)}`);
-            }
-          }}
-          className="bg-purple-600 hover:bg-purple-700 text-white font-medium px-4 py-2 text-xs rounded-lg shadow-md transition-all"
-        >
-          Select Event
-        </Button>
-      ) : (
-        <>
-          <Button
-            onClick={() => {
-              const eventLat = event.location.coordinates[1];
-              const eventLng = event.location.coordinates[0];
-              if (typeof onDropSelect === "function") {
-                onDropSelect(`${eventLat.toFixed(4)}, ${eventLng.toFixed(4)}`);
-              }
-            }}
-            className="bg-green-600 hover:bg-green-700 text-white font-medium px-4 py-2 text-xs rounded-lg shadow-md transition-all"
-          >
-            Find
-          </Button>
-          <Button
-            onClick={() => {
-              const eventLat = event.location.coordinates[1];
-              const eventLng = event.location.coordinates[0];
-              if (typeof onDropSelect === "function") {
-                onDropSelect(`${eventLat.toFixed(4)}, ${eventLng.toFixed(4)}`);
-              }
-            }}
-            className="bg-blue-500 hover:bg-blue-600 text-white font-medium px-4 py-2 text-xs rounded-lg shadow-md transition-all"
-          >
-            Offer
-          </Button>
-        </>
-      )}
-    </div>
-  </div>
-</Popup>
+                                        {/* Action Buttons */}
+                                        <div className="mt-3 flex gap-2 justify-center">
+                                            {onPickupSelect ? (
+                                                <Button
+                                                    onClick={() => {
+                                                        const eventLat = event.location.coordinates[1];
+                                                        const eventLng = event.location.coordinates[0];
+                                                        if (typeof onDropSelect === "function") {
+                                                            onDropSelect(`${eventLat.toFixed(4)}, ${eventLng.toFixed(4)}`);
+                                                        }
+                                                    }}
+                                                    className="bg-purple-600 hover:bg-purple-700 text-white font-medium px-4 py-2 text-xs rounded-lg shadow-md transition-all"
+                                                >
+                                                    Select Event
+                                                </Button>
+                                            ) : (
+                                                <>
+                                                    <Button
+                                                        onClick={() => {
+                                                            const eventLat = event.location.coordinates[1];
+                                                            const eventLng = event.location.coordinates[0];
+                                                            if (typeof onDropSelect === "function") {
+                                                                onDropSelect(`${eventLat.toFixed(4)}, ${eventLng.toFixed(4)}`);
+                                                            }
+                                                        }}
+                                                        className="bg-green-600 hover:bg-green-700 text-white font-medium px-4 py-2 text-xs rounded-lg shadow-md transition-all"
+                                                    >
+                                                        Find
+                                                    </Button>
+                                                    <Button
+                                                        onClick={() => {
+                                                            const eventLat = event.location.coordinates[1];
+                                                            const eventLng = event.location.coordinates[0];
+                                                            if (typeof onDropSelect === "function") {
+                                                                onDropSelect(`${eventLat.toFixed(4)}, ${eventLng.toFixed(4)}`);
+                                                            }
+                                                        }}
+                                                        className="bg-blue-500 hover:bg-blue-600 text-white font-medium px-4 py-2 text-xs rounded-lg shadow-md transition-all"
+                                                    >
+                                                        Offer
+                                                    </Button>
+                                                </>
+                                            )}
+                                        </div>
+                                    </div>
+                                </Popup>
 
                             </Marker>
                         ))
