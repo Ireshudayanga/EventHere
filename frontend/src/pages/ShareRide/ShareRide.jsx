@@ -12,10 +12,11 @@ import { AuthContext } from "../../context/AuthProvider";
 import { addRide } from "../../../redux/rideShareSlice";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { toast, ToastContainer } from "react-toastify";
-
+import Lottie from "lottie-react";
+import rideAnimation from "../../assets/animation/LottyLoadingHand.json";
 const ShareRide = () => {
 
-  const {currentUser } = useContext(AuthContext);
+  const { currentUser } = useContext(AuthContext);
 
   // Pickup and Drop location states
   const [location1, setLocation1] = useState("");
@@ -28,6 +29,10 @@ const ShareRide = () => {
   const dispatch = useDispatch();
   const { category: specialCategory } = useSelector((state) => state.specialCategory);
 
+  const [isRequesting, setIsRequesting] = useState(false);
+  const [isOngoing, setIsOngoing] = useState(false);
+
+  const [isHidden, setIsHidden] = useState(false);
   // Fetch events and categories on component mount
   useEffect(() => {
     dispatch(fetchEvents());
@@ -39,13 +44,13 @@ const ShareRide = () => {
       alert("Please select both Pickup and Event locations.");
       return;
     }
-  
+
     // Convert location strings to GeoJSON format
     const pickupCoords = location1.split(',').map(Number);
     const dropCoords = location2.split(',').map(Number);
 
-    console.log(pickupCoords, dropCoords);
-  
+    //console.log(pickupCoords, dropCoords);
+
     const rideData = {
       userId: currentUser?.uid,  // Ensure user is logged in
       rideType: type,
@@ -58,18 +63,29 @@ const ShareRide = () => {
         coordinates: [dropCoords[1], dropCoords[0]],
       },
     };
-    
+
     // Dispatch addRide action
     dispatch(addRide(rideData))
-    .then(unwrapResult)
-    .then(() => {
-      toast.success("Ride added successfully");
-      setLocation1("");
-      setLocation2("");
-    })
-    .catch((err) => console.error(err));
+      .then(unwrapResult)
+      .then(() => {
+        toast.success("Ride added successfully");
+        setIsRequesting(true);
+        setLocation1("");
+        setLocation2("");
+      })
+      .catch((err) => console.error(err));
   };
-  
+
+
+
+  useEffect(() => {
+    if (isRequesting) {
+      setTimeout(() => setIsHidden(true), 1200); // Delay hiding after animation completes
+    } else {
+      setIsHidden(false); // Show again when isRequesting is false
+    }
+  }, [isRequesting]);
+
 
   return (
     <div className="h-screen w-full">
@@ -77,10 +93,10 @@ const ShareRide = () => {
       <SearchBar />
       <div className="h-full w-full md:w-[94%] mt-0 md:mt-4 rounded-none md:rounded-2xl shadow-xl md:shadow-2xl ml-auto">
         <div className="flex flex-col md:flex-row h-full p-3 md:p-7 gap-4 md:gap-5">
-          
+
           {/* Left Side - Map and Communication */}
           <div className="w-full md:w-[50%] flex flex-col gap-3">
-            
+
             {/* Map Section */}
             <div className="bg-white rounded-xl md:rounded-2xl shadow-lg h-[40vh] flex-grow">
               <ShareRideMap
@@ -94,7 +110,7 @@ const ShareRide = () => {
 
             {/* Communication & Ride Status Section */}
             <div className="w-full md:max-h-52 flex flex-row gap-3 md:gap-5">
-              
+
               {/* Chat Box */}
               <div className="bg-white text-black rounded-xl md:rounded-2xl shadow-lg p-4 flex flex-col items-center justify-center text-center flex-[2] md:w-2/3">
                 <p className="text-2xl font-medium">Contact Your Partner</p>
@@ -121,52 +137,61 @@ const ShareRide = () => {
 
           {/* Right Side - Ride Selection & Pool Matching */}
           <div className="w-full md:w-[50%] flex flex-col gap-3 md:gap-5">
-            
+
             {/* Ride Selection */}
-            <div className="bg-white rounded-xl md:rounded-2xl shadow-lg p-4 flex flex-col items-center">
-              <p className="text-2xl font-medium">Choose Ride</p>
-              
-              <div className="flex my-3 md:my-6 items-center">
-                <div className="flex flex-col gap-4 justify-center">
-                  <p className="text-sm primary-color">Pickup</p>
-                  <p className="text-sm yellow-color">Event</p>
+            <div
+              className={`bg-white rounded-xl md:rounded-2xl shadow-lg p-4 flex flex-col items-center transition-all duration-700 ease-in-out ${isRequesting || availableRides ? "opacity-0 translate-y-5 pointer-events-none" : "opacity-100 translate-y-0"
+                } ${isHidden ? "hidden" : ""}`}
+            >
+              <p className="text-2xl text-stone-950 font-medium">Choose Ride</p>
+
+                <div className="flex my-3 md:my-6 items-center">
+                  <div className="flex flex-col gap-4 justify-center">
+                    <p className="text-sm primary-color">Pickup</p>
+                    <p className="text-sm yellow-color">Event</p>
+                  </div>
+
+                  <div className="w-[200px] flex flex-col gap-3 justify-center">
+                    <input
+                      type="text"
+                      placeholder="Pickup Location"
+                      value={location1}
+                      onClick={() => setActiveField("pickup")}
+                      className="text-base text-black text-center outline-none"
+                    />
+                    <hr />
+                    <input
+                      type="text"
+                      placeholder="Drop Location"
+                      value={location2}
+                      onClick={() => setActiveField("event")}
+                      className="text-base text-black text-center outline-none"
+                    />
+                  </div>
                 </div>
 
-                <div className="w-[200px] flex flex-col gap-3 justify-center">
-                  <input
-                    type="text"
-                    placeholder="Pickup Location"
-                    value={location1}
-                    onClick={() => setActiveField("pickup")}
-                    className="text-base text-black text-center outline-none"
-                  />
-                  <hr />
-                  <input
-                    type="text"
-                    placeholder="Drop Location"
-                    value={location2}
-                    onClick={() => setActiveField("event")}
-                    className="text-base text-black text-center outline-none"
-                  />
-                </div>
-              </div>
-
-              {/* Ride Buttons */}
-              <div className="flex mt-4 md:mt-auto gap-3">
-                <Button onClick={()=>handleConfirmRide("find")} className="bg-green-600 md:w-[150px] text-white px-4 py-2 text-base md:text-lg rounded-3xl">
-                  Find Ride
-                </Button>
-                <Button onClick={()=>handleConfirmRide("offer")} className="bg-blue-500 md:w-[150px] text-white px-4 py-2 text-base md:text-lg rounded-3xl">
-                  Offer Ride
-                </Button>
-              </div>
+                {/* Ride Buttons */}
+                <div className="flex mt-4 md:mt-auto gap-3">
+                  <Button onClick={() => handleConfirmRide("find")} className="bg-green-600 md:w-[150px] text-white px-4 py-2 text-base md:text-lg rounded-3xl">
+                    Find Ride
+                  </Button>
+                  <Button onClick={() => handleConfirmRide("offer")} className="bg-blue-500 md:w-[150px] text-white px-4 py-2 text-base md:text-lg rounded-3xl">
+                    Offer Ride
+                  </Button>
+                </div> 
             </div>
 
             {/* Pool Matching */}
-            <div className="bg-white rounded-xl md:rounded-2xl shadow-lg p-8 flex flex-col items-center w-full max-w-3xl mx-auto h-full">
+            <div
+              className={`bg-white rounded-xl md:rounded-2xl shadow-lg p-8 flex flex-col items-center w-full mx-auto h-full transition-all duration-700 ease-in-out ${isRequesting ? "flex-grow opacity-100" : "opacity-100"
+                }`}
+            >
               <p className="text-2xl font-medium mb-12">Pool Matching</p>
               <div className="flex flex-col md:flex-row gap-6 items-center">
-                <img src={animationGif} alt="animation" className="w-[300px] md:w-[150px] h-full" />
+                {isRequesting && !availableRides ? <div className="flex flex-col items-center">
+                <Lottie animationData={rideAnimation} className="w-40 h-40" />
+                <p className="text-xs text-center font-normal text-gray-600 ">This may take longer! Searching for a partner within a 3km range...</p>
+              </div> : <> <img src={animationGif} alt="animation" className="w-[300px] md:w-[150px] h-full" />
                 {availableRides ? (
                   <RideCard />
                 ) : (
@@ -174,6 +199,7 @@ const ShareRide = () => {
                     <p className="text-gray-400">No rides available at the moment</p>
                   </div>
                 )}
+              </>}
               </div>
             </div>
 
