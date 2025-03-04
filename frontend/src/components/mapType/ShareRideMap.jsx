@@ -6,7 +6,7 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { FaCrosshairs } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchSpecialCategory } from "../../../redux/specialCategorySlice";
+import { fetchSpecialCategory } from "../../redux/specialCategorySlice";
 import Button from "../Button";
 import { Polyline } from "react-leaflet";
 import locationIcon from '../../assets/images/location.png';
