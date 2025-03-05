@@ -5,11 +5,11 @@ import ShareRideMap from "../../components/mapType/ShareRideMap";
 import RideCard from "./RideCard";
 import animationGif from "../../assets/animation/animation.gif";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchEvents } from "../../redux/eventSlice";
-import { fetchSpecialCategory } from "../../redux/specialCategorySlice";
+import { fetchEvents } from "../../../redux/eventSlice";
+import { fetchSpecialCategory } from "../../../redux/specialCategorySlice";
 import "../ShareRide/ShareRide.css";
 import { AuthContext } from "../../context/AuthProvider";
-import { addRide } from "../../redux/rideShareSlice";
+import { addRide } from "../../../redux/rideShareSlice";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { toast, ToastContainer } from "react-toastify";
 import Lottie from "lottie-react";
@@ -70,8 +70,7 @@ const ShareRide = () => {
       .then(() => {
         toast.success("Ride added successfully");
         setIsRequesting(true);
-        setLocation1("");
-        setLocation2("");
+        
       })
       .catch((err) => console.error(err));
   };
