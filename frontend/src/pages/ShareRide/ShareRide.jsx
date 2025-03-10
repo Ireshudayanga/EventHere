@@ -201,7 +201,6 @@ const ShareRide = () => {
               </>}
               </div>
             </div>
-
           </div>
         </div>
       </div>
