@@ -207,7 +207,7 @@ const ShareRideMap = ({
                         const coords = data.routes[0].geometry.coordinates.map(coord => [coord[1], coord[0]]);
                         setRouteCoords(coords);
 
-                        // Set the route distance (in meters)
+                        // Set the route distance 
                         setRouteDistance(data.routes[0].distance);
                     }
                 } catch (error) {
