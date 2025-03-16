@@ -48,9 +48,31 @@ const ShareRide = () => {
       return;
     }
 
-    setShowRideSelection(false); // Hide ride selection
-    setIsRequesting(true); // Show loading animation
+    const pickupCoords = location1.split(',').map(Number);
+    const dropCoords = location2.split(',').map(Number);
+    
+    const rideData = {
+      userId: currentUser?.uid,  // Ensure user is logged in
+      rideType: type,
+      pickupLocation: {
+        type: "Point",
+        coordinates: [pickupCoords[1], pickupCoords[0]],  // MongoDB requires [lng, lat]
+      },
+      eventLocation: {
+        type: "Point",
+        coordinates: [dropCoords[1], dropCoords[0]],
+      },
+    };
 
+    // Dispatch addRide action
+    dispatch(addRide(rideData))
+    .then(unwrapResult)
+    .then(() => {
+      setIsRequesting(true); // Show loading animation
+      setShowRideSelection(false); // Hide ride selection
+      toast.success("Ride added successfully");
+    }).catch((err) => console.error(err));
+    
     // Simulate ride search delay
     setTimeout(() => {
       setAvailableRides(true); // Show ride results
