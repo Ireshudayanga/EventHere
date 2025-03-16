@@ -106,12 +106,12 @@ const ShareRide = () => {
 
           {/* Right Side - Ride Selection & Pool Matching */}
           <div className="w-full md:w-[50%] flex flex-col gap-3 md:gap-5">
-            <div className="bg-white rounded-xl md:rounded-2xl shadow-lg p-8 flex flex-col items-center w-full mx-auto h-full transition-all duration-700 ease-in-out">
+            <div className="bg-white rounded-xl md:rounded-2xl shadow-lg p-8 flex flex-col items-center w-full mx-auto h-full transition-all duration-700 ease-in-out justify-center  ">
               {showRideSelection ? (
                 <>
-                  <p className="md:my-auto text-2xl text-stone-950 font-medium">Choose Ride</p>
+                  <p className="text-2xl text-stone-950 font-medium">Choose Ride</p>
                   <Lottie animationData={WalkingManAnimation} className="w-40 h-40" />
-                  <div className="flex my-3 md:my-6 items-center">
+                  <div className="flex my-3 md:my-6 items-center gap-3">
                     <div className="flex flex-col gap-4 justify-center">
                       <p className="text-sm primary-color">Pickup</p>
                       <p className="text-sm yellow-color">Event</p>
