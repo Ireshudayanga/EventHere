@@ -50,7 +50,7 @@ const ShareRide = () => {
 
     const pickupCoords = location1.split(',').map(Number);
     const dropCoords = location2.split(',').map(Number);
-    
+
     const rideData = {
       userId: currentUser?.uid,  // Ensure user is logged in
       rideType: type,
@@ -66,13 +66,13 @@ const ShareRide = () => {
 
     // Dispatch addRide action
     dispatch(addRide(rideData))
-    .then(unwrapResult)
-    .then(() => {
-      setIsRequesting(true); // Show loading animation
-      setShowRideSelection(false); // Hide ride selection
-      toast.success("Ride added successfully");
-    }).catch((err) => console.error(err));
-    
+      .then(unwrapResult)
+      .then(() => {
+        setIsRequesting(true); // Show loading animation
+        setShowRideSelection(false); // Hide ride selection
+        toast.success("Ride added successfully");
+      }).catch((err) => console.error(err));
+
     // Simulate ride search delay
     setTimeout(() => {
       setAvailableRides(true); // Show ride results
