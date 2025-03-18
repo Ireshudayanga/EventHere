@@ -1,14 +1,13 @@
-
 const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
 const cors = require('cors');
-const port = process.env.PORT || 6001;
-
+const { Server } = require('socket.io');
+const http = require('http');
 require('dotenv').config();
 
-// Middleware (Optional)
-app.use(express.json()); 
+// Middleware
+app.use(express.json());
 app.use(cors());
 
 // Routes
@@ -16,17 +15,22 @@ app.get('/', (req, res) => {
     res.send('Hello, Docker hii !');
 });
 
-// Connect to MongoDB
-mongoose
-.connect(`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@eventhere-cluster.9jdmr.mongodb.net/?retryWrites=true&w=majority&appName=EventHere-Cluster`)
-.then(() => {
-    console.log('Connected to MongoDB');
-})
-.catch((error) => {
-    console.log('Error:', error.message);
-}); 
+// Create HTTP Server
+const server = http.createServer(app);
+const io = new Server(server, {
+    cors: {
+        origin: 'http://localhost:5173', // Change to frontend URL in production
+        methods: ["GET", "POST"]
+    }
+});
 
-// Import User Routes
+// MongoDB Connection
+mongoose
+    .connect(`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@eventhere-cluster.9jdmr.mongodb.net/?retryWrites=true&w=majority&appName=EventHere-Cluster`)
+    .then(() => console.log('Connected to MongoDB'))
+    .catch((error) => console.log('Error:', error.message));
+
+// Import Routes
 const userRoutes = require('./api/routers/UserRoutes');
 app.use('/users', userRoutes);
 
@@ -39,8 +43,57 @@ app.use("/api/special-category", specialCategoryRoutes);
 const rideRoutes = require('./api/routers/ShareRideRoutes');
 app.use('/rides', rideRoutes);
 
-// Start the Server
-const PORT = 5000; // Choose your port number
-app.listen(PORT, () => {
+// -------------------- CHAT FUNCTIONALITY --------------------
+
+// Chat Schema & Model
+const chatSchema = new mongoose.Schema({
+    sender: String,
+    message: String,
+    timestamp: { type: Date, default: Date.now },
+});
+
+const Chat = mongoose.model("Chat", chatSchema);
+
+// Chat Routes
+app.get("/messages", async (req, res) => {
+    try {
+        const messages = await Chat.find().sort({ timestamp: 1 });
+        res.json(messages);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.post("/messages", async (req, res) => {
+    try {
+        const { sender, message } = req.body;
+        const chatMessage = new Chat({ sender, message });
+        await chatMessage.save();
+
+        io.emit("message", chatMessage); // Real-time update
+        res.json(chatMessage);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Socket.io Handling
+io.on("connection", (socket) => {
+    console.log("User Connected:", socket.id);
+
+    socket.on("sendMessage", async (data) => {
+        const chatMessage = new Chat(data);
+        await chatMessage.save();
+        io.emit("message", chatMessage);
+    });
+
+    socket.on("disconnect", () => {
+        console.log("User Disconnected");
+    });
+});
+
+// Start Server with Socket.io
+const PORT = process.env.PORT || 5000;
+server.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });

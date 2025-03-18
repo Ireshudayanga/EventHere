@@ -10,6 +10,7 @@ import Massage from '../pages/Massage/Massage';
 import AddEvent from '../pages/Addevent/AddEvent';
 import Signup from '../components/Signup';
 import AdminPanel from '../pages/admin/AdminPanel';
+import Chat from '../pages/Massage/Chat';
 
 
 
@@ -41,7 +42,8 @@ const router = createBrowserRouter([
            },
            {
             path: "/message",
-            element: <Massage/>,
+            element: <Chat/>
+            // element: <Massage/>,
            },
            {
             path: "/add-events",
