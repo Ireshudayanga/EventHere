@@ -5,7 +5,7 @@ const cors = require('cors');
 const { Server } = require('socket.io');
 const http = require('http');
 const jwt = require("jsonwebtoken");
-
+const admin = require("firebase-admin");
 require('dotenv').config();
 const serviceAccount = {
     type: process.env.FIREBASE_TYPE,
@@ -23,6 +23,17 @@ const serviceAccount = {
 // Middleware
 app.use(express.json());
 app.use(cors());
+
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+});
+
+const generateJWT = (uid) => {
+    return jwt.sign({ uid }, process.env.JWT_SECRET, { expiresIn: "1h" });
+  };
+
+  console.log(process.env.JWT_SECRET)
+  
 
 // Routes
 app.get('/', (req, res) => {
