@@ -26,6 +26,8 @@ const Signup = () => {
     createUser(email, password).then((userCredential) => {
       const user = userCredential.user;
       console.log(user);
+      const token = userCredential._tokenResponse.idToken;
+      console.log(token);
       updateUserProfile(
         data.name,
         data.email,
@@ -33,8 +35,13 @@ const Signup = () => {
         const userInfo = {
           name: data.name,
           email: data.email,
+          token: token,
         }
-        axios.post("http://localhost:5000/users", userInfo)
+        axios.post("http://localhost:5000/users", userInfo, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
           .then((res) => {
             alert("SignUp successful!");
           })
@@ -59,12 +66,17 @@ const Signup = () => {
   const googleSignIn = () => {
     signInWithGoogle().then((userCredential) => {
       const user = userCredential.user;
+      const token = userCredential._tokenResponse.idToken;
       // console.log(user);
       const userInfo = {
         name: user.displayName,
         email: user.email,
       }
-      axios.post("http://localhost:5000/users", userInfo)
+      axios.post("http://localhost:5000/users", userInfo, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
         .then((res) => {
           alert("SignUp successful!");
           navigate("/events");
