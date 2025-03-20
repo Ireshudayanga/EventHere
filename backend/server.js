@@ -1,69 +1,68 @@
+require('dotenv').config();
 const express = require('express');
-const app = express();
 const mongoose = require('mongoose');
 const cors = require('cors');
-const { Server } = require('socket.io');
 const http = require('http');
-const jwt = require("jsonwebtoken");
+const { Server } = require('socket.io');
 const admin = require("firebase-admin");
-require('dotenv').config();
+const PORT = process.env.PORT || 5000;
 
+// Initialize Express App
+const app = express();
+
+// Middleware
+app.use(express.json());
+app.use(cors());
+
+// Firebase Admin Setup
 const serviceAccount = {
     type: process.env.TYPE,
     project_id: process.env.PROJECT_ID,
     private_key_id: process.env.PRIVATE_KEY_ID,
-    private_key: process.env.PRIVATE_KEY.replace(/\\n/g, "\n"), // Fix newlines
+    private_key: process.env.PRIVATE_KEY.replace(/\\n/g, "\n"), // Ensure proper format
     client_email: process.env.CLIENT_EMAIL,
     client_id: process.env.CLIENT_ID,
     auth_uri: process.env.AUTH_URI,
     token_uri: process.env.TOKEN_URI,
     auth_provider_x509_cert_url: process.env.AUTH_PROVIDER_CERT_URI,
     client_x509_cert_url: process.env.CLIENT_CERT_URI,
-  };
-
-// Middleware
-app.use(express.json());
-app.use(cors());
+};
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
 });
 
+// MongoDB Connection
+const connectDB = async () => {
+    try {
+        await mongoose.connect(
+            `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@eventhere-cluster.9jdmr.mongodb.net/?retryWrites=true&w=majority&appName=EventHere-Cluster`
+        );
+        console.log('✅ Connected to MongoDB');
+    } catch (error) {
+        console.error('❌ MongoDB Connection Error:', error.message);
+        process.exit(1);
+    }
+};
+
+connectDB();
 
 // Routes
 app.get('/', (req, res) => {
-    res.send('Hello, Docker hii !');
+    res.send('Hello, Docker!');
 });
 
-// Create HTTP Server
-const server = http.createServer(app);
-const io = new Server(server, {
-    cors: {
-        origin: 'http://localhost:5173', // Change to frontend URL in production
-        methods: ["GET", "POST"]
-    }
-});
-
-// MongoDB Connection
-mongoose
-    .connect(`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@eventhere-cluster.9jdmr.mongodb.net/?retryWrites=true&w=majority&appName=EventHere-Cluster`)
-    .then(() => console.log('Connected to MongoDB'))
-    .catch((error) => console.log('Error:', error.message));
-
-// Import Routes
+// Import & Use Routes
 const userRoutes = require('./api/routers/UserRoutes');
-app.use('/users', userRoutes);
-
 const eventRoutes = require('./api/routers/EventRoutes');
-app.use('/events', eventRoutes);
-
 const specialCategoryRoutes = require("./api/routers/SpecialCategoryRoutes");
-app.use("/api/special-category", specialCategoryRoutes);
-
 const rideRoutes = require('./api/routers/ShareRideRoutes');
-app.use('/rides', rideRoutes);
-
 const tokenRoutes = require('./api/routers/TokenRoutes');
+
+app.use('/users', userRoutes);
+app.use('/events', eventRoutes);
+app.use("/api/special-category", specialCategoryRoutes);
+app.use('/rides', rideRoutes);
 app.use('/jwt', tokenRoutes);
 
 // -------------------- CHAT FUNCTIONALITY --------------------
@@ -100,23 +99,39 @@ app.post("/messages", async (req, res) => {
     }
 });
 
-// Socket.io Handling
+// -------------------- SOCKET.IO SETUP --------------------
+
+// Create HTTP Server & WebSocket
+const server = http.createServer(app);
+const io = new Server(server, {
+    cors: {
+        origin: 'http://localhost:5173', // Change to frontend URL in production
+        methods: ["GET", "POST"]
+    }
+});
+
+// Handle WebSocket Connections
 io.on("connection", (socket) => {
-    console.log("User Connected:", socket.id);
+    console.log(`🔵 User Connected: ${socket.id}`);
 
     socket.on("sendMessage", async (data) => {
-        const chatMessage = new Chat(data);
-        await chatMessage.save();
-        io.emit("message", chatMessage);
+        try {
+            const chatMessage = new Chat(data);
+            await chatMessage.save();
+            io.emit("message", chatMessage);
+        } catch (error) {
+            console.error("❌ Chat Save Error:", error.message);
+        }
     });
 
     socket.on("disconnect", () => {
-        console.log("User Disconnected");
+        console.log("🔴 User Disconnected");
     });
 });
 
-// Start Server with Socket.io
-const PORT = process.env.PORT || 5000;
+
+// -------------------- START SERVER --------------------
+
 server.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+    console.log(`🚀 Server running at http://localhost:${PORT}`);
 });
