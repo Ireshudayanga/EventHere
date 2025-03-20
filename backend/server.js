@@ -7,6 +7,7 @@ const http = require('http');
 const jwt = require("jsonwebtoken");
 const admin = require("firebase-admin");
 require('dotenv').config();
+
 const serviceAccount = {
     type: process.env.TYPE,
     project_id: process.env.PROJECT_ID,
@@ -28,10 +29,18 @@ admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
 });
 
-const generateJWT = (uid) => {
-    return jwt.sign({ uid }, process.env.JWT_SECRET, { expiresIn: "1h" });
-  };
-  
+const AuthenticateFirebaseToken = (req, res, next) => {
+    const token = req.headers.Authorization?.split(" ")[1];
+    if (!token) return res.status(401).json({ error: "Unauthorized: No token provided Access" });
+
+    admin.auth().verifyIdToken(token)
+    .then((decodedToken) => {
+        req.user = decodedToken;
+        next();
+    }).catch((error) => {
+        return res.status(401).json({ error: "Unauthorized: Invalid token" });
+    })
+}
 
 // Routes
 app.get('/', (req, res) => {

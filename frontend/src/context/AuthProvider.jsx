@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 import React, { createContext, useState, useEffect } from "react";
 import { auth, createUser, signInWithGoogle, login, logout, updateUserProfile } from "../firebase/authService"; // Import functions
+import axios from "axios";
 
 export const AuthContext = createContext();
 
@@ -11,7 +12,23 @@ const AuthProvider = ({ children }) => {
   // Listen for authentication state changes
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(user => {
-      setCurrentUser(user);
+      if(user){
+        setCurrentUser(user);
+
+        user.getIdToken()
+        .then((idToken) => {
+          return axios.post("http://localhost:5000/jwt", {token: idToken });
+        })
+        .then((response) => {
+          localStorage.setItem("access-token",response.data.token);
+        })
+        .catch((error) => {
+          console.error("Error fetching or sending token:", error);
+        });
+      } else{
+        setCurrentUser(null);
+        localStorage.removeItem("access-token");
+      }
       setLoading(false);
     });
 
