@@ -15,7 +15,6 @@ const AuthProvider = ({ children }) => {
     const unsubscribe = auth.onAuthStateChanged(user => {
       if(user){
         setCurrentUser(user);
-
         user.getIdToken()
         .then((idToken) => {
           return axios.post("http://localhost:5000/jwt", {token: idToken });

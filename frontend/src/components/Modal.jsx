@@ -22,7 +22,6 @@ const Modal = () => {
         setLoading(true);
         const email = data.email;
         const password = data.password;
-    
         // Login User
         login(email, password)
             .then(() => {
@@ -45,7 +44,7 @@ const Modal = () => {
             const token = userCredential._tokenResponse.idToken;
             const userInfo = { name: user.displayName, email: user.email };
             axios.post("http://localhost:5000/users", userInfo)
-            .then((res) => {
+            .then(() => {
               alert("SignUp successful!");
             })
             .catch((error) => {

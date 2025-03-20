@@ -29,18 +29,6 @@ admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
 });
 
-const AuthenticateFirebaseToken = (req, res, next) => {
-    const token = req.headers.Authorization?.split(" ")[1];
-    if (!token) return res.status(401).json({ error: "Unauthorized: No token provided Access" });
-
-    admin.auth().verifyIdToken(token)
-    .then((decodedToken) => {
-        req.user = decodedToken;
-        next();
-    }).catch((error) => {
-        return res.status(401).json({ error: "Unauthorized: Invalid token" });
-    })
-}
 
 // Routes
 app.get('/', (req, res) => {
@@ -74,6 +62,9 @@ app.use("/api/special-category", specialCategoryRoutes);
 
 const rideRoutes = require('./api/routers/ShareRideRoutes');
 app.use('/rides', rideRoutes);
+
+const tokenRoutes = require('./api/routers/TokenRoutes');
+app.use('/jwt', tokenRoutes);
 
 // -------------------- CHAT FUNCTIONALITY --------------------
 

@@ -26,8 +26,6 @@ const Signup = () => {
     createUser(email, password).then((userCredential) => {
       const user = userCredential.user;
       console.log(user);
-      const token = userCredential._tokenResponse.idToken;
-      console.log(token);
       updateUserProfile(
         data.name,
         data.email,
@@ -35,10 +33,9 @@ const Signup = () => {
         const userInfo = {
           name: data.name,
           email: data.email,
-          token: token,
         }
         axios.post("http://localhost:5000/users", userInfo)
-          .then((res) => {
+          .then(() => {
             alert("SignUp successful!");
           })
           .catch((error) => {
@@ -62,8 +59,7 @@ const Signup = () => {
   const googleSignIn = () => {
     signInWithGoogle().then((userCredential) => {
       const user = userCredential.user;
-      const token = userCredential._tokenResponse.idToken;
-      // console.log(user);
+      console.log(user);
       const userInfo = {
         name: user.displayName,
         email: user.email,
