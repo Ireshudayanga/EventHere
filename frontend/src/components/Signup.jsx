@@ -37,11 +37,7 @@ const Signup = () => {
           email: data.email,
           token: token,
         }
-        axios.post("http://localhost:5000/users", userInfo, {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        })
+        axios.post("http://localhost:5000/users", userInfo)
           .then((res) => {
             alert("SignUp successful!");
           })
@@ -72,11 +68,7 @@ const Signup = () => {
         name: user.displayName,
         email: user.email,
       }
-      axios.post("http://localhost:5000/users", userInfo, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      })
+      axios.post("http://localhost:5000/users", userInfo)
         .then((res) => {
           alert("SignUp successful!");
           navigate("/events");

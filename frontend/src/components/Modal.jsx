@@ -25,23 +25,7 @@ const Modal = () => {
     
         // Login User
         login(email, password)
-            .then((userCredential) => {
-                const user = userCredential.user;
-                console.log(user);
-    
-                // Get Firebase Token
-                return user.getIdToken(); // Return the promise so the next `.then()` waits
-            })
-            .then((token) => {
-                console.log("Firebase Token:", token);
-    
-                // Send token to backend
-                return axios.post("http://localhost:5000/auth/token", {}, {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
-            })
-            .then((res) => {
-                console.log("Backend Response:", res.data);
+            .then(() => {
                 alert("Login successful!");
                 navigate("/events");
             })
@@ -60,11 +44,7 @@ const Modal = () => {
             const user = userCredential.user;
             const token = userCredential._tokenResponse.idToken;
             const userInfo = { name: user.displayName, email: user.email };
-            axios.post("http://localhost:5000/users", userInfo, {
-                headers: {
-                  Authorization: `Bearer ${token}`
-                }
-              })
+            axios.post("http://localhost:5000/users", userInfo)
             .then((res) => {
               alert("SignUp successful!");
             })
