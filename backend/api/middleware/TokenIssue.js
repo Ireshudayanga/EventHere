@@ -10,7 +10,7 @@ const TokenIssue = async (req, res) => {
 
         // Verify Firebase Token
         const decodedToken = await admin.auth().verifyIdToken(token);
-        console.log("Decoded Firebase Token:", decodedToken); // Debugging
+        //console.log("Decoded Firebase Token:", decodedToken); // Debugging
 
         const appJWT = jwt.sign(
             { uid: decodedToken.uid, email: decodedToken.email },
