@@ -14,48 +14,50 @@ import Chat from '../pages/Massage/Chat';
 
 
 
+
 const router = createBrowserRouter([
     {
         path: "/",
         element: <Main />,
-        children: [            {
-                path: "/",
-                element: <Home />,
-            },
-            {
-                path: "/admin",
-                element: <AdminPanel />,
-            },
-           
+        children: [{
+            path: "/",
+            element: <Home />,
+        },
+        {
+            path: "/admin",
+            element: <AdminPanel />,
+        },
+
         ]
     },
     {
         path: "/",
         element: <Dashboard />,
-        children: [            {
+        children: [
+        {
             path: "/events",
-            element: <EventPage/>,
-            },
-           {
+            element: <privateRouter> <EventPage /> </privateRouter>
+        },
+        {
             path: "/share-ride",
-            element: <ShareRide/>,
-           },
-           {
+            element: <ShareRide />,
+        },
+        {
             path: "/message",
-            element: <Chat/>
+            element: <Chat />
             // element: <Massage/>,
-           },
-           {
+        },
+        {
             path: "/add-events",
-            element: <AddEvent/>,
-           },
+            element: <AddEvent />,
+        },
         ]
     },
     {
         path: "/signup",
         element: <Signup />,
     },
-   
-    
+
+
 ])
 export default router

@@ -1,117 +1,113 @@
 import React, { useContext, useState } from "react";
-import { Link, useNavigate } from "react-router-dom"; // Import the hook for navigation
+import { Link } from "react-router-dom";
 import logo from "../assets/images/300PPI.png";
 import { AuthContext } from "../context/AuthProvider";
 import Modal from "./Modal";
 
 const Navbar = () => {
-  const [activePage, setActivePage] = useState("Home");
-  const [isMenuOpen, setIsMenuOpen] = useState(false); // State to handle menu toggle
-  const navigate = useNavigate();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { currentUser, logout } = useContext(AuthContext);
-  const navItems = ["Home", "Events", "Calendar", "Volunteer", "Explore"];
 
-  const handleNavigation = (item) => {
-    setActivePage(item);
-    setIsMenuOpen(false); // Close menu after navigation 
-    navigate(item === "Home" ? "/" : `/${item.toLowerCase()}`);
-  };
+  const navItems = [
+    { name: "Home", href: "/" },
+    { name: "Events", href: "/events" },
+    { name: "Calendar", href: "/calendar" },
+    { name: "Volunteer", href: "/volunteer" },
+    { name: "Explore", href: "/explore" },
+  ];
 
   const handleLogout = () => {
-    logout().then(() => {
-      navigate("/");
-    }).catch((error) => {
-      console.error("Error:", error);
-      alert("Logout failed. Please try again.");
-    })};
-    
-      // console.log(currentUser);
+    logout()
+      .then(() => (window.location.href = "/"))
+      .catch((error) => {
+        console.error("Error:", error);
+        alert("Logout failed. Please try again.");
+      });
+  };
 
-    return (
-      <div className="mx-4 sm:mx-10 lg:mx-20 flex flex-row items-center justify-between py-4">
-        {/* Logo Section */}
-        <div className="flex items-center justify-between w-full lg:w-auto">
-          <div className="w-28 sm:w-36 lg:w-52">
-            <img src={logo} alt="EventHere Logo" />
-          </div>
-
-          {/* Hamburger Menu Icon */}
-          <div className="lg:hidden flex items-center">
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-white focus:outline-none"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-6 h-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                {isMenuOpen ? (
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                ) : (
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M4 6h16M4 12h16M4 18h16"
-                  />
-                )}
-              </svg>
-            </button>
-          </div>
+  return (
+    <div className="mx-4 sm:mx-10 lg:mx-20 flex flex-row items-center justify-between py-4">
+      {/* Logo Section */}
+      <div className="flex items-center justify-between w-full lg:w-auto">
+        <div className="w-28 sm:w-36 lg:w-52">
+          <img src={logo} alt="EventHere Logo" />
         </div>
 
-        {/* Navigation Section */}
-        <div
-          className={`${isMenuOpen ? "block" : "hidden"
-            } absolute lg:static top-16 left-0 w-full bg-[#1A73E8] lg:bg-transparent lg:block z-50`}
-        >
-          <ul className="flex flex-col lg:flex-row items-center lg:gap-6 py-4 lg:py-0">
-            {navItems.map((item) => (
-              <li
-                key={item}
-                className={`ml-4 relative px-5 py-2 lg:py-0 text-white cursor-pointer ${activePage === item ? "font-bold" : "font-normal"
-                  }`}
-                onClick={() => handleNavigation(item)}
-              >
-                {item}
-                {activePage === item && (
-                  <span className="absolute bottom-[-4px] left-0 w-full h-1 bg-white rounded-full" />
-                )}
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* Right Section */}
-        <div className="hidden lg:flex items-center gap-6">
-          {/* Search Icon */}
-          <div className="w-6 h-6">
+        {/* Hamburger Menu Icon */}
+        <div className="lg:hidden flex items-center">
+          <button
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="text-white focus:outline-none"
+          >
             <svg
-              clipRule="evenodd"
-              fillRule="evenodd"
-              strokeLinejoin="round"
-              strokeMiterlimit="2"
-              viewBox="0 0 24 24"
               xmlns="http://www.w3.org/2000/svg"
-              className="w-full h-full"
+              className="w-6 h-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
             >
-              <path
-                d="m15.97 17.031c-1.479 1.238-3.384 1.985-5.461 1.985-4.697 0-8.509-3.812-8.509-8.508s3.812-8.508 8.509-8.508c4.695 0 8.508 3.812 8.508 8.508 0 2.078-.747 3.984-1.985 5.461l4.749 4.75c.146.146.219.338.219.531 0 .587-.537.75-.75.75-.192 0-.384-.073-.531-.22zm-5.461-13.53c-3.868 0-7.007 3.14-7.007 7.007s3.139 7.007 7.007 7.007c3.866 0 7.007-3.14 7.007-7.007s-3.141-7.007-7.007-7.007z"
-                fill="#ffffff"
-              />
+              {isMenuOpen ? (
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              ) : (
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
+              )}
             </svg>
-          </div>
+          </button>
+        </div>
+      </div>
 
-          {/* Login Button */}
-          {currentUser ? <button onClick={handleLogout} className="custom-button flex items-center gap-2 px-4 py-2">
+      {/* Navigation Section */}
+      <div
+        className={`${isMenuOpen ? "block" : "hidden"
+          } absolute lg:static top-16 left-0 w-full bg-[#1A73E8] lg:bg-transparent lg:block z-50`}
+      >
+        <ul className="flex flex-col lg:flex-row items-center lg:gap-6 py-4 lg:py-0">
+          {navItems.map((item) => (
+            <li key={item.name} className="ml-4 px-5 py-2 lg:py-0 text-white">
+              <Link to={item.href} className="hover:underline">
+                {item.name}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Right Section */}
+      <div className="hidden lg:flex items-center gap-6">
+        {/* Search Icon */}
+        <div className="w-6 h-6">
+          <svg
+            clipRule="evenodd"
+            fillRule="evenodd"
+            strokeLinejoin="round"
+            strokeMiterlimit="2"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+            className="w-full h-full"
+          >
+            <path
+              d="m15.97 17.031c-1.479 1.238-3.384 1.985-5.461 1.985-4.697 0-8.509-3.812-8.509-8.508s3.812-8.508 8.509-8.508c4.695 0 8.508 3.812 8.508 8.508 0 2.078-.747 3.984-1.985 5.461l4.749 4.75c.146.146.219.338.219.531 0 .587-.537.75-.75.75-.192 0-.384-.073-.531-.22zm-5.461-13.53c-3.868 0-7.007 3.14-7.007 7.007s3.139 7.007 7.007 7.007c3.866 0 7.007-3.14 7.007-7.007s-3.141-7.007-7.007-7.007z"
+              fill="#ffffff"
+            />
+          </svg>
+        </div>
+
+        {/* Login/Logout Button */}
+        {currentUser ? (
+          <button
+            onClick={handleLogout}
+            className="custom-button flex items-center gap-2 px-4 py-2"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
@@ -124,7 +120,12 @@ const Navbar = () => {
               />
             </svg>
             <span>Logout</span>
-          </button> : <button onClick={() => document.getElementById("LoginModel").showModal()} className="custom-button flex items-center gap-2 px-4 py-2">
+          </button>
+        ) : (
+          <button
+            onClick={() => document.getElementById("LoginModel").showModal()}
+            className="custom-button flex items-center gap-2 px-4 py-2"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
@@ -137,13 +138,13 @@ const Navbar = () => {
               />
             </svg>
             <span>Login</span>
-          </button>}
+          </button>
+        )}
 
-          <Modal />
-
-        </div>
+        <Modal />
       </div>
-    );
-  };
+    </div>
+  );
+};
 
-  export default Navbar;
+export default Navbar;
