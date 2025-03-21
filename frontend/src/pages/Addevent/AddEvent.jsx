@@ -10,6 +10,7 @@ import { use } from 'react';
 import { AuthContext } from '../../context/AuthProvider';
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import useAxiosPublic from '../../hooks/useAxiosPublic';
 
 
 
@@ -27,6 +28,7 @@ const AddEvent = () => {
   const [loading, setLoading] = useState(false);
   const [specialCategory, setSpecialCategory] = useState(null);
 
+  const axiosPublic = useAxiosPublic();
 
   useEffect(() => {
     const fetchUserEmail = async () => {
@@ -41,7 +43,7 @@ const AddEvent = () => {
     const defaultCategories = ["entertainment", "volunteer", "traditional"];
 
     // Fetch the special category from the backend
-    axios.get("http://localhost:5000/api/special-category/active")
+    axiosPublic.get("/api/special-category/active")
       .then((res) => {
         if (res.data.success) {
           setSpecialCategory(res.data.category);

@@ -2,16 +2,22 @@
 import { useState, useEffect } from "react";
 import io from "socket.io-client";
 import axios from "axios";
+import useAxiosPublic from "../../hooks/useAxiosPublic";
 
-const socket = io("http://localhost:5000"); // Update with your backend URL
+const socket = io("http://localhost:5000");
+
+ // Update with your backend URL
 
 const Chat = () => {
+
+    const axiosPublic = useAxiosPublic();
+   
     const [messages, setMessages] = useState([]);
     const [message, setMessage] = useState("");
     const [username, setUsername] = useState("");
 
     useEffect(() => {
-        axios.get("http://localhost:5000/messages")
+        axiosPublic.get("/messages")
             .then(res => setMessages(res.data))
             .catch(err => console.error(err));
 

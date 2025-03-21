@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
 import forwardArrow from "../../assets/svg/ForwardArrow.svg";
 import axios from "axios";
+import useAxiosPublic from "../../hooks/useAxiosPublic";
 
 const UpcommingCard = () => {
   const [cardData, setCardData] = useState([]);
+  const  axiosPublic = useAxiosPublic();
 
   useEffect(() => {
-    axios.get("http://localhost:5000/events")
+    axiosPublic.get("/events")
       .then((response) => {
         setCardData(response.data); // Axios automatically parses JSON
       })

@@ -6,6 +6,7 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { AiOutlineClose } from "react-icons/ai";
 import { AuthContext } from "../context/AuthProvider";
 import axios from "axios";
+import useAxiosPublic from "../hooks/useAxiosPublic";
 const Signup = () => {
   const { register, handleSubmit, watch, formState: { errors } } = useForm();
   const [loading, setLoading] = useState(false);
@@ -14,6 +15,7 @@ const Signup = () => {
   const navigate = useNavigate();
 
   const { createUser, signInWithGoogle, updateUserProfile, user } = useContext(AuthContext);
+  const axiosPublic = useAxiosPublic();
 
   // User Signup Using Email and Password
   const onSubmit = (data) => {
@@ -34,7 +36,7 @@ const Signup = () => {
           name: data.name,
           email: data.email,
         }
-        axios.post("http://localhost:5000/users", userInfo)
+        axiosPublic.post("/users", userInfo)
           .then(() => {
             alert("SignUp successful!");
           })
@@ -64,7 +66,7 @@ const Signup = () => {
         name: user.displayName,
         email: user.email,
       }
-      axios.post("http://localhost:5000/users", userInfo)
+      axiosPublic.post("/users", userInfo)
         .then((res) => {
           alert("SignUp successful!");
           navigate("/events");

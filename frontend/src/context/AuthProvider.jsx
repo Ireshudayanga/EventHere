@@ -3,13 +3,16 @@
 import React, { createContext, useState, useEffect } from "react";
 import { auth, createUser, signInWithGoogle, login, logout, updateUserProfile } from "../firebase/authService"; // Import functions
 import axios from "axios";
+import useAxiosPublic from "../hooks/useAxiosPublic";
 
 export const AuthContext = createContext();
+
 
 const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
-
+  const  axiosPublic = useAxiosPublic();
+  
   // Listen for authentication state changes
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(user => {
@@ -17,7 +20,7 @@ const AuthProvider = ({ children }) => {
         setCurrentUser(user);
         user.getIdToken()
         .then((idToken) => {
-          return axios.post("http://localhost:5000/jwt", {token: idToken });
+          return axiosPublic.post("/jwt", {token: idToken });
         })
         .then((response) => {
           localStorage.setItem("access-token",response.data.token);

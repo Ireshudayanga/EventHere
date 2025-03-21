@@ -6,6 +6,7 @@ import { FcGoogle } from 'react-icons/fc';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthProvider';
 import axios from 'axios';
+import useAxiosPublic from '../hooks/useAxiosPublic';
 
 
 const Modal = () => {
@@ -14,6 +15,7 @@ const Modal = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const navigate = useNavigate();
+    const axiosPublic = useAxiosPublic()
 
     // User Signup Using Email and Password
     const {login, signInWithGoogle} = useContext(AuthContext);
@@ -43,7 +45,7 @@ const Modal = () => {
             const user = userCredential.user;
             const token = userCredential._tokenResponse.idToken;
             const userInfo = { name: user.displayName, email: user.email };
-            axios.post("http://localhost:5000/users", userInfo)
+            axiosPublic.post("/users", userInfo)
             .then(() => {
               alert("SignUp successful!");
             })
