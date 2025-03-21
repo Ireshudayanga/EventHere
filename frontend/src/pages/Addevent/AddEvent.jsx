@@ -11,6 +11,7 @@ import { AuthContext } from '../../context/AuthProvider';
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import useAxiosPublic from '../../hooks/useAxiosPublic';
+import useAxiosSecure from '../../hooks/useAxiosSecure';
 
 
 
@@ -29,6 +30,7 @@ const AddEvent = () => {
   const [specialCategory, setSpecialCategory] = useState(null);
 
   const axiosPublic = useAxiosPublic();
+  const axiosSecure = useAxiosSecure();
 
   useEffect(() => {
     const fetchUserEmail = async () => {
@@ -58,6 +60,7 @@ const AddEvent = () => {
         console.error("Error fetching special category:", err);
         setCategories([...defaultCategories]); // If error, fallback to default categories
       });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
 
@@ -88,7 +91,7 @@ const AddEvent = () => {
 
   const onSubmit = async (data) => {
     setLoading(true);
-    const token = localStorage.getItem("access-token");
+   
     if (selectedLocation.length === 0) {
         setLocationError(true);
         setError("eventLocation", { type: "manual", message: "Please choose a location on the map!" });
@@ -124,12 +127,7 @@ const AddEvent = () => {
             imageUrl: imageUrl,
         };
 
-        const response = await axios.post("http://localhost:5000/events", eventData, {
-          headers: {
-            "Authorization": `Bearer ${token}`
-          }
-          
-        });
+        const response = await axiosSecure.post("events", eventData);
 
         if (response.status === 201) {
             setLoading(false);
