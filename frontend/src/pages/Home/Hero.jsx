@@ -1,6 +1,9 @@
-import React from 'react'
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Hero = () => {
+    const navigate = useNavigate();
+
     return (
         <div className='mt-16 mb-72 hero-section'>
             <div className='text-3xl md:text-5xl lg:text-7xl text-center leading-snug lg:leading-tight font-semibold'>
@@ -14,11 +17,13 @@ const Hero = () => {
 
             {/* Hero Buttons */}
             <div className='flex justify-center space-x-8 md:space-x-16 lg:space-x-24 my-8 md:my-16 lg:my-24'>
-                <button className='primarybutton'>Explore Event</button>
+                <button onClick={() => navigate('/events')} className='primarybutton'>
+                    Explore Event
+                </button>
                 <button className='secondarybutton'>Find Ride</button>
             </div>
         </div>
-    )
-}
+    );
+};
 
-export default Hero
+export default Hero;
