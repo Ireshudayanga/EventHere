@@ -86,7 +86,7 @@ const AddEvent = () => {
 
   const onSubmit = async (data) => {
     setLoading(true);
-
+    const token = localStorage.getItem("access-token");
     if (selectedLocation.length === 0) {
         setLocationError(true);
         setError("eventLocation", { type: "manual", message: "Please choose a location on the map!" });
@@ -123,7 +123,10 @@ const AddEvent = () => {
         };
 
         const response = await axios.post("http://localhost:5000/events", eventData, {
-            headers: { "Content-Type": "application/json" },
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+          
         });
 
         if (response.status === 201) {

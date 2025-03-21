@@ -13,7 +13,7 @@ const createUser = async (req, res) => {
     const user = req.body;
     const email = user.email
 
-    console.log(email)
+    //console.log(email)
 
     try {
         const existingUser = await User.findOne({ email });
