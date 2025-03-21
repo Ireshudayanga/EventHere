@@ -11,6 +11,7 @@ import AddEvent from '../pages/Addevent/AddEvent';
 import Signup from '../components/Signup';
 import AdminPanel from '../pages/admin/AdminPanel';
 import Chat from '../pages/Massage/Chat';
+import PrivateRouter from '../privetRouter/privateRouter';
 
 
 
@@ -36,7 +37,7 @@ const router = createBrowserRouter([
         children: [
         {
             path: "/events",
-            element: <privateRouter> <EventPage /> </privateRouter>
+            element: <PrivateRouter><EventPage /> </PrivateRouter>
         },
         {
             path: "/share-ride",
