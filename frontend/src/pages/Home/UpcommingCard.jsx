@@ -15,6 +15,7 @@ const UpcommingCard = () => {
       .catch((error) => {
         console.error("Error fetching event data:", error.message);
       });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
 
