@@ -59,7 +59,7 @@ const Signup = () => {
   const googleSignIn = () => {
     signInWithGoogle().then((userCredential) => {
       const user = userCredential.user;
-      console.log(user);
+      //console.log(user);
       const userInfo = {
         name: user.displayName,
         email: user.email,
@@ -68,7 +68,7 @@ const Signup = () => {
         .then((res) => {
           alert("SignUp successful!");
           navigate("/events");
-          console.log(user);
+          //console.log(user);
         })
         .catch((error) => {
           console.error("Error signing up:", error);

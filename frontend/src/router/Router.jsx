@@ -33,11 +33,11 @@ const router = createBrowserRouter([
     },
     {
         path: "/",
-        element: <Dashboard />,
+        element:<PrivateRouter> <Dashboard />  </PrivateRouter>,
         children: [
         {
             path: "/events",
-            element: <PrivateRouter><EventPage /> </PrivateRouter>
+            element: <EventPage />
         },
         {
             path: "/share-ride",

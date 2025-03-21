@@ -11,13 +11,17 @@ const getAllUsers = async (req, res) => {
 
 const createUser = async (req, res) => {
     const user = req.body;
-    const email = { email: user.email };
+    const email = user.email
+
+    console.log(email)
 
     try {
-        const existingUser = await User.findOne(email);
+        const existingUser = await User.findOne({ email });
+
         if (existingUser) {
-            return res.status(400).json({ message: 'User already exists' }); // ✅ Added return
+            return res.status(200).json(existingUser); // Just return existing user
         }
+
 
         const result = await User.create(user);
         return res.status(201).json(result); // ✅ Added return

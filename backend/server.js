@@ -52,6 +52,8 @@ app.get('/', (req, res) => {
     res.send('Hello, Docker!');
 });
 
+// -------------------- ROUTES --------------------
+
 // Import & Use Routes
 const userRoutes = require('./api/routers/UserRoutes');
 const eventRoutes = require('./api/routers/EventRoutes');
