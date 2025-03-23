@@ -1,22 +1,23 @@
+// 📦 axiosSecure.js
 import axios from 'axios';
-import { useContext, useEffect } from 'react';
+import { useContext, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthProvider';
-import useAxiosPublic from './useAxiosPublic';
+
+// 🔁 create only once outside the hook
+const axiosSecureInstance = axios.create({
+  baseURL: 'http://localhost:5000',
+});
 
 const useAxiosSecure = () => {
   const navigate = useNavigate();
   const { logout } = useContext(AuthContext);
-  const axiosPublic = useAxiosPublic(); // ✅ Call the hook here
 
-  const axiosSecure = axios.create({
-    baseURL: axiosPublic.defaults.baseURL, // ✅ Now this works
-  });
-
-  useEffect(() => {
-    const requestInterceptor = axiosSecure.interceptors.request.use(
+  useMemo(() => {
+    const requestInterceptor = axiosSecureInstance.interceptors.request.use(
       (config) => {
         const token = localStorage.getItem('access-token');
+        // console.log('🛂 Attaching token:', token); // <--- This should now log ✅
         if (token) {
           config.headers.Authorization = `Bearer ${token}`;
         }
@@ -25,26 +26,24 @@ const useAxiosSecure = () => {
       (error) => Promise.reject(error)
     );
 
-    const responseInterceptor = axiosSecure.interceptors.response.use(
-      (response) => response,
-      (error) => {
-        if (error.response?.status === 401 || error.response?.status === 403) {
+    const responseInterceptor = axiosSecureInstance.interceptors.response.use(
+      (res) => res,
+      (err) => {
+        if (err.response?.status === 401 || err.response?.status === 403) {
           logout();
           navigate('/signup');
         }
-        return Promise.reject(error);
+        return Promise.reject(err);
       }
     );
 
-    // 🧼 Clean up interceptors when unmounted
     return () => {
-      axiosSecure.interceptors.request.eject(requestInterceptor);
-      axiosSecure.interceptors.response.eject(responseInterceptor);
+      axiosSecureInstance.interceptors.request.eject(requestInterceptor);
+      axiosSecureInstance.interceptors.response.eject(responseInterceptor);
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [logout, navigate]);
+  }, [logout, navigate]); // ✅ Run only once per mount
 
-  return axiosSecure;
+  return axiosSecureInstance;
 };
 
 export default useAxiosSecure;

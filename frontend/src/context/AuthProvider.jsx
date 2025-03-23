@@ -36,6 +36,7 @@ const AuthProvider = ({ children }) => {
     });
 
     return unsubscribe; // Cleanup on unmount
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const authInfo = {

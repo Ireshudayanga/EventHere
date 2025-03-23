@@ -127,7 +127,7 @@ const AddEvent = () => {
             imageUrl: imageUrl,
         };
 
-        const response = await axiosSecure.post("events", eventData);
+        const response = await axiosSecure.post("/events", eventData);
 
         if (response.status === 201) {
             setLoading(false);
