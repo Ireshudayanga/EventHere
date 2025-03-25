@@ -69,37 +69,31 @@ app.use('/jwt', tokenRoutes);
 
 // -------------------- CHAT FUNCTIONALITY --------------------
 
-// Chat Schema & Model
+// Chat schema
 const chatSchema = new mongoose.Schema({
-    sender: String,
+    senderId: String,
+    receiverId: String,
     message: String,
-    timestamp: { type: Date, default: Date.now },
-});
+    timestamp: { type: Date, default: Date.now }
+  });
+  const Chat = mongoose.model("Chat", chatSchema);
 
-const Chat = mongoose.model("Chat", chatSchema);
+// In-memory user tracking
+const onlineUsers = {};
 
-// Chat Routes
-app.get("/messages", async (req, res) => {
-    try {
-        const messages = await Chat.find().sort({ timestamp: 1 });
-        res.json(messages);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-});
 
-app.post("/messages", async (req, res) => {
-    try {
-        const { sender, message } = req.body;
-        const chatMessage = new Chat({ sender, message });
-        await chatMessage.save();
-
-        io.emit("message", chatMessage); // Real-time update
-        res.json(chatMessage);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-});
+// REST APIs
+app.get("/messages/:user1/:user2", async (req, res) => {
+    const { user1, user2 } = req.params;
+    const messages = await Chat.find({
+      $or: [
+        { senderId: user1, receiverId: user2 },
+        { senderId: user2, receiverId: user1 },
+      ]
+    }).sort({ timestamp: 1 });
+    res.json(messages);
+  });
+  
 
 // -------------------- SOCKET.IO SETUP --------------------
 
@@ -114,23 +108,43 @@ const io = new Server(server, {
 
 // Handle WebSocket Connections
 io.on("connection", (socket) => {
-    console.log(`🔵 User Connected: ${socket.id}`);
-
-    socket.on("sendMessage", async (data) => {
-        try {
-            const chatMessage = new Chat(data);
-            await chatMessage.save();
-            io.emit("message", chatMessage);
-        } catch (error) {
-            console.error("❌ Chat Save Error:", error.message);
-        }
+    console.log("🔵 User connected:", socket.id);
+  
+    socket.on("join", (userId) => {
+      socket.join(userId);
+      onlineUsers[userId] = socket.id;
+  
+      io.emit("onlineUsers", Object.keys(onlineUsers));
     });
-
+  
+    socket.on("privateMessage", async ({ senderId, receiverId, message }) => {
+      const chatMessage = new Chat({ senderId, receiverId, message });
+      await chatMessage.save();
+  
+      io.to(receiverId).emit("privateMessage", chatMessage);
+      io.to(senderId).emit("privateMessage", chatMessage);
+    });
+  
+    socket.on("typing", ({ senderId, receiverId }) => {
+      io.to(receiverId).emit("typing", senderId);
+    });
+  
+    socket.on("stopTyping", ({ senderId, receiverId }) => {
+      io.to(receiverId).emit("stopTyping", senderId);
+    });
+  
     socket.on("disconnect", () => {
-        console.log("🔴 User Disconnected");
+      console.log("🔴 User disconnected:", socket.id);
+      for (let userId in onlineUsers) {
+        if (onlineUsers[userId] === socket.id) {
+          delete onlineUsers[userId];
+          break;
+        }
+      }
+      io.emit("onlineUsers", Object.keys(onlineUsers));
     });
-});
-
+  });
+  
 
 // -------------------- START SERVER --------------------
 

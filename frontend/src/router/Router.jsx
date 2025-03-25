@@ -45,8 +45,8 @@ const router = createBrowserRouter([
         },
         {
             path: "/message",
-            element: <Chat />
-            // element: <Massage/>,
+            // element: <Chat />
+           element: <Massage/>,
         },
         {
             path: "/add-events",

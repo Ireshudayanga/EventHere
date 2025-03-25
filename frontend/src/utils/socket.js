@@ -1,14 +1,10 @@
-/* eslint-disable react-hooks/rules-of-hooks */
 // src/utils/socket.js
 import { io } from "socket.io-client";
-import useAxiosPublic from "../hooks/useAxiosPublic";
 
-
-const axiosPublic = useAxiosPublic();
-
-const socket = io(axiosPublic.defaults.baseURL, {
+// Replace with your backend URL directly (adjust for prod if needed)
+const socket = io("http://localhost:5000", {
   transports: ["websocket"],
-  withCredentials: true, // Optional if you use cookies/auth
+  withCredentials: true, // Optional if using cookies/auth
 });
 
 export default socket;

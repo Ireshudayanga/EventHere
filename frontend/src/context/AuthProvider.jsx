@@ -2,6 +2,7 @@
 /* eslint-disable react/prop-types */
 import React, { createContext, useState, useEffect } from "react";
 import { auth, createUser, signInWithGoogle, login, logout, updateUserProfile } from "../firebase/authService"; // Import functions
+import { setPersistence, browserSessionPersistence } from "firebase/auth";
 import axios from "axios";
 import useAxiosPublic from "../hooks/useAxiosPublic";
 
@@ -15,29 +16,37 @@ const AuthProvider = ({ children }) => {
   
   // Listen for authentication state changes
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(user => {
-      if(user){
-        setCurrentUser(user);
-        user.getIdToken()
-        .then((idToken) => {
-          return axiosPublic.post("/jwt", {token: idToken });
-        })
-        .then((response) => {
-          localStorage.setItem("access-token",response.data.token);
-        })
-        .catch((error) => {
-          console.error("Error fetching or sending token:", error);
+    // Set Firebase to session-only persistence (clears on tab/browser close)
+    setPersistence(auth, browserSessionPersistence)
+      .then(() => {
+        const unsubscribe = auth.onAuthStateChanged(async (user) => {
+          if (user) {
+            const idToken = await user.getIdToken();
+            try {
+              const response = await axiosPublic.post("/jwt", { token: idToken });
+              const appToken = response.data.token;
+              localStorage.setItem("access-token", appToken);
+              setCurrentUser(user);
+            } catch (error) {
+              console.error("Token error:", error);
+              await logout();
+              localStorage.removeItem("access-token");
+              setCurrentUser(null);
+            }
+          } else {
+            setCurrentUser(null);
+            localStorage.removeItem("access-token");
+          }
+          setLoading(false);
         });
-      } else{
-        setCurrentUser(null);
-        localStorage.removeItem("access-token");
-      }
-      setLoading(false);
-    });
-
-    return unsubscribe; // Cleanup on unmount
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  
+        return unsubscribe;
+      })
+      .catch((error) => {
+        console.error("Error setting Firebase persistence:", error);
+      });
   }, []);
+  
 
   const authInfo = {
     currentUser,

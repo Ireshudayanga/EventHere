@@ -18,7 +18,7 @@ const Chat = () => {
 
     // Listen for new messages
     socket.on("message", (newMessage) => {
-      setMessages((prev) => [...prev, newMessage]);
+      setMessages((prev) => [...prev, newMessage]); 
     });
 
     // Clean up listener on unmount
