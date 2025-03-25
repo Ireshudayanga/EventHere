@@ -69,6 +69,33 @@ app.use('/jwt', tokenRoutes);
 
 // -------------------- CHAT FUNCTIONALITY --------------------
 
+// Manual POST for testing: send message
+app.post("/send-message", async (req, res) => {
+  const { senderId, receiverId, message } = req.body;
+
+  if (!senderId || !receiverId || !message) {
+    return res.status(400).json({ error: "senderId, receiverId, and message are required." });
+  }
+
+  try {
+    const newMessage = new Chat({ senderId, receiverId, message });
+    await newMessage.save();
+
+    res.status(201).json({
+      success: true,
+      message: "Message saved",
+      data: newMessage
+    });
+  } catch (err) {
+    console.error("❌ Error saving message:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
+
+
+
 // Chat schema
 const chatSchema = new mongoose.Schema({
     senderId: String,
@@ -93,7 +120,49 @@ app.get("/messages/:user1/:user2", async (req, res) => {
     }).sort({ timestamp: 1 });
     res.json(messages);
   });
-  
+
+
+// Get list of users chatted with
+app.get("/chat-list/:userId", async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const messages = await Chat.find({
+      $or: [{ senderId: userId }, { receiverId: userId }]
+    });
+
+    const usersMap = new Map();
+
+    messages.forEach(msg => {
+      const otherUserId = msg.senderId === userId ? msg.receiverId : msg.senderId;
+      if (!usersMap.has(otherUserId)) {
+        usersMap.set(otherUserId, {
+          id: otherUserId,
+          lastMessage: msg.message,
+          timestamp: msg.timestamp
+        });
+      } else {
+        // Keep the latest message
+        const existing = usersMap.get(otherUserId);
+        if (msg.timestamp > existing.timestamp) {
+          usersMap.set(otherUserId, {
+            id: otherUserId,
+            lastMessage: msg.message,
+            timestamp: msg.timestamp
+          });
+        }
+      }
+    });
+
+    // Convert Map to array
+    const chatUsers = Array.from(usersMap.values());
+    res.json(chatUsers);
+  } catch (err) {
+    console.error("Error fetching chat list:", err);
+    res.status(500).json({ error: "Failed to fetch chat list" });
+  }
+});
+
 
 // -------------------- SOCKET.IO SETUP --------------------
 
