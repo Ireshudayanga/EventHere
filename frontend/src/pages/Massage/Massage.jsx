@@ -7,31 +7,21 @@ import axios from "axios";
 import "../Massage/Message.css";
 import { AuthContext } from "../../context/AuthProvider";
 import { ClipLoader } from "react-spinners";
+import './Message.css'
 
 const Massage = () => {
-  
   const { currentUser, loading } = useContext(AuthContext);
   const [contacts, setContacts] = useState([]);
   const [selectedChat, setSelectedChat] = useState(null);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [showChat, setShowChat] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
 
   const messagesEndRef = useRef(null);
   const socket = useRef(null);
-  const currentUserId = currentUser?.email || "";
 
-  const loadMessagesFromLocal = (contactId) => {
-    const key = `chat:${contactId}`;
-    const stored = localStorage.getItem(key);
-    return stored ? JSON.parse(stored) : [];
-  };
-  
-  const saveMessagesToLocal = (contactId, messages) => {
-    const last100 = messages.slice(-100);
-    localStorage.setItem(`chat:${contactId}`, JSON.stringify(last100));
-  };
-  
+  const currentUserId = currentUser?.email || "";
 
   useEffect(() => {
     if (!currentUserId) return;
@@ -40,31 +30,30 @@ const Massage = () => {
     socket.current.emit("join", currentUserId);
 
     socket.current.on("privateMessage", (msg) => {
-      // 👇 Prevent handling message we already added manually
-      if (msg.senderId === currentUserId) return;
-    
-      const contactId = msg.senderId;
-      const newMsg = {
-        text: msg.message,
-        sender: "bot",
-        timestamp: Date.now(),
-      };
-    
-      const old = loadMessagesFromLocal(contactId);
-      const updated = [...old, newMsg];
-      saveMessagesToLocal(contactId, updated);
-    
-      const isCurrentChat = selectedChat?.id === contactId;
-    
+      const isCurrentChat =
+        (msg.senderId === currentUserId && msg.receiverId === selectedChat?.id.toString()) ||
+        (msg.receiverId === currentUserId && msg.senderId === selectedChat?.id.toString());
+
       if (isCurrentChat) {
-        setMessages((prevMessages) => [...prevMessages, newMsg]);
+        setMessages((prev) => [
+          ...prev,
+          {
+            text: msg.message,
+            sender: msg.senderId === currentUserId ? "user" : "bot",
+            time: msg.createdAt || new Date().toISOString(),
+          },
+        ]);
       }
-    
+
       fetchContacts();
     });
-    
-    
-    
+
+    socket.current.on("typing", (data) => {
+      if (data.senderId === selectedChat?.id.toString()) {
+        setIsTyping(true);
+        setTimeout(() => setIsTyping(false), 2000);
+      }
+    });
 
     fetchContacts();
 
@@ -73,21 +62,34 @@ const Massage = () => {
     };
   }, [selectedChat, currentUserId]);
 
-  const fetchContacts = () => {
-    const local = localStorage.getItem(`chat-contacts:${currentUserId}`);
-    if (local) {
-      setContacts(JSON.parse(local));
-    } else {
-      setContacts([]);
+  const fetchContacts = async () => {
+    try {
+      const res = await axios.get(`http://localhost:5000/chat-list/${currentUserId}`);
+      const mapped = res.data.map((user) => ({
+        id: user.id,
+        name: `User ${user.id}`,
+        img: `https://i.pravatar.cc/40?img=${(user.id % 70) + 1}`,
+        lastMessage: user.lastMessage,
+      }));
+      setContacts(mapped);
+    } catch (err) {
+      console.error("Failed to fetch contacts:", err);
     }
   };
-  
 
-  const loadMessages = (contact) => {
-    const localMsgs = loadMessagesFromLocal(contact.id);
-    setMessages(localMsgs);
+  const loadMessages = async (contact) => {
+    try {
+      const res = await axios.get(`http://localhost:5000/messages/${currentUserId}/${contact.id}`);
+      const formatted = res.data.map((msg) => ({
+        text: msg.message,
+        sender: msg.senderId === currentUserId ? "user" : "bot",
+        time: msg.createdAt,
+      }));
+      setMessages(formatted);
+    } catch (err) {
+      console.error("Error loading messages:", err);
+    }
   };
-  
 
   useEffect(() => {
     scrollToBottom();
@@ -99,30 +101,19 @@ const Massage = () => {
 
   const sendMessage = () => {
     if (!input.trim() || !selectedChat) return;
-  
-    const newMsg = {
-      text: input.trim(),
-      sender: "user",
-      timestamp: Date.now(),
-    };
-  
-    const updated = [...messages, newMsg];
-    setMessages(updated);
-    saveMessagesToLocal(selectedChat.id, updated);
-    setInput("");
-  
-    // Still emit to socket
-    socket.current.emit("privateMessage", {
+
+    const msg = {
       senderId: currentUserId,
       receiverId: selectedChat.id.toString(),
-      message: newMsg.text,
-    });
+      message: input.trim(),
+    };
+
+    socket.current.emit("privateMessage", msg);
+    setInput("");
   };
-  
 
   return (
     <div className="h-screen w-full">
-      {/* 👇 Handle loading or auth failure inside JSX, not before hooks */}
       {loading ? (
         <div className="flex justify-center items-center h-screen">
           <ClipLoader size={50} color="#3B82F6" />
@@ -134,7 +125,6 @@ const Massage = () => {
           <SearchBar title="Messages" />
           <div className="h-[92%] w-full md:w-[94%] mt-0 md:mt-4 rounded-none md:rounded-2xl shadow-xl md:shadow-2xl ml-auto">
             <div className="flex h-full p-3 md:p-7 gap-4 md:gap-4">
-              {/* Chat List */}
               {!showChat && (
                 <div className="bg-white w-full md:w-[30%] rounded-xl md:rounded-2xl shadow-lg p-5">
                   <p className="text-2xl font-medium font-sans text-black p-3">Messages</p>
@@ -160,7 +150,6 @@ const Massage = () => {
                 </div>
               )}
 
-              {/* Chat View - Mobile */}
               {showChat && selectedChat && (
                 <div className="bg-white w-full md:flex rounded-xl md:rounded-2xl shadow-lg flex flex-col h-full flex-grow">
                   <div className="p-3 flex items-center gap-3 border-b">
@@ -184,12 +173,19 @@ const Massage = () => {
                             msg.sender === "user" ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-800"
                           }`}
                         >
-                          {msg.text}
+                          <p>{msg.text}</p>
+                          <p className="text-[10px] mt-1 text-right opacity-70">
+                            {new Date(msg.time).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                          </p>
                         </div>
                       </motion.div>
                     ))}
                     <div ref={messagesEndRef}></div>
                   </div>
+
+                  {isTyping && (
+                    <p className="text-sm text-gray-500 px-4 pb-1">Typing...</p>
+                  )}
 
                   <div className="p-4 flex items-center gap-2 border-t">
                     <input
@@ -197,7 +193,13 @@ const Massage = () => {
                       className="flex-1 p-2 rounded-lg border border-gray-300 text-black focus:outline-none focus:ring-2 focus:ring-blue-400"
                       placeholder="Type a message..."
                       value={input}
-                      onChange={(e) => setInput(e.target.value)}
+                      onChange={(e) => {
+                        setInput(e.target.value);
+                        socket.current.emit("typing", {
+                          senderId: currentUserId,
+                          receiverId: selectedChat?.id.toString(),
+                        });
+                      }}
                       onKeyDown={(e) => e.key === "Enter" && sendMessage()}
                     />
                     <button className="bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600" onClick={sendMessage}>
@@ -207,7 +209,6 @@ const Massage = () => {
                 </div>
               )}
 
-              {/* Chat View - Desktop */}
               <div className="hidden md:flex bg-white flex-1 rounded-xl md:rounded-2xl shadow-lg flex-col h-full">
                 {selectedChat ? (
                   <>
@@ -224,19 +225,38 @@ const Massage = () => {
                               msg.sender === "user" ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-800"
                             }`}
                           >
-                            {msg.text}
+                            <p>{msg.text}</p>
+                            <p className="text-[10px] mt-1 text-right opacity-70">
+                            {new Date(msg.time || msg.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+
+                            </p>
                           </div>
                         </motion.div>
                       ))}
                       <div ref={messagesEndRef}></div>
                     </div>
+
+                    {isTyping && (
+                       <div className="flex items-center gap-1 px-4 pb-1">
+                       <span className="dot-animation w-1.5 h-1.5 bg-red-500 rounded-full"></span>
+                       <span className="dot-animation w-1.5 h-1.5 bg-red-500 rounded-full delay-150"></span>
+                       <span className="dot-animation w-1.5 h-1.5 bg-red-500 rounded-full delay-300"></span>
+                     </div>
+                    )}
+
                     <div className="p-4 flex items-center gap-2 border-t">
                       <input
                         type="text"
                         className="flex-1 p-2 rounded-lg border border-gray-300 text-black focus:outline-none focus:ring-2 focus:ring-blue-400"
                         placeholder="Type a message..."
                         value={input}
-                        onChange={(e) => setInput(e.target.value)}
+                        onChange={(e) => {
+                          setInput(e.target.value);
+                          socket.current.emit("typing", {
+                            senderId: currentUserId,
+                            receiverId: selectedChat?.id.toString(),
+                          });
+                        }}
                         onKeyDown={(e) => e.key === "Enter" && sendMessage()}
                       />
                       <button className="bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600" onClick={sendMessage}>

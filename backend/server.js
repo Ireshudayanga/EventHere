@@ -195,12 +195,13 @@ io.on("connection", (socket) => {
     });
   
     socket.on("typing", ({ senderId, receiverId }) => {
-      io.to(receiverId).emit("typing", senderId);
+      io.to(receiverId).emit("typing", { senderId });
     });
-  
+    
     socket.on("stopTyping", ({ senderId, receiverId }) => {
-      io.to(receiverId).emit("stopTyping", senderId);
+      io.to(receiverId).emit("stopTyping", { senderId });
     });
+    
   
     socket.on("disconnect", () => {
       console.log("🔴 User disconnected:", socket.id);
