@@ -1,14 +1,18 @@
-import React from 'react'
-import { Outlet } from 'react-router-dom'
-import SideBar from '../components/SideBar'
+import React from 'react';
+import { Outlet } from 'react-router-dom';
+import SideBar from '../components/SideBar';
+import { ToastContainer } from 'react-toastify'; // ✅
+import 'react-toastify/dist/ReactToastify.css'; // ✅
 
 const Dashboard = () => {
-    return (
-        <div>
-            <div><Outlet /></div>
-            <div><SideBar/></div>
-        </div>
-    )
-}
+  return (
+    <div>
+      <Outlet />
+      <SideBar />
 
-export default Dashboard
+      <ToastContainer position="top-right" autoClose={3000} />
+    </div>
+  );
+};
+
+export default Dashboard;

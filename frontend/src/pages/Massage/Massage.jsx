@@ -2,14 +2,13 @@ import React, { useState, useRef, useEffect, useContext } from "react";
 import SearchBar from "../../components/SearchBar";
 import { Send, ArrowLeft } from "lucide-react";
 import { motion } from "framer-motion";
-import { io } from "socket.io-client";
-import axios from "axios";
 import "../Massage/Message.css";
 import { AuthContext } from "../../context/AuthProvider";
 import { ClipLoader } from "react-spinners";
 import './Message.css'
 import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import { useSocket } from "../../socket/SocketPrivider";
 
 
 const Massage = () => {
@@ -22,62 +21,31 @@ const Massage = () => {
   const [isTyping, setIsTyping] = useState(false);
 
   const messagesEndRef = useRef(null);
-  const socket = useRef(null);
   const currentUserId = currentUser?.email || "";
+  const { socket } = useSocket();
+
 
   useEffect(() => {
-
     if (!currentUserId) return;
+    fetchContacts();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedChat, currentUserId]);
 
-    socket.current = io("http://localhost:5000");
-    socket.current.emit("join", currentUserId);
-
-    socket.current.on("privateMessage", (msg) => {
-      const chatKey = `chat_${msg.senderId}_${msg.receiverId}`;
-      const reverseKey = `chat_${msg.receiverId}_${msg.senderId}`;
-    
-      const keyToUse = msg.senderId === currentUserId ? chatKey : reverseKey;
-      const stored = JSON.parse(localStorage.getItem(keyToUse) || "[]");
-      stored.push(msg);
-      localStorage.setItem(keyToUse, JSON.stringify(stored));
-    
-      const isCurrentChat =
-        (msg.senderId === currentUserId && msg.receiverId === selectedChat?.id.toString()) ||
-        (msg.receiverId === currentUserId && msg.senderId === selectedChat?.id.toString());
-    
-      if (msg.senderId !== currentUserId) {
-        toast.info(`New message from ${msg.senderId}`);
-      }
-    
-      if (isCurrentChat) {
-        setMessages((prev) => [
-          ...prev,
-          {
-            text: msg.message,
-            sender: msg.senderId === currentUserId ? "user" : "bot",
-            time: msg.timestamp || new Date().toISOString(),
-          },
-        ]);
-      }
-    
-      fetchContacts(); // optional
-    });
-    
-
-    socket.current.on("typing", (data) => {
-      if (data.senderId === selectedChat?.id.toString()) {
+  useEffect(() => {
+    if (!socket.current || !selectedChat) return;
+  
+    socket.current.on("typing", ({ senderId }) => {
+      if (senderId === selectedChat.id.toString()) {
         setIsTyping(true);
         setTimeout(() => setIsTyping(false), 2000);
       }
     });
-
-    fetchContacts();
-
+  
     return () => {
-      socket.current.disconnect();
+      socket.current.off("typing");
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedChat, currentUserId]);
+  }, [socket, selectedChat]);
+  
 
 
   const fetchContacts = () => {
@@ -139,9 +107,36 @@ const Massage = () => {
 
   // Just emit — don't store
   socket.current.emit("privateMessage", msg);
-
+  
   setInput("");
 };
+
+useEffect(() => {
+  if (!socket.current || !selectedChat) return;
+
+  const handleNewMessage = (msg) => {
+    const isCurrentChat =
+      (msg.senderId === currentUserId && msg.receiverId === selectedChat.id.toString()) ||
+      (msg.receiverId === currentUserId && msg.senderId === selectedChat.id.toString());
+
+    if (isCurrentChat) {
+      setMessages((prev) => [
+        ...prev,
+        {
+          text: msg.message,
+          sender: msg.senderId === currentUserId ? "user" : "bot",
+          time: msg.timestamp || new Date().toISOString(),
+        },
+      ]);
+    }
+  };
+
+  socket.current.on("privateMessage", handleNewMessage);
+
+  return () => {
+    socket.current.off("privateMessage", handleNewMessage);
+  };
+}, [socket, selectedChat, currentUserId]);
 
   
 
