@@ -8,6 +8,9 @@ import "../Massage/Message.css";
 import { AuthContext } from "../../context/AuthProvider";
 import { ClipLoader } from "react-spinners";
 import './Message.css'
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+
 
 const Massage = () => {
   const { currentUser, loading } = useContext(AuthContext);
@@ -20,33 +23,46 @@ const Massage = () => {
 
   const messagesEndRef = useRef(null);
   const socket = useRef(null);
-
   const currentUserId = currentUser?.email || "";
 
   useEffect(() => {
+
     if (!currentUserId) return;
 
     socket.current = io("http://localhost:5000");
     socket.current.emit("join", currentUserId);
 
     socket.current.on("privateMessage", (msg) => {
+      const chatKey = `chat_${msg.senderId}_${msg.receiverId}`;
+      const reverseKey = `chat_${msg.receiverId}_${msg.senderId}`;
+    
+      const keyToUse = msg.senderId === currentUserId ? chatKey : reverseKey;
+      const stored = JSON.parse(localStorage.getItem(keyToUse) || "[]");
+      stored.push(msg);
+      localStorage.setItem(keyToUse, JSON.stringify(stored));
+    
       const isCurrentChat =
         (msg.senderId === currentUserId && msg.receiverId === selectedChat?.id.toString()) ||
         (msg.receiverId === currentUserId && msg.senderId === selectedChat?.id.toString());
-
+    
+      if (msg.senderId !== currentUserId) {
+        toast.info(`New message from ${msg.senderId}`);
+      }
+    
       if (isCurrentChat) {
         setMessages((prev) => [
           ...prev,
           {
             text: msg.message,
             sender: msg.senderId === currentUserId ? "user" : "bot",
-            time: msg.createdAt || new Date().toISOString(),
+            time: msg.timestamp || new Date().toISOString(),
           },
         ]);
       }
-
-      fetchContacts();
+    
+      fetchContacts(); // optional
     });
+    
 
     socket.current.on("typing", (data) => {
       if (data.senderId === selectedChat?.id.toString()) {
@@ -60,57 +76,74 @@ const Massage = () => {
     return () => {
       socket.current.disconnect();
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedChat, currentUserId]);
 
-  const fetchContacts = async () => {
-    try {
-      const res = await axios.get(`http://localhost:5000/chat-list/${currentUserId}`);
-      const mapped = res.data.map((user) => ({
-        id: user.id,
-        name: `User ${user.id}`,
-        img: `https://i.pravatar.cc/40?img=${(user.id % 70) + 1}`,
-        lastMessage: user.lastMessage,
-      }));
-      setContacts(mapped);
-    } catch (err) {
-      console.error("Failed to fetch contacts:", err);
-    }
+
+  const fetchContacts = () => {
+    const chats = Object.keys(localStorage).filter((key) =>
+      key.startsWith(`chat_${currentUserId}_`)
+    );
+  
+    const contactIds = chats.map(key => key.split("_")[2]);
+  
+    const mapped = contactIds.map((id) => {
+      const messages = JSON.parse(localStorage.getItem(`chat_${currentUserId}_${id}`));
+      const lastMsg = messages[messages.length - 1];
+      return {
+        id,
+        name: `User ${id}`,
+        img: `https://i.pravatar.cc/40?img=${(id.length % 70) + 1}`,
+        lastMessage: lastMsg?.message || "",
+      };
+    });
+  
+    setContacts(mapped);
   };
+  
 
   const loadMessages = async (contact) => {
-    try {
-      const res = await axios.get(`http://localhost:5000/messages/${currentUserId}/${contact.id}`);
-      const formatted = res.data.map((msg) => ({
-        text: msg.message,
-        sender: msg.senderId === currentUserId ? "user" : "bot",
-        time: msg.createdAt,
-      }));
-      setMessages(formatted);
-    } catch (err) {
-      console.error("Error loading messages:", err);
-    }
+    const chatKey = `chat_${currentUserId}_${contact.id}`;
+    const stored = localStorage.getItem(chatKey);
+    const parsed = stored ? JSON.parse(stored) : [];
+  
+    const formatted = parsed.map((msg) => ({
+      text: msg.message,
+      sender: msg.senderId === currentUserId ? "user" : "bot",
+      time: msg.timestamp,
+    }));
+  
+    setMessages(formatted);
   };
+  
 
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
 
+
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
+
   const sendMessage = () => {
-    if (!input.trim() || !selectedChat) return;
+  if (!input.trim() || !selectedChat) return;
 
-    const msg = {
-      senderId: currentUserId,
-      receiverId: selectedChat.id.toString(),
-      message: input.trim(),
-    };
-
-    socket.current.emit("privateMessage", msg);
-    setInput("");
+  const msg = {
+    senderId: currentUserId,
+    receiverId: selectedChat.id.toString(),
+    message: input.trim(),
+    timestamp: new Date().toISOString(),
   };
+
+  // Just emit — don't store
+  socket.current.emit("privateMessage", msg);
+
+  setInput("");
+};
+
+  
 
   return (
     <div className="h-screen w-full">
@@ -272,6 +305,7 @@ const Massage = () => {
           </div>
         </>
       )}
+      <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );
 };
