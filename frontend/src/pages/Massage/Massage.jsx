@@ -56,6 +56,7 @@ const Massage = () => {
     const contactIds = chats.map(key => key.split("_")[2]);
   
     const mapped = contactIds.map((id) => {
+
       const messages = JSON.parse(localStorage.getItem(`chat_${currentUserId}_${id}`));
       const lastMsg = messages[messages.length - 1];
       return {

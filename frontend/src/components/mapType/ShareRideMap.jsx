@@ -148,13 +148,13 @@ const LocateButton = ({ setUserLocation }) => {
 // Component that listens for map clicks to select a pickup point
 const MapClickHandler = ({ onPickupSelect, activeField, isPickupSelected, setIsPickupSelected }) => {
     const [pickupPosition, setPickupPosition] = useState(null);
-    console.log("Pickup Position:", pickupPosition);
+    //console.log("Pickup Position:", pickupPosition);
 
     useMapEvent("click", (e) => {
         if (activeField === "pickup" && !isPickupSelected) {
             const { lat, lng } = e.latlng;
             const newPosition = [lat, lng];
-            console.log("New Pickup Position:", newPosition);
+          //  console.log("New Pickup Position:", newPosition);
             setPickupPosition(newPosition);
             setIsPickupSelected(true);
             if (typeof onPickupSelect === "function") {
@@ -263,7 +263,7 @@ const ShareRideMap = ({
         ? dropLocation.split(",").map((val) => parseFloat(val.trim()))
         : null;
 
-console.log("Drop Coords:", dropCoords);
+    //console.log("Drop Coords:", dropCoords);
 
     return (
         <div className="relative h-full w-full">

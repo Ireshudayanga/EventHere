@@ -15,6 +15,7 @@ import { toast, ToastContainer } from "react-toastify";
 import Lottie from "lottie-react";
 import rideAnimation from "../../assets/animation/LottyLoadingHand.json";
 import WalkingManAnimation from "../../assets/animation/WalkingManAnimation.json"
+import useAxiosPublic from "../../hooks/useAxiosPublic";
 
 const ShareRide = () => {
   const { currentUser } = useContext(AuthContext);
@@ -41,6 +42,9 @@ const ShareRide = () => {
     dispatch(fetchSpecialCategory());
   }, [dispatch]);
 
+
+  const axiosPublic = useAxiosPublic();
+
   // Handle ride request/offer
   const handleConfirmRide = async (type) => {
     if (!location1 || !location2) {
@@ -51,34 +55,71 @@ const ShareRide = () => {
     const pickupCoords = location1.split(',').map(Number);
     const dropCoords = location2.split(',').map(Number);
 
-    const rideData = {
-      userId: currentUser?.uid,  // Ensure user is logged in
-      rideType: type,
-      pickupLocation: {
-        type: "Point",
-        coordinates: [pickupCoords[1], pickupCoords[0]],  // MongoDB requires [lng, lat]
-      },
-      eventLocation: {
-        type: "Point",
-        coordinates: [dropCoords[1], dropCoords[0]],
-      },
+    const pickupLocation = {
+      type: "Point",
+      coordinates: [pickupCoords[1], pickupCoords[0]], // lng, lat
+    };
+    const eventLocation = {
+      type: "Point",
+      coordinates: [dropCoords[1], dropCoords[0]],
     };
 
-    // Dispatch addRide action
+    if (type === "find") {
+      try {
+        console.log("Finding rides...");
+        const res = await axiosPublic.post("/rides/find-matches", {
+          userId: currentUser?.uid,               // ✅ Add this
+          email: currentUser?.email,             // ✅ And this
+          pickupLocation,
+          eventLocation,
+        });
+
+        const matchedRides = res.data.rides;
+        console.log("Matched rides:", matchedRides);
+
+        setIsRequesting(false);
+        setShowRideSelection(false);
+
+        if (matchedRides.length > 0) {
+          setAvailableRides(matchedRides);
+          toast.success("Matching rides found");
+        } else {
+          setAvailableRides(null);
+          toast.info("No ride found. We'll notify you if a match becomes available.");
+        }
+
+      } catch (error) {
+        console.error(error);
+        toast.error("Error finding rides");
+      }
+      return;
+    }
+
+
+    // For offering a ride
+    const rideData = {
+      userId: currentUser?.uid,
+      email: currentUser?.email,
+      rideType: type,
+      pickupLocation,
+      eventLocation,
+    };
+
     dispatch(addRide(rideData))
       .then(unwrapResult)
       .then(() => {
-        setIsRequesting(true); // Show loading animation
-        setShowRideSelection(false); // Hide ride selection
+        setIsRequesting(true);
+        setShowRideSelection(false);
         toast.success("Ride added successfully");
-      }).catch((err) => console.error(err));
+      })
+      .catch((err) => console.error(err));
 
-    // Simulate ride search delay
     setTimeout(() => {
-      setAvailableRides(true); // Show ride results
-      setIsRequesting(false); // Hide loading animation
+      setAvailableRides(true);
+      setIsRequesting(false);
     }, 3000);
   };
+
 
   return (
     <div className="h-screen w-full">
@@ -186,9 +227,9 @@ const ShareRide = () => {
                   <RideCard />
                 </div>
               ) : (
-                <div className="p-4 text-center">
-                  <p className="text-gray-400">No rides available at the moment</p>
-                </div>
+                <p className="text-gray-400">
+                  No rides found right now. Your request is saved and we will notify you if a match appears!
+                </p>
               )}
             </div>
           </div>

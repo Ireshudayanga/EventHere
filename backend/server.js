@@ -50,7 +50,7 @@ connectDB();
 // Routes
 app.get('/', (req, res) => {
   res.send('Hello, Docker!');
-});
+}); 
 
 // -------------------- ROUTES --------------------
 const userRoutes = require('./api/routers/UserRoutes');
@@ -58,6 +58,7 @@ const eventRoutes = require('./api/routers/EventRoutes');
 const specialCategoryRoutes = require("./api/routers/SpecialCategoryRoutes");
 const rideRoutes = require('./api/routers/ShareRideRoutes');
 const tokenRoutes = require('./api/routers/TokenRoutes');
+
 
 app.use('/users', userRoutes);
 app.use('/events', eventRoutes);

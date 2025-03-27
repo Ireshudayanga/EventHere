@@ -1,7 +1,8 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const shareRideController = require('../controllers/rideContoller')
+const { setRide, findMatchingRides } = require("../controllers/shareRideController");
 
-router.post('/set-ride',shareRideController.setRide );
+router.post("/set-ride", setRide);
+router.post("/find-matches", findMatchingRides);
 
 module.exports = router;
