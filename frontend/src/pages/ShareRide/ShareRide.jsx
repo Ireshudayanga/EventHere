@@ -68,8 +68,8 @@ const ShareRide = () => {
       try {
         console.log("Finding rides...");
         const res = await axiosPublic.post("/rides/find-matches", {
-          userId: currentUser?.uid,               // ✅ Add this
-          email: currentUser?.email,             // ✅ And this
+          userId: currentUser?.uid,               
+          email: currentUser?.email,           
           pickupLocation,
           eventLocation,
         });
