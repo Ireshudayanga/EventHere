@@ -33,6 +33,23 @@ export const SocketProvider = ({ children }) => {
       //console.log(`💬 New message from ${msg.senderId}:`, msg);
     });
 
+    // 🎯 Receive ride acceptance
+  socket.current.on("ride-accept-request", (data) => {
+    // Notify or update UI (e.g. show modal)
+    toast.info(`${data.from} wants to ride with you`);
+    // TODO: Show popup/modal in UI, store it in context if needed
+  });
+
+  socket.current.on("ride-confirmed", () => {
+    toast.success("You have been matched!");
+    // You can now redirect both users or start the ride session
+  });
+
+  socket.current.on("ride-rejected", () => {
+    toast.error("Ride was rejected");
+    // Handle fallback UI on rejection
+  });
+
     return () => {
       socket.current.disconnect();
     };

@@ -114,6 +114,34 @@ io.on("connection", (socket) => {
     io.to(receiverId).emit("stopTyping", { senderId });
   });
 
+    // RIDE ACCEPT REQUEST
+    socket.on("ride-accept-request", ({ to, from, rideId }) => {
+      const receiverSocketId = onlineUsers[to];
+      if (receiverSocketId) {
+        io.to(receiverSocketId).emit("ride-accept-request", {
+          from,
+          rideId,
+        });
+      }
+    });
+  
+    // RIDE CONFIRMED
+    socket.on("ride-confirmed", ({ to }) => {
+      const senderSocketId = onlineUsers[to];
+      if (senderSocketId) {
+        io.to(senderSocketId).emit("ride-confirmed");
+      }
+    });
+  
+    // RIDE REJECTED
+    socket.on("ride-rejected", ({ to }) => {
+      const senderSocketId = onlineUsers[to];
+      if (senderSocketId) {
+        io.to(senderSocketId).emit("ride-rejected");
+      }
+    });
+  
+
   socket.on("disconnect", () => {
     console.log("🔴 User disconnected:", socket.id);
     for (let userId in onlineUsers) {

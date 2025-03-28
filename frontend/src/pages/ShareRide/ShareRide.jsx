@@ -16,8 +16,10 @@ import Lottie from "lottie-react";
 import rideAnimation from "../../assets/animation/LottyLoadingHand.json";
 import WalkingManAnimation from "../../assets/animation/WalkingManAnimation.json"
 import useAxiosPublic from "../../hooks/useAxiosPublic";
+import { useSocket } from "../../socket/SocketPrivider";
 
 const ShareRide = () => {
+   const { socket } = useSocket();
   const { currentUser,loading } = useContext(AuthContext);
 
   // !loading && console.log("Current User:", currentUser.displayName);
@@ -132,11 +134,15 @@ const ShareRide = () => {
     const currentRide = availableRides[rideIndex];
     console.log("Accepted ride:", currentRide);
   
-    // TODO: Emit socket event or store to DB
-    toast.success("Ride accepted!");
+    socket.current.emit("ride-accept-request", {
+      to: currentRide.email, // receiver
+      from: currentUser.email, // sender
+      rideId: currentRide._id, // optional
+    });
   
-    // You could now wait for second user's response
+    toast.info("Waiting for confirmation...");
   };
+  
   
   const handleCancel = () => {
     const nextIndex = rideIndex + 1;
@@ -147,6 +153,28 @@ const ShareRide = () => {
       toast.info("No more rides found.");
     }
   };
+  
+  useEffect(() => {
+    if (!socket.current) return;
+  
+    const handleConfirmed = () => {
+      toast.success("Ride confirmed! 🎉");
+      // Here, you can start a ride session or navigate to chat
+    };
+  
+    const handleRejected = () => {
+      toast.error("Ride was rejected");
+      handleCancel(); // Show next match
+    };
+  
+    socket.current.on("ride-confirmed", handleConfirmed);
+    socket.current.on("ride-rejected", handleRejected);
+  
+    return () => {
+      socket.current.off("ride-confirmed", handleConfirmed);
+      socket.current.off("ride-rejected", handleRejected);
+    };
+  }, [socket.current, handleCancel]);
   
 
 
