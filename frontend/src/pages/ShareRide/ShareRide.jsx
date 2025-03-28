@@ -136,6 +136,7 @@ const ShareRide = () => {
   
     socket.current.emit("ride-accept-request", {
       to: currentRide.email, // receiver
+      name: currentUser.displayName, // sender
       from: currentUser.email, // sender
       rideId: currentRide._id, // optional
     });

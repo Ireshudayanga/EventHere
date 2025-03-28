@@ -6,7 +6,7 @@ import userIcon from '../../assets/svg/User.svg';
 
 
 const RideCard = ({ ride, onAccept, onCancel }) => {
-  const riderName = ride?.userName || "Unknown";
+  const riderName = ride?.email || "Unknown";
   const rating = 4.3; // Temporary until backend provides actual rating
 
   return (

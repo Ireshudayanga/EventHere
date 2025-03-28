@@ -115,12 +115,13 @@ io.on("connection", (socket) => {
   });
 
     // RIDE ACCEPT REQUEST
-    socket.on("ride-accept-request", ({ to, from, rideId }) => {
+    socket.on("ride-accept-request", ({ to, from, rideId, name }) => {
       const receiverSocketId = onlineUsers[to];
       if (receiverSocketId) {
         io.to(receiverSocketId).emit("ride-accept-request", {
           from,
           rideId,
+          name,
         });
       }
     });

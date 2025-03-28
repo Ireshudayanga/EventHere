@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import React, { createContext, useContext, useEffect, useRef } from "react";
+import React, { createContext, useContext, useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
 import { AuthContext } from "../context/AuthProvider";
 import { toast } from "react-toastify";
@@ -11,6 +11,7 @@ export const SocketContext = createContext();
 export const SocketProvider = ({ children }) => {
   const { currentUser } = useContext(AuthContext);
   const socket = useRef(null);
+  const [incomingRideRequest, setIncomingRideRequest] = useState(null); // 👈 store ride request
 
   useEffect(() => {
     if (!currentUser?.email) return;
@@ -34,11 +35,12 @@ export const SocketProvider = ({ children }) => {
     });
 
     // 🎯 Receive ride acceptance
-  socket.current.on("ride-accept-request", (data) => {
-    // Notify or update UI (e.g. show modal)
-    toast.info(`${data.from} wants to ride with you`);
-    // TODO: Show popup/modal in UI, store it in context if needed
-  });
+    socket.current.on("ride-accept-request", (data) => {
+      // Save incoming ride request data to state
+      setIncomingRideRequest(data);
+      console.log("🚗 Ride request:", data);
+      toast.info(`${data.from} wants to ride with you`);
+    });
 
   socket.current.on("ride-confirmed", () => {
     toast.success("You have been matched!");
@@ -56,7 +58,7 @@ export const SocketProvider = ({ children }) => {
   }, [currentUser]);
 
   return (
-    <SocketContext.Provider value={{ socket }}>
+    <SocketContext.Provider value={{ socket, incomingRideRequest, setIncomingRideRequest }}>
       {children}
     </SocketContext.Provider>
   );
