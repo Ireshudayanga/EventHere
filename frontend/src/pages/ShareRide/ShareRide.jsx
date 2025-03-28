@@ -18,7 +18,9 @@ import WalkingManAnimation from "../../assets/animation/WalkingManAnimation.json
 import useAxiosPublic from "../../hooks/useAxiosPublic";
 
 const ShareRide = () => {
-  const { currentUser } = useContext(AuthContext);
+  const { currentUser,loading } = useContext(AuthContext);
+
+  // !loading && console.log("Current User:", currentUser.displayName);
 
   // Pickup and Drop location states
   const [location1, setLocation1] = useState("");
@@ -32,7 +34,11 @@ const ShareRide = () => {
 
   // Ride status
   const [isRequesting, setIsRequesting] = useState(false);
-  const [availableRides, setAvailableRides] = useState(false); // Initially false
+  const [availableRides, setAvailableRides] = useState([]); 
+
+  // Ride index for selection ( If there multiple matching rides)
+  const [rideIndex, setRideIndex] = useState(0);
+
 
   const dispatch = useDispatch();
 
@@ -64,18 +70,21 @@ const ShareRide = () => {
       coordinates: [dropCoords[1], dropCoords[0]],
     };
 
+    // Find Ride Part
     if (type === "find") {
       try {
         console.log("Finding rides...");
         const res = await axiosPublic.post("/rides/find-matches", {
-          userId: currentUser?.uid,               
-          email: currentUser?.email,           
+          userName: currentUser?.displayName,
+          email: currentUser?.email,
           pickupLocation,
           eventLocation,
         });
 
+
         const matchedRides = res.data.rides;
         console.log("Matched rides:", matchedRides);
+        setAvailableRides(matchedRides);
 
         setIsRequesting(false);
         setShowRideSelection(false);
@@ -96,9 +105,9 @@ const ShareRide = () => {
     }
 
 
-    // For offering a ride
+    // Offering Ride Part
     const rideData = {
-      userId: currentUser?.uid,
+      userName: currentUser?.displayName,
       email: currentUser?.email,
       rideType: type,
       pickupLocation,
@@ -108,19 +117,37 @@ const ShareRide = () => {
     dispatch(addRide(rideData))
       .then(unwrapResult)
       .then((data) => {
-        const matchedRides = data.rides; 
-       console.log("Matched rides:", matchedRides);
+        const matchedRides = data.rides;
+        setAvailableRides(matchedRides);
+        console.log("Matched rides:", matchedRides);
+        console.log("avalible rides-------", availableRides );
         setIsRequesting(true);
         setShowRideSelection(false);
         toast.success("Ride added successfully");
       })
       .catch((err) => console.error(err));
-
-    setTimeout(() => {
-      setAvailableRides(true);
-      setIsRequesting(false);
-    }, 3000);
   };
+
+  const handleAccept = () => {
+    const currentRide = availableRides[rideIndex];
+    console.log("Accepted ride:", currentRide);
+  
+    // TODO: Emit socket event or store to DB
+    toast.success("Ride accepted!");
+  
+    // You could now wait for second user's response
+  };
+  
+  const handleCancel = () => {
+    const nextIndex = rideIndex + 1;
+    if (nextIndex < availableRides.length) {
+      setRideIndex(nextIndex);
+    } else {
+      setAvailableRides(null);
+      toast.info("No more rides found.");
+    }
+  };
+  
 
 
   return (
@@ -224,15 +251,20 @@ const ShareRide = () => {
                     Searching for a partner within a 3km range...
                   </p>
                 </div>
-              ) : availableRides ? (
+              ) : availableRides && availableRides.length > 0 ? (
                 <div className="flex flex-col items-center justify-center h-full w-full">
-                  <RideCard />
+                <RideCard
+                  ride={availableRides[rideIndex]}
+                  onAccept={handleAccept}
+                  onCancel={handleCancel}
+                />
                 </div>
               ) : (
                 <p className="text-gray-400">
                   No rides found right now. Your request is saved and we will notify you if a match appears!
                 </p>
               )}
+              
             </div>
           </div>
 

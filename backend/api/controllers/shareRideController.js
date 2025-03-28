@@ -5,7 +5,7 @@ const matchRides = require("../services/matchRides");
 
 const setRide = async (req, res) => {
     try {
-        const { userId, email,  rideType, pickupLocation, eventLocation } = req.body;
+        const { userName, email,  rideType, pickupLocation, eventLocation } = req.body;
 
         
 
@@ -39,7 +39,7 @@ const setRide = async (req, res) => {
           console.log("Matched pending requests:", pendingRequests.length);
         }
 
-        const newRide = new ShareRide({ userId, email, rideType, pickupLocation, eventLocation });
+        const newRide = new ShareRide({ userName, email, rideType, pickupLocation, eventLocation });
         await newRide.save();
         
 
@@ -51,7 +51,7 @@ const setRide = async (req, res) => {
 
 const findMatchingRides = async (req, res) => {
   try {
-    const { userId, email, pickupLocation, eventLocation } = req.body;
+    const { userName, email, pickupLocation, eventLocation } = req.body;
 
     const matches = await matchRides(pickupLocation, eventLocation);
 
@@ -61,7 +61,7 @@ const findMatchingRides = async (req, res) => {
 
     // Store unmatched ride request
     const pending = new RideRequest({
-      userId,
+      userName,
       email,
       pickupLocation,
       eventLocation,

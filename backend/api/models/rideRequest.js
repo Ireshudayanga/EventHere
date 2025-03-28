@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const RideRequestSchema = new mongoose.Schema({
-  userId: { type: String, required: true },
+  userName: { type: String, required: true },
   email: { type: String, required: true },
 
   pickupLocation: {
