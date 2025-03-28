@@ -107,7 +107,9 @@ const ShareRide = () => {
 
     dispatch(addRide(rideData))
       .then(unwrapResult)
-      .then(() => {
+      .then((data) => {
+        const matchedRides = data.rides; 
+       console.log("Matched rides:", matchedRides);
         setIsRequesting(true);
         setShowRideSelection(false);
         toast.success("Ride added successfully");

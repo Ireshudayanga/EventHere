@@ -7,8 +7,7 @@ const setRide = async (req, res) => {
     try {
         const { userId, email,  rideType, pickupLocation, eventLocation } = req.body;
 
-        const newRide = new ShareRide({ userId, email, rideType, pickupLocation, eventLocation });
-        await newRide.save();
+        
 
         if (rideType === "offer") {
           const pendingRequests = await RideRequest.find({
@@ -34,10 +33,14 @@ const setRide = async (req, res) => {
               { _id: { $in: pendingRequests.map(r => r._id) } },
               { $set: { matched: true } }
             );
+            return res.json({ success: true, rides: pendingRequests });
           }
         
           console.log("Matched pending requests:", pendingRequests.length);
         }
+
+        const newRide = new ShareRide({ userId, email, rideType, pickupLocation, eventLocation });
+        await newRide.save();
         
 
         res.json({ success: true, message: "Ride added successfully!" });
