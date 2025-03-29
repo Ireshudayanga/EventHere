@@ -18,9 +18,12 @@ import WalkingManAnimation from "../../assets/animation/WalkingManAnimation.json
 import useAxiosPublic from "../../hooks/useAxiosPublic";
 import { useSocket } from "../../socket/SocketPrivider";
 
+
 const ShareRide = () => {
    const { socket } = useSocket();
   const { currentUser,loading } = useContext(AuthContext);
+
+
 
   // !loading && console.log("Current User:", currentUser.displayName);
 
@@ -86,8 +89,7 @@ const ShareRide = () => {
 
         const matchedRides = res.data.rides;
         console.log("Matched rides:", matchedRides);
-        setAvailableRides(matchedRides);
-
+        
         setIsRequesting(false);
         setShowRideSelection(false);
 
@@ -119,13 +121,22 @@ const ShareRide = () => {
     dispatch(addRide(rideData))
       .then(unwrapResult)
       .then((data) => {
-        const matchedRides = data.rides;
-        setAvailableRides(matchedRides);
-        console.log("Matched rides:", matchedRides);
-        console.log("avalible rides-------", availableRides );
-        setIsRequesting(true);
-        setShowRideSelection(false);
+
         toast.success("Ride added successfully");
+        setIsRequesting(false);
+        setShowRideSelection(false);
+
+        const matchedRides = data.rides;
+        console.log("Matched rides:", matchedRides);
+        if (matchedRides.length > 0) {
+          setAvailableRides(matchedRides);
+          toast.success("Matching rides found");
+          console.log("Matched rides:", matchedRides);
+        } else {
+          setAvailableRides(null);
+          toast.info("No ride found. We'll notify you if a match becomes available.");
+        }
+       
       })
       .catch((err) => console.error(err));
   };

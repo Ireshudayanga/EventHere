@@ -3,6 +3,7 @@ import axios from "axios";
 
 export const addRide = createAsyncThunk("rides/addRide", async (rideData) => {
     const response = await axios.post("http://localhost:5000/rides/set-ride", rideData);
+    console.log("🚀 Backend Response in addRide:", response.data);
     return response.data;
 });
 

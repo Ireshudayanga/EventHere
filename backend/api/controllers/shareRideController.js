@@ -6,10 +6,7 @@ const matchRides = require("../services/matchRides");
 const setRide = async (req, res) => {
     try {
         const { userName, email,  rideType, pickupLocation, eventLocation } = req.body;
-
         
-
-        if (rideType === "offer") {
           const pendingRequests = await RideRequest.find({
             matched: false,
             eventLocation: {
@@ -26,24 +23,26 @@ const setRide = async (req, res) => {
               },
             },
           });
-        
+
           // Optional: mark them as matched
           if (pendingRequests.length > 0) {
             await RideRequest.updateMany(
               { _id: { $in: pendingRequests.map(r => r._id) } },
               { $set: { matched: true } }
             );
+            console.log("Pending requests marked as matched:", pendingRequests);
             return res.json({ success: true, rides: pendingRequests });
-          }
-        
-          console.log("Matched pending requests:", pendingRequests.length);
-        }
+            
+         
 
-        const newRide = new ShareRide({ userName, email, rideType, pickupLocation, eventLocation });
-        await newRide.save();
-        
+          const newRide = new ShareRide({ userName, email, rideType, pickupLocation, eventLocation });
+          await newRide.save();
+          
+          res.json({ success: true, message: "Ride added successfully!" });
+        } 
 
-        res.json({ success: true, message: "Ride added successfully!" });
+         
+
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }
