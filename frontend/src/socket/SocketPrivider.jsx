@@ -39,7 +39,7 @@ export const SocketProvider = ({ children }) => {
       // Save incoming ride request data to state
       setIncomingRideRequest(data);
       console.log("🚗 Ride request:", data);
-      toast.info(`${data.from} wants to ride with you`);
+      toast.info(`${data.name} wants to ride with you`);
     });
 
   socket.current.on("ride-confirmed", () => {
