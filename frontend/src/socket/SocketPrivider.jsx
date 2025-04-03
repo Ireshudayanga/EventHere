@@ -66,5 +66,4 @@ export const SocketProvider = ({ children }) => {
 };
 
 // Custom hook for easier access
-// eslint-disable-next-line react-refresh/only-export-components
 export const useSocket = () => useContext(SocketContext);

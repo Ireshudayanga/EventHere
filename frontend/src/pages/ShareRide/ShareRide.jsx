@@ -4,7 +4,6 @@ import SearchBar from "../../components/SearchBar";
 import Button from "../../components/Button";
 import ShareRideMap from "../../components/mapType/ShareRideMap";
 import RideCard from "./RideCard";
-import animationGif from "../../assets/animation/animation.gif";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchEvents } from "../../../redux/eventSlice";
 import { fetchSpecialCategory } from "../../../redux/specialCategorySlice";
