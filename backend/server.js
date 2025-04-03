@@ -50,7 +50,7 @@ connectDB();
 // Routes
 app.get('/', (req, res) => {
   res.send('Hello, Docker!');
-}); 
+});
 
 // -------------------- ROUTES --------------------
 const userRoutes = require('./api/routers/UserRoutes');
@@ -114,34 +114,34 @@ io.on("connection", (socket) => {
     io.to(receiverId).emit("stopTyping", { senderId });
   });
 
-    // RIDE ACCEPT REQUEST
-    socket.on("ride-accept-request", ({ to, from, rideId, name }) => {
-      const receiverSocketId = onlineUsers[to];
-      if (receiverSocketId) {
-        io.to(receiverSocketId).emit("ride-accept-request", {
-          from,
-          rideId,
-          name,
-        });
-      }
-    });
-  
-    // RIDE CONFIRMED
-    socket.on("ride-confirmed", ({ to, from  }) => {
-      const senderSocketId = onlineUsers[to];
-  if (senderSocketId) {
-    io.to(senderSocketId).emit("ride-confirmed", { from }); // include sender email
-  }
-    });
-  
-    // RIDE REJECTED
-    socket.on("ride-rejected", ({ to }) => {
-      const senderSocketId = onlineUsers[to];
-      if (senderSocketId) {
-        io.to(senderSocketId).emit("ride-rejected");
-      }
-    });
-  
+  // RIDE ACCEPT REQUEST
+  socket.on("ride-accept-request", ({ to, from, rideId, name }) => {
+    const receiverSocketId = onlineUsers[to];
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit("ride-accept-request", {
+        from,
+        rideId,
+        name,
+      });
+    }
+  });
+
+  // RIDE CONFIRMED
+  socket.on("ride-confirmed", ({ to, from, name }) => {
+    const senderSocketId = onlineUsers[to];
+    if (senderSocketId) {
+      io.to(senderSocketId).emit("ride-confirmed", { from,name }); // include sender email
+    }
+  });
+
+  // RIDE REJECTED
+  socket.on("ride-rejected", ({ to }) => {
+    const senderSocketId = onlineUsers[to];
+    if (senderSocketId) {
+      io.to(senderSocketId).emit("ride-rejected");
+    }
+  });
+
 
   socket.on("disconnect", () => {
     console.log("🔴 User disconnected:", socket.id);

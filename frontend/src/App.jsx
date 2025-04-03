@@ -15,19 +15,28 @@ function App() {
   const handleAccept = () => {
     const fromEmail = currentUser?.email;
     const toEmail = incomingRideRequest?.from;
+    const fromName = currentUser?.displayName;
+   
+
+     console.log("incomingRideRequest", incomingRideRequest);
   
     // 1. Emit to other user
     socket.current.emit("ride-confirmed", {
       to: toEmail,
       from: fromEmail,
+      name: fromName,
     });
   
     // 2. Save local message for *yourself*
     const key = `chat_${fromEmail}_${toEmail}`;
     const reverseKey = `chat_${toEmail}_${fromEmail}`;
+
+    console.log("key", key);
+    console.log("reverseKey", reverseKey);
   
     const initialMsg = {
       senderId: toEmail,
+      senderName: incomingRideRequest.name,
       receiverId: fromEmail,
       message: "🎉 Ride matched successfully! Say hi to your ride partner!",
       timestamp: new Date().toISOString(),

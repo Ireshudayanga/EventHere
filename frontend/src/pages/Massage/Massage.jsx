@@ -53,21 +53,29 @@ const Massage = () => {
       key.startsWith(`chat_${currentUserId}_`)
     );
   
+    console.log("Chats:", chats);
+
     const contactIds = chats.map(key => key.split("_")[2]);
+    console.log("Contact IDs:", contactIds);
   
     const mapped = contactIds.map((id) => {
 
       const messages = JSON.parse(localStorage.getItem(`chat_${currentUserId}_${id}`));
       const lastMsg = messages[messages.length - 1];
+
+      const contactName =
+      messages.find((m) => m.senderId === id)?.senderName || id;
+
       return {
         id,
-        name: `User ${id}`,
+        name: contactName,
         img: `https://i.pravatar.cc/40?img=${(id.length % 70) + 1}`,
         lastMessage: lastMsg?.message || "",
       };
     });
   
     setContacts(mapped);
+    console.log("Contacts:", mapped);
   };
   
 

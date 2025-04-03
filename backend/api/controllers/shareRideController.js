@@ -33,13 +33,13 @@ const setRide = async (req, res) => {
             console.log("Pending requests marked as matched:", pendingRequests);
             return res.json({ success: true, rides: pendingRequests });
             
-         
+        } else {
 
           const newRide = new ShareRide({ userName, email, rideType, pickupLocation, eventLocation });
           await newRide.save();
           
           res.json({ success: true, message: "Ride added successfully!" });
-        } 
+        }
 
          
 

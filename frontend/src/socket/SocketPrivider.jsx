@@ -49,16 +49,18 @@ export const SocketProvider = ({ children }) => {
       // 🧠 LocalStorage chat key
       const userEmail = currentUser?.email;
       const otherUserEmail = data?.from;
+      const otherUserName = data?.name;
     
       const keyA = `chat_${userEmail}_${otherUserEmail}`;
       const keyB = `chat_${otherUserEmail}_${userEmail}`;
       const initialMessage = {
         senderId: otherUserEmail,
+        senderName: otherUserName,
         receiverId: userEmail,
         message: "🎉 Ride matched successfully! Say hi to your ride partner!",
         timestamp: new Date().toISOString()
       };
-    
+    console.log("44444444",initialMessage);
       // Prevent overwriting if already exists
       if (!localStorage.getItem(keyA) && !localStorage.getItem(keyB)) {
         localStorage.setItem(keyA, JSON.stringify([initialMessage]));
