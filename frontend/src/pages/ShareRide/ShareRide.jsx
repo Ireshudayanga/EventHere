@@ -171,6 +171,8 @@ const ShareRide = () => {
   
     const handleConfirmed = () => {
       toast.success("Ride confirmed! 🎉");
+      // Navigate to chat or start a ride session
+      
       // Here, you can start a ride session or navigate to chat
     };
   

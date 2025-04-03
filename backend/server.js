@@ -127,11 +127,11 @@ io.on("connection", (socket) => {
     });
   
     // RIDE CONFIRMED
-    socket.on("ride-confirmed", ({ to }) => {
+    socket.on("ride-confirmed", ({ to, from  }) => {
       const senderSocketId = onlineUsers[to];
-      if (senderSocketId) {
-        io.to(senderSocketId).emit("ride-confirmed");
-      }
+  if (senderSocketId) {
+    io.to(senderSocketId).emit("ride-confirmed", { from }); // include sender email
+  }
     });
   
     // RIDE REJECTED

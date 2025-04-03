@@ -43,10 +43,30 @@ export const SocketProvider = ({ children }) => {
       toast.info(`${data.name} wants to ride with you`);
     });
 
-  socket.current.on("ride-confirmed", () => {
-    toast.success("You have been matched!");
-    // You can now redirect both users or start the ride session
-  });
+    socket.current.on("ride-confirmed", (data) => {
+      toast.success("You have been matched!");
+    console.log("🚗 Ride confirmed:", data);
+      // 🧠 LocalStorage chat key
+      const userEmail = currentUser?.email;
+      const otherUserEmail = data?.from;
+    
+      const keyA = `chat_${userEmail}_${otherUserEmail}`;
+      const keyB = `chat_${otherUserEmail}_${userEmail}`;
+      const initialMessage = {
+        senderId: otherUserEmail,
+        receiverId: userEmail,
+        message: "🎉 Ride matched successfully! Say hi to your ride partner!",
+        timestamp: new Date().toISOString()
+      };
+    
+      // Prevent overwriting if already exists
+      if (!localStorage.getItem(keyA) && !localStorage.getItem(keyB)) {
+        localStorage.setItem(keyA, JSON.stringify([initialMessage]));
+      }
+    
+      // You can now redirect both users or start the ride session
+    });
+    
 
   socket.current.on("ride-rejected", () => {
     toast.error("Ride was rejected");
