@@ -67,6 +67,8 @@ export const SocketProvider = ({ children }) => {
       }
     
       // You can now redirect both users or start the ride session
+      
+
     });
     
 
