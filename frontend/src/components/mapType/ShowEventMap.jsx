@@ -243,12 +243,12 @@ const ShowEventMap = ({ setSelectedLocation, categoryType, filterDate, specialCa
 
                                         <div className="mt-1 text-xs">
                                             <p><span className="font-semibold text-gray-700">Category:</span> {event.category}</p>
-                                            <p><span className="font-semibold text-gray-700">Date:</span>
+                                            <p><span className="font-semibold text-gray-700">Date: </span>
                                                 {new Date(event.date).toISOString().split('T')[0]}
                                             </p>
                                         </div>
 
-                                        {event.imageUrl && (
+                                        {event.imageUrl && ( 
                                             <img
                                                 src={event.imageUrl}
                                                 alt={event.title}

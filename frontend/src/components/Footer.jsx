@@ -63,9 +63,9 @@ const legalLinks = [
 
 function Footer() {
   return (
-    <div className="bg-[#bedddb] py-20 md:py-36 flex relative flex-col items-center px-5 md:px-12" >
+    <div className="bg-[#bedddb] py-20  flex relative flex-col items-center px-5 md:px-12" >
       <div className="flex z-0 gap-5 md:gap-10 items-center w-full justify-center flex-col md:flex-row">
-        <div className="flex flex-wrap gap-5 md:gap-10 justify-center items-start self-stretch my-auto w-full md:w-auto">
+        <div className="flex flex-wrap gap-5 md:gap-10  items-start self-stretch my-auto w-full md:w-3/4">
           <img
             loading="lazy"
             src={logo}
@@ -80,8 +80,8 @@ function Footer() {
         </div>
       </div>
       <div className="flex z-0 flex-col items-center mt-10 md:mt-20 w-full">
-        <div className="flex flex-col md:flex-row gap-4 md:gap-10 items-center w-full max-md:max-w-full">
-          <div className="text-sm md:text-xl text-zinc-500 text-center">
+        <div className="flex flex-col md:flex-row gap-4 md:gap-10 w-full max-md:max-w-full">
+          <div className="text-sm md:text-xl text-zinc-500 text-center ">
             Bring people together one event at <span className="font-medium">Time</span>
           </div>
           <SocialIcons />
