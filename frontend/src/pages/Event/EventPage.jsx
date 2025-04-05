@@ -21,8 +21,8 @@ const EventPage = () => {
     );
     const [selectedDate, setSelectedDate] = useState(null);
 
-    
-    
+
+
 
     const categoryColors = {
         entertainment: "bg-green-500 text-white",
@@ -36,7 +36,7 @@ const EventPage = () => {
 
     const [calenderEvents, setCalenderEvents] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState("");
-    
+
     const handleDateChange = (newDate) => {
         setSelectedDate(newDate);
         setSelectedCategory(''); // Reset category when date is selected
@@ -127,7 +127,7 @@ const EventPage = () => {
                                 ) : status === "failed" ? (
                                     <p className="text-red-500 text-sm">Error fetching events: {error}</p>
                                 ) : (
-                                  
+
                                     <Calender date={selectedDate} setDate={handleDateChange} events={calenderEvents} />
                                 )}
                             </div>
@@ -137,7 +137,7 @@ const EventPage = () => {
                     <div className="w-full md:w-[65%] flex flex-col gap-4 md:pl-6">
                         <div className="h-[60vh] md:h-[75vh] flex-grow">
                             <div className="bg-white rounded-xl md:rounded-2xl shadow-lg h-full">
-                                <ShowEventMap filterDate={selectedDate} categoryType={selectedCategory} specialCategoryName={specialCategory}/>
+                                <ShowEventMap filterDate={selectedDate} categoryType={selectedCategory} specialCategoryName={specialCategory} />
                             </div>
                         </div>
 
@@ -146,12 +146,18 @@ const EventPage = () => {
                                 <p className="text-lg font-semibold text-black">Share Ride</p>
                                 <p className="text-xs text-gray-600">Choose event for ride</p>
                                 <div className="flex gap-3">
-                                    <Button className="bg-blue-600 text-white px-4 py-2 rounded-full text-sm">
-                                        Share
-                                    </Button>
-                                    <Button className="bg-green-500 text-white px-4 py-2 rounded-full text-sm">
-                                        Offer
-                                    </Button>
+
+                                    <Link to="/share-ride">
+                                        <Button className="bg-blue-600 text-white px-4 py-2 rounded-full text-sm">
+                                            Share
+                                        </Button>
+                                    </Link>
+
+                                    <Link to="/share-ride">
+                                        <Button className="bg-green-500 text-white px-4 py-2 rounded-full text-sm">
+                                            Offer
+                                        </Button>
+                                    </Link>
                                 </div>
                             </div>
 

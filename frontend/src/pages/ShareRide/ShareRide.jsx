@@ -199,44 +199,7 @@ const ShareRide = () => {
       <div className="h-full w-full md:w-[94%] mt-0 md:mt-4 rounded-none md:rounded-2xl shadow-xl md:shadow-2xl ml-auto">
         <div className="flex flex-col md:flex-row h-full p-3 md:p-7 gap-4 md:gap-5">
 
-          {/* Left Side - Map and Communication */}
-          <div className="w-full md:w-[50%] flex flex-col gap-3">
-            {/* Map Section */}
-            <div className="bg-white rounded-xl md:rounded-2xl shadow-lg h-[40vh] flex-grow">
-              <ShareRideMap
-                onPickupSelect={setLocation1}
-                onDropSelect={setLocation2}
-                activeField={activeField}
-                pickupLocation={location1}
-                dropLocation={location2}
-              />
-            </div>
-
-            {/* Communication & Ride Status Section */}
-            <div className="w-full md:max-h-52 flex flex-row gap-3 md:gap-5">
-              {/* Chat Box */}
-              <div className="bg-white text-black rounded-xl md:rounded-2xl shadow-lg p-4 flex flex-col items-center justify-center text-center flex-[2] md:w-2/3">
-                <p className="text-2xl font-medium">Contact Your Partner</p>
-                <div className="relative w-full mt-3">
-                  <textarea
-                    className="w-full h-28 bg-gray-200 rounded-lg p-3 text-gray-700 text-sm outline-none focus:ring-2 focus:ring-gray-400 resize-none"
-                    placeholder="Enter Your Message .."
-                  ></textarea>
-                  <Button className="absolute bottom-3 right-2 px-4 py-1 text-white bg-blue-500 text-sm rounded-3xl">
-                    Send
-                  </Button>
-                </div>
-              </div>
-
-              {/* Ongoing Ride Status */}
-              <div className="bg-white text-black rounded-xl md:rounded-2xl shadow-lg p-4 flex flex-col justify-center text-center flex-[1] md:w-1/3">
-                <p className="text-2xl font-medium">Ongoing</p>
-                <p className="m-6 text-6xl">
-                  67<span className="text-base">KM</span>
-                </p>
-              </div>
-            </div>
-          </div>
+          
 
           {/* Right Side - Ride Selection & Pool Matching */}
           <div className="w-full md:w-[50%] flex flex-col gap-3 md:gap-5">
@@ -310,6 +273,44 @@ const ShareRide = () => {
             </div>
           </div>
 
+          {/* Left Side - Map and Communication */}
+          <div className="w-full md:w-[50%] flex flex-col gap-3">
+            {/* Map Section */}
+            <div className="bg-white rounded-xl md:rounded-2xl shadow-lg h-[40vh] flex-grow">
+              <ShareRideMap
+                onPickupSelect={setLocation1}
+                onDropSelect={setLocation2}
+                activeField={activeField}
+                pickupLocation={location1}
+                dropLocation={location2}
+              />
+            </div>
+
+            {/* Communication & Ride Status Section */}
+            <div className="w-full md:max-h-52 flex flex-row gap-3 md:gap-5">
+              {/* Chat Box */}
+              <div className="bg-white text-black rounded-xl md:rounded-2xl shadow-lg p-4 flex flex-col items-center justify-center text-center flex-[2] md:w-2/3">
+                <p className="text-2xl font-medium">Contact Your Partner</p>
+                <div className="relative w-full mt-3">
+                  <textarea
+                    className="w-full h-28 bg-gray-200 rounded-lg p-3 text-gray-700 text-sm outline-none focus:ring-2 focus:ring-gray-400 resize-none"
+                    placeholder="Enter Your Message .."
+                  ></textarea>
+                  <Button className="absolute bottom-3 right-2 px-4 py-1 text-white bg-blue-500 text-sm rounded-3xl">
+                    Send
+                  </Button>
+                </div>
+              </div>
+
+              {/* Ongoing Ride Status */}
+              <div className="bg-white text-black rounded-xl md:rounded-2xl shadow-lg p-4 flex flex-col justify-center text-center flex-[1] md:w-1/3">
+                <p className="text-2xl font-medium">Ongoing</p>
+                <p className="m-6 text-6xl">
+                  67<span className="text-base">KM</span>
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
