@@ -22,10 +22,13 @@ const Massage = () => {
 
   const messagesEndRef = useRef(null);
   const currentUserId = currentUser?.email || "";
-  const { socket } = useSocket();
+  const { socket, setHasUnreadMessages } = useSocket();
+
 
 
   useEffect(() => {
+    setHasUnreadMessages(false);
+
     if (!currentUserId) return;
     fetchContacts();
   // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -7,8 +7,10 @@ import Sidebar03 from '../assets/svg/Sidebar03.svg';
 import Sidebar04 from '../assets/svg/Sidebar04.svg';
 import Sidebar05 from '../assets/svg/Sidebar05.svg';
 import Sidebar06 from '../assets/svg/Sidebar06.svg';
+import { useSocket } from "../socket/SocketPrivider";
 
 const SideBar = () => {
+    const { hasUnreadMessages } = useSocket();
     const [activePage, setActivePage] = useState(1);
     const [hoveredItem, setHoveredItem] = useState(null);
     const [isOpen, setIsOpen] = useState(false);
@@ -29,28 +31,23 @@ const SideBar = () => {
     const handleNavigation = (id, path) => {
         setActivePage(id);
         navigate(path);
-        setIsOpen(false); // Close sidebar on selection
+        setIsOpen(false);
     };
 
     return (
         <>
-            {/* Hamburger Menu Button (For Mobile & Tablet) */}
+            {/* Hamburger Menu Button */}
             <button
-                className={`md:hidden lg:hidden text-black  fixed top-4 left-4 z-[1500] p-2 shadow-lg rounded-md transition-all ${isOpen ? "hidden" : "block"
-                    }`}
-                onClick={() => {
-                    setIsOpen(true)
-                    // console.log('clicked-------------')
-                }}
+                className={`md:hidden lg:hidden text-black fixed top-4 left-4 z-[1500] p-2 shadow-lg rounded-md transition-all ${isOpen ? "hidden" : "block"}`}
+                onClick={() => setIsOpen(true)}
             >
-                <FiMenu  size={24} />
+                <FiMenu size={24} />
             </button>
 
-            {/* Sidebar (Hidden by default on Mobile & Tablet) */}
+            {/* Sidebar */}
             <div className={`h-screen z-[1500] w-60 fixed left-0 top-0 bg-white shadow-xl flex flex-col justify-between py-6 transition-transform duration-300 
                 ${isOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0 lg:w-20`}>
 
-                {/* Close Button for Mobile & Tablet */}
                 {isOpen && (
                     <button
                         className="md:hidden lg:hidden absolute top-4 right-4 p-2 text-gray-600 hover:text-gray-900"
@@ -71,19 +68,27 @@ const SideBar = () => {
                             onMouseLeave={() => setHoveredItem(null)}
                         >
                             {/* Active Indicator */}
-                            <div className={`absolute left-0 h-6 w-1  rounded-r-full transition-transform duration-300 
+                            <div className={`absolute left-0 h-6 w-1 rounded-r-full transition-transform duration-300 
                                 ${activePage === item.id ? 'translate-y-0' : '-translate-y-2'}
                                 ${hoveredItem === item.id ? 'opacity-30 scale-y-150' : ''}`} />
 
-                            {/* Icon & Name Container */}
+                            {/* Icon & Name */}
                             <div className={`flex items-center p-2 rounded-xl transition-all duration-300 
                                 ${activePage === item.id ? 'bg-[#34a853]/10 transform scale-110' : 'hover:bg-gray-100'}`}>
-                                <img
-                                    src={item.icon}
-                                    alt={item.alt}
-                                    className={`w-8 h-8 transition-all duration-300 
-                                        ${activePage === item.id ? 'filter brightness-125 saturate-150' : 'opacity-70 group-hover:opacity-100'}`}
-                                />
+                                
+                                {/* Icon + Red Dot (for messages only) */}
+                                <div className="relative">
+                                    <img
+                                        src={item.icon}
+                                        alt={item.alt}
+                                        className={`w-8 h-8 transition-all duration-300 
+                                            ${activePage === item.id ? 'filter brightness-125 saturate-150' : 'opacity-70 group-hover:opacity-100'}`}
+                                    />
+                                    {item.id === 3 && hasUnreadMessages && (
+                                        <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-600 rounded-full" />
+                                    )}
+                                </div>
+
                                 {isOpen && (
                                     <span className="ml-3 text-gray-700 font-medium">{item.alt}</span>
                                 )}
@@ -102,12 +107,10 @@ const SideBar = () => {
                             onMouseEnter={() => setHoveredItem(item.id)}
                             onMouseLeave={() => setHoveredItem(null)}
                         >
-                            {/* Active Indicator for Bottom Items */}
-                            <div className={`absolute left-0 h-6 w-1  rounded-r-full transition-transform duration-300 
+                            <div className={`absolute left-0 h-6 w-1 rounded-r-full transition-transform duration-300 
                                 ${activePage === item.id ? 'translate-y-0' : '-translate-y-2'}
                                 ${hoveredItem === item.id ? 'opacity-30 scale-y-150' : ''}`} />
 
-                            {/* Icon & Name Container */}
                             <div className={`flex items-center p-2 rounded-xl transition-all duration-300 
                                 ${activePage === item.id ? 'bg-[#34a853]/10 transform scale-110' : 'hover:bg-gray-100'} ${item.id === 6 ? 'mt-4' : ''}`}>
                                 <img

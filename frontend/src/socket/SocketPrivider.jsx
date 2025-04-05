@@ -13,6 +13,8 @@ export const SocketProvider = ({ children }) => {
   const { currentUser } = useContext(AuthContext);
   const socket = useRef(null);
   const [incomingRideRequest, setIncomingRideRequest] = useState(null); // 👈 store ride request
+  const [hasUnreadMessages, setHasUnreadMessages] = useState(false);
+
 
   useEffect(() => {
     if (!currentUser?.email) return;
@@ -31,7 +33,10 @@ export const SocketProvider = ({ children }) => {
       stored.push(msg);
       localStorage.setItem(keyToUse, JSON.stringify(stored));
 
-      (msg.senderId !== currentUser.email) && toast.info(`New message from ${msg.senderId}`);
+      if (msg.senderId !== currentUser?.email) {
+        setHasUnreadMessages(true); // 💡 Set unread flag
+        toast.info(`New message from ${msg.senderId}`);
+      }
       //console.log(`💬 New message from ${msg.senderId}:`, msg);
     });
 
@@ -83,7 +88,7 @@ export const SocketProvider = ({ children }) => {
   }, [currentUser]);
 
   return (
-    <SocketContext.Provider value={{ socket, incomingRideRequest, setIncomingRideRequest }}>
+    <SocketContext.Provider value={{ socket, incomingRideRequest, setIncomingRideRequest, hasUnreadMessages, setHasUnreadMessages }}>
       {children}
     </SocketContext.Provider>
   );
