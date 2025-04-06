@@ -82,7 +82,7 @@ const EventPage = () => {
                                         <ClipLoader size={40} color={"#3498db"} loading={true} />
                                     </div>
                                 ) : categoryStatus === "failed" ? (
-                                    <p className="text-red-500 text-sm">Error fetching special category: {error}</p>
+                                    <p className="text-red-500 text-center text-sm">Error fetching special category: {error}</p>
                                 ) : (categories.length > 0 && (
                                     categories.map((category, index) => {
                                         const isCategoryAll = category === "All";
@@ -125,7 +125,7 @@ const EventPage = () => {
                                         <ClipLoader size={50} color={"#3498db"} loading={true} />
                                     </div>
                                 ) : status === "failed" ? (
-                                    <p className="text-red-500 text-sm">Error fetching events: {error}</p>
+                                    <p className="text-red-500 text-center text-sm">Error fetching events: {error}</p>
                                 ) : (
                                    
                                         <Calender date={selectedDate} setDate={handleDateChange} events={calenderEvents} />
