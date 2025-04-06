@@ -69,7 +69,7 @@ const EventPage = () => {
     }, [status, categoryStatus, events, specialCategory]);
 
     return (
-        <div className="h-screen w-full">
+        <div className=" w-full">
             <SearchBar />
             <div className="h-[92%] w-full md:w-[94%] mt-0 md:mt-4 rounded-none md:rounded-2xl shadow-xl  ml-auto">
                 <div className="flex flex-col md:flex-row h-full p-3 md:p-7 gap-4 md:gap-0">
@@ -106,8 +106,8 @@ const EventPage = () => {
                         </div>
 
                         {/* ✅ Show Loading Spinner Instead of "Loading events..." */}
-                        <div className="bg-white p-4 md:p-5 rounded-xl md:rounded-2xl">
-                            <div className="flex justify-between items-center w-full">
+                        <div className="bg-white  rounded-xl md:rounded-2xl h-full">
+                            <div className="flex px-5 pt-5 justify-between items-center w-full">
                                 <div>
                                     <p className="text-2xl font-medium text-black font-sans">Events</p>
                                     <p className="text-[12px] text-black">Join our community</p>
@@ -119,7 +119,7 @@ const EventPage = () => {
                                     </div>
                                 </Link>
                             </div>
-                            <div className="mt-4 overflow-y-auto md:overflow-y-scroll custom-scrollbar h-[calc(100vh-550px)] md:h-[calc(100vh-370px)] ">
+                            <div className="mt-2 overflow-y-auto md:overflow-y-scroll custom-scrollbar   ">
                                 {status === "loading" ? (
                                     <div className="flex justify-center items-center h-full">
                                         <ClipLoader size={50} color={"#3498db"} loading={true} />
@@ -127,8 +127,9 @@ const EventPage = () => {
                                 ) : status === "failed" ? (
                                     <p className="text-red-500 text-sm">Error fetching events: {error}</p>
                                 ) : (
-
-                                    <Calender date={selectedDate} setDate={handleDateChange} events={calenderEvents} />
+                                   
+                                        <Calender date={selectedDate} setDate={handleDateChange} events={calenderEvents} />
+                                    
                                 )}
                             </div>
                         </div>

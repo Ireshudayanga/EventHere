@@ -55,7 +55,7 @@ const CustomCalendar = ({
         tileClassName={tileClassName}
         view="month"
         maxDetail="month"
-        className={`${className} rounded-xl md:rounded-2xl shadow-lg`}
+        className={`${className} rounded-xl md:rounded-2xl `}
       />
     </div>
   );
