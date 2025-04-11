@@ -44,7 +44,7 @@ function SearchBar({
 
         {/* User Info */}
         <div className="flex items-center gap-2">
-          <img className="w-6 h-6 md:w-8 md:h-8" src={userIcon} alt="user" />
+          <img className="w-6 h-6 md:w-8 md:h-8" src={`https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(currentUser.displayName)}&backgroundColor=0D8ABC&textColor=ffffff&radius=50&size=128`} alt="user" />
           <p className="hidden md:block text-black text-sm md:text-base uppercase">
             {currentUser ? currentUser.displayName : ""}
           </p>

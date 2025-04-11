@@ -12,6 +12,7 @@ import Signup from '../components/Signup';
 import AdminPanel from '../pages/admin/AdminPanel';
 import Chat from '../pages/Massage/Chat';
 import PrivateRouter from '../privetRouter/privateRouter';
+import ProfilePage from '../pages/Profile/Profile';
 
 
 
@@ -53,6 +54,11 @@ const router = createBrowserRouter([
             path: "/add-events",
             element: <AddEvent />,
         },
+        {
+            path: "/profile",
+            element: <ProfilePage/>
+
+        }
         ]
     },
     {
