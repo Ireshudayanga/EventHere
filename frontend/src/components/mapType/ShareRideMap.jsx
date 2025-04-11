@@ -168,7 +168,7 @@ const MapClickHandler = ({ onPickupSelect, activeField, isPickupSelected, setIsP
 
 const ShareRideMap = ({
     onDropSelect,
-    onPickupSelect,
+    onPickupSelect ,
     activeField,
     setSelectedLocation,
     categoryType,

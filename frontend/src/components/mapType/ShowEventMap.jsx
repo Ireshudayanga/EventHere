@@ -1,17 +1,16 @@
 /* eslint-disable react/prop-types */
-import React, { useEffect, useState } from "react";
-import { MapContainer, TileLayer, Marker, Popup, LayersControl, useMap } from "react-leaflet";
+import React, { useEffect, useRef, useState } from "react";
+import { MapContainer, TileLayer, Marker, Popup, LayersControl, useMap, Polyline } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { FaCrosshairs } from "react-icons/fa";
-import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchSpecialCategory } from "../../../redux/specialCategorySlice";
 import locationIcon from '../../assets/images/location.png';
+import Button from "../Button";
 
 const { BaseLayer } = LayersControl;
 
-// Custom marker icon (Red marker)
 const eventIcon = new L.Icon({
     iconUrl: locationIcon,
     iconSize: [39, 41],
@@ -96,7 +95,6 @@ const markerIcons = {
     }),
 };
 
-// Change View Component
 const ChangeView = ({ coords }) => {
     const map = useMap();
     useEffect(() => {
@@ -105,7 +103,6 @@ const ChangeView = ({ coords }) => {
     return null;
 };
 
-// Locate Me Button
 const LocateButton = ({ setSelectedLocation }) => {
     const map = useMap();
 
@@ -122,7 +119,11 @@ const LocateButton = ({ setSelectedLocation }) => {
                 (error) => {
                     console.error("Geolocation error:", error.message);
                 },
-                { enableHighAccuracy: true }
+                {
+                    enableHighAccuracy: true,
+                    timeout: 75000,
+                    maximumAge: 0,
+                }
             );
         }
     };
@@ -138,25 +139,25 @@ const LocateButton = ({ setSelectedLocation }) => {
 };
 
 const ShowEventMap = ({ setSelectedLocation, categoryType, filterDate, specialCategoryName }) => {
-    const [userLocation, setUserLocation] = useState([7.8731, 80.7718]); // Default location: Sri Lanka
-
+    const [userLocation, setUserLocation] = useState([7.8731, 80.7718]);
     const [filteredCategory, setFilteredCategory] = useState("");
-    //console.log("Filter category name ",filteredCategory);
+    const [routeCoords, setRouteCoords] = useState(null);
+    const [routeDistance, setRouteDistance] = useState(null);
+    const [destination, setDestination] = useState(null);
 
     const dispatch = useDispatch();
-    const { events, status, error } = useSelector((state) => state.events);
+    const { events } = useSelector((state) => state.events);
+
+    const mapRef = useRef();
+
     useEffect(() => {
         dispatch(fetchSpecialCategory());
     }, [dispatch]);
 
-    // console.log(filterDate);
-
     useEffect(() => {
         setFilteredCategory(categoryType);
-    }, [categoryType, filterDate,]);
+    }, [categoryType, filterDate]);
 
-
-    // Get User Location
     useEffect(() => {
         if ("geolocation" in navigator) {
             navigator.geolocation.getCurrentPosition(
@@ -170,12 +171,14 @@ const ShowEventMap = ({ setSelectedLocation, categoryType, filterDate, specialCa
                 (error) => {
                     console.error("Geolocation error:", error.message);
                 },
-                { enableHighAccuracy: true }
+                {
+                    enableHighAccuracy: true,
+                    timeout: 75000,
+                    maximumAge: 0,
+                }
             );
         }
     }, []);
-
-
 
     const categoryIcons = {
         entertainment: markerIcons.green,
@@ -183,12 +186,69 @@ const ShowEventMap = ({ setSelectedLocation, categoryType, filterDate, specialCa
         traditional: markerIcons.blue,
     };
 
+    const handleShowDirection = (event, userLocation) => {
+        const eventCoords = [event.location.coordinates[1], event.location.coordinates[0]];
+        setDestination({ start: userLocation, end: eventCoords });
+    };
+
+    useEffect(() => {
+        const calculateRoute = async () => {
+            if (destination?.start && destination?.end) {
+                const [startLat, startLng] = destination.start;
+                const [endLat, endLng] = destination.end;
+
+                try {
+                    const response = await fetch(
+                        `https://router.project-osrm.org/route/v1/driving/${startLng},${startLat};${endLng},${endLat}?overview=full&geometries=geojson`
+                    );
+                    const data = await response.json();
+
+                    if (data.routes?.[0]?.geometry) {
+                        const coords = data.routes[0].geometry.coordinates.map(coord => [coord[1], coord[0]]);
+                        setRouteCoords(coords);
+                        setRouteDistance(data.routes[0].distance);
+
+                        const map = mapRef.current;
+                        if (map) {
+                            map.closePopup();
+                            const bounds = L.latLngBounds(coords);
+                            map.flyToBounds(bounds, {
+                                padding: [50, 50],
+                                duration: 1.5,
+                            });
+                        }
+                    }
+                } catch (error) {
+                    console.error("Error fetching route:", error);
+                    setRouteCoords(null);
+                    setRouteDistance(null);
+                }
+            }
+        };
+
+        calculateRoute();
+    }, [destination]);
+
+    const formatDistance = (distanceInMeters) => {
+        if (!distanceInMeters) return "";
+        const km = distanceInMeters / 1000;
+        return `${km.toFixed(2)} km`;
+    };
+
+    const routeMidpoint = routeCoords
+        ? routeCoords[Math.floor(routeCoords.length / 2)]
+        : null;
+
     return (
         <div className="relative h-full w-full">
-            <MapContainer center={userLocation} zoom={8} className="h-full w-full rounded-xl relative">
+            <MapContainer
+                center={userLocation}
+                zoom={8}
+                className="h-full w-full rounded-xl relative"
+                whenCreated={(mapInstance) => { mapRef.current = mapInstance }}
+            >
                 <ChangeView coords={userLocation} />
 
-                {/* Base Map Layers */}
                 <LayersControl position="topright">
                     <BaseLayer checked name="OpenStreetMap">
                         <TileLayer
@@ -198,75 +258,89 @@ const ShowEventMap = ({ setSelectedLocation, categoryType, filterDate, specialCa
                     </BaseLayer>
                 </LayersControl>
 
-                {/* 📌 Show Event Markers */}
-                {
-                    events.filter(event => {
+                {events.filter(event => {
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    const eventDate = new Date(event.date);
+                    eventDate.setHours(0, 0, 0, 0);
+                    const isUpcoming = eventDate >= today;
+                    const isCategoryMatch = !filteredCategory || event.category === filteredCategory || (filteredCategory === specialCategoryName && event.category === specialCategoryName);
+                    const isDateMatch = filterDate && eventDate.toDateString() === new Date(filterDate).toDateString();
+                    if (filterDate) {
+                        return isDateMatch;
+                    } else {
+                        return isUpcoming && isCategoryMatch || (filteredCategory === specialCategoryName && event.category === specialCategoryName);
+                    }
+                }).map(event => (
+                    <Marker
+                        key={event._id}
+                        position={[event.location.coordinates[1], event.location.coordinates[0]]}
+                        icon={categoryIcons[event.category] || markerIcons.violet}
+                    >
+                        <Popup>
+                            <div className="w-48 p-2 bg-white rounded-md shadow-md">
+                                <h3 className="font-bold text-sm text-gray-800">{event.title}</h3>
+                                <div className="max-h-16 overflow-y-auto text-gray-600 text-xs mt-1">
+                                    {event.description}
+                                </div>
+                                <div className="mt-1 text-xs">
+                                    <p><span className="font-semibold text-gray-700">Category:</span> {event.category}</p>
+                                    <p><span className="font-semibold text-gray-700">Date:</span> {new Date(event.date).toISOString().split('T')[0]}</p>
+                                </div>
+                                {event.imageUrl && (
+                                    <img
+                                        src={event.imageUrl}
+                                        alt={event.title}
+                                        className="w-full h-16 mt-1 rounded object-cover"
+                                    />
+                                )}
+                                <Button
+                                    onClick={() => handleShowDirection(event, userLocation)}
+                                    className="mt-2 w-full bg-blue-500 text-white text-xs py-1 rounded hover:bg-blue-600 transition"
+                                >
+                                    Direction
+                                </Button>
+                            </div>
+                        </Popup>
+                    </Marker>
+                ))}
 
-                        // console.log(events);
-                        const today = new Date();
-                        today.setHours(0, 0, 0, 0);
-
-                        const eventDate = new Date(event.date);
-                        eventDate.setHours(0, 0, 0, 0);
-
-                        const isUpcoming = eventDate >= today;
-
-                        const isCategoryMatch = !filteredCategory || event.category === filteredCategory || (filteredCategory === specialCategoryName && event.category === specialCategoryName);
-
-                        const isDateMatch = filterDate && eventDate.toDateString() === new Date(filterDate).toDateString();
-
-
-                        if (filterDate) {
-                            return isDateMatch;
-                        }
-
-                        else {
-                            return isUpcoming && isCategoryMatch || (filteredCategory === specialCategoryName && event.category === specialCategoryName);
-                        }
-                    })
-
-
-                        .map(event => (
-                            <Marker
-                                key={event._id}
-                                position={[event.location.coordinates[1], event.location.coordinates[0]]}
-                                icon={categoryIcons[event.category] || markerIcons.violet}
-                            >
-                                <Popup>
-                                    <div className="w-48 p-2 bg-white rounded-md shadow-md">
-                                        <h3 className="font-bold text-sm text-gray-800">{event.title}</h3>
-
-                                        {/* Scrollable Description */}
-                                        <div className="max-h-16 overflow-y-auto text-gray-600 text-xs mt-1">
-                                            {event.description}
-                                        </div>
-
-                                        <div className="mt-1 text-xs">
-                                            <p><span className="font-semibold text-gray-700">Category:</span> {event.category}</p>
-                                            <p><span className="font-semibold text-gray-700">Date: </span>
-                                                {new Date(event.date).toISOString().split('T')[0]}
-                                            </p>
-                                        </div>
-
-                                        {event.imageUrl && ( 
-                                            <img
-                                                src={event.imageUrl}
-                                                alt={event.title}
-                                                className="w-full h-16 mt-1 rounded object-cover"
-                                            />
-                                        )}
-                                    </div>
-                                </Popup>
-                            </Marker>
-                        ))}
-
-
-
-                {/* 📌 Always Show User's Location Marker */}
                 {userLocation && <Marker position={userLocation} icon={eventIcon} />}
-
-                {/* 📌 "Locate Me" Button */}
                 <LocateButton setSelectedLocation={setSelectedLocation} />
+
+                {routeCoords && (
+                    <Polyline
+                        positions={routeCoords}
+                        color="blue"
+                        weight={4}
+                        opacity={0.7}
+                    />
+                )}
+
+                {routeMidpoint && routeDistance && (
+                    <Marker
+                        position={routeMidpoint}
+                        icon={L.divIcon({
+                            className: 'custom-distance-label',
+                            html: `<div style="
+                                background-color: #1A73E8;
+                                width: 100px;
+                                padding: 12px 10px;
+                                border-radius: 6px;
+                                box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+                                font-size: 15px;
+                                color: white;
+                                font-weight: 500;
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+                                text-align: center;
+                            ">
+                                ${formatDistance(routeDistance)}
+                            </div>`,
+                        })}
+                    />
+                )}
             </MapContainer>
         </div>
     );
