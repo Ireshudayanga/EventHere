@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 // ShareRideMap.jsx
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup, LayersControl, useMap, useMapEvent } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -10,6 +10,7 @@ import { fetchSpecialCategory } from "../../../redux/specialCategorySlice";
 import Button from "../Button";
 import { Polyline } from "react-leaflet";
 import locationIcon from '../../assets/images/location.png';
+import { useSocket } from "../../socket/SocketPrivider"
 
 const { BaseLayer } = LayersControl;
 
@@ -154,7 +155,7 @@ const MapClickHandler = ({ onPickupSelect, activeField, isPickupSelected, setIsP
         if (activeField === "pickup" && !isPickupSelected) {
             const { lat, lng } = e.latlng;
             const newPosition = [lat, lng];
-          //  console.log("New Pickup Position:", newPosition);
+            //  console.log("New Pickup Position:", newPosition);
             setPickupPosition(newPosition);
             setIsPickupSelected(true);
             if (typeof onPickupSelect === "function") {
@@ -168,20 +169,20 @@ const MapClickHandler = ({ onPickupSelect, activeField, isPickupSelected, setIsP
 
 const InvalidateMapSize = ({ isRideMatched }) => {
     const map = useMap();
-  
+
     useEffect(() => {
-      setTimeout(() => {
-        map.invalidateSize();
-      }, 500); // wait for the panel animation
+        setTimeout(() => {
+            map.invalidateSize();
+        }, 500); // wait for the panel animation
     }, [isRideMatched]);
-  
+
     return null;
-  };
-  
+};
+
 
 const ShareRideMap = ({
     onDropSelect,
-    onPickupSelect ,
+    onPickupSelect,
     activeField,
     setSelectedLocation,
     categoryType,
@@ -192,9 +193,12 @@ const ShareRideMap = ({
     isRideMatched,   // new prop from parent
 }) => {
 
-    
 
- 
+
+
+    const [partnerCoords, setPartnerCoords] = useState(null);
+    const markerRef = useRef();
+    const { socket } = useSocket();
     const [userLocation, setUserLocation] = useState([7.8731, 80.7718]); // Default location
     const [filteredCategory, setFilteredCategory] = useState("");
     const dispatch = useDispatch();
@@ -205,7 +209,7 @@ const ShareRideMap = ({
 
     // console.log("Route Distance:", routeDistance);
 
-   
+
     useEffect(() => {
         const calculateRoute = async () => {
             if (pickupLocation && dropLocation) {
@@ -240,6 +244,40 @@ const ShareRideMap = ({
 
         calculateRoute();
     }, [pickupLocation, dropLocation]);
+
+    useEffect(() => {
+        if (!socket?.current) return;
+
+        socket.current.on("partner-location", ({ lat, lng }) => {
+            if (!markerRef.current) {
+                setPartnerCoords([lat, lng]);
+            } else {
+                const marker = markerRef.current;
+                const current = marker.getLatLng();
+                const next = L.latLng(lat, lng);
+
+                const duration = 300;
+                let start = null;
+
+                const animate = (timestamp) => {
+                    if (!start) start = timestamp;
+                    const progress = timestamp - start;
+                    const ratio = Math.min(progress / duration, 1);
+
+                    const interpolated = L.latLng(
+                        current.lat + (next.lat - current.lat) * ratio,
+                        current.lng + (next.lng - current.lng) * ratio
+                    );
+
+                    marker.setLatLng(interpolated);
+
+                    if (ratio < 1) requestAnimationFrame(animate);
+                };
+
+                requestAnimationFrame(animate);
+            }
+        });
+    }, [socket]);
 
 
     useEffect(() => {
@@ -287,7 +325,7 @@ const ShareRideMap = ({
     return (
         <div className="relative h-full w-full">
             <MapContainer center={userLocation} zoom={8} className="h-full w-full rounded-xl relative">
-            <InvalidateMapSize isRideMatched={isRideMatched} />
+                <InvalidateMapSize isRideMatched={isRideMatched} />
                 <ChangeView coords={userLocation} />
                 <LayersControl position="topright">
                     <BaseLayer checked name="OpenStreetMap">
@@ -431,6 +469,19 @@ const ShareRideMap = ({
 
 
                 <LocateButton setUserLocation={setUserLocation} />
+
+
+                {/* Real time tracking */}
+                {partnerCoords && (
+                    <Marker
+                        position={partnerCoords}
+                        icon={markerIcons.red}
+                        ref={markerRef}
+                    >
+
+                    </Marker>
+                )}
+
 
             </MapContainer>
         </div>

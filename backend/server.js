@@ -130,18 +130,18 @@ io.on("connection", (socket) => {
   socket.on("ride-confirmed", ({ to, from, name }) => {
     const receiverSocketId = onlineUsers[to];
     const senderSocketId = onlineUsers[from];
-  
+
     const payload = { from, name };
-  
+
     if (receiverSocketId) {
       io.to(receiverSocketId).emit("ride-confirmed", payload);
     }
-  
+
     if (senderSocketId) {
       io.to(senderSocketId).emit("ride-confirmed", payload); // ✅ send to the one who accepted too
     }
   });
-  
+
 
   // RIDE REJECTED
   socket.on("ride-rejected", ({ to }) => {
@@ -150,6 +150,17 @@ io.on("connection", (socket) => {
       io.to(senderSocketId).emit("ride-rejected");
     }
   });
+
+  // User joins ride room for location tracking
+  socket.on("join-ride-room", (rideId) => {
+    socket.join(rideId);
+  });
+
+  // Receive location and broadcast to the matched partner in the same ride
+  socket.on("location-update", ({ rideId, lat, lng }) => {
+    socket.to(rideId).emit("partner-location", { lat, lng });
+  });
+
 
 
   socket.on("disconnect", () => {
@@ -162,6 +173,7 @@ io.on("connection", (socket) => {
     }
     io.emit("onlineUsers", Object.keys(onlineUsers));
   });
+
 });
 
 // -------------------- START SERVER --------------------
