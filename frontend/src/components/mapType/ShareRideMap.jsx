@@ -166,6 +166,19 @@ const MapClickHandler = ({ onPickupSelect, activeField, isPickupSelected, setIsP
     return pickupPosition ? <Marker position={pickupPosition} icon={markerIcons.grey} /> : null;
 };
 
+const InvalidateMapSize = ({ isRideMatched }) => {
+    const map = useMap();
+  
+    useEffect(() => {
+      setTimeout(() => {
+        map.invalidateSize();
+      }, 500); // wait for the panel animation
+    }, [isRideMatched]);
+  
+    return null;
+  };
+  
+
 const ShareRideMap = ({
     onDropSelect,
     onPickupSelect ,
@@ -175,8 +188,13 @@ const ShareRideMap = ({
     filterDate,
     specialCategoryName,
     pickupLocation, // new prop from parent
-    dropLocation,   // new prop from parent
+    dropLocation,
+    isRideMatched,   // new prop from parent
 }) => {
+
+    
+
+ 
     const [userLocation, setUserLocation] = useState([7.8731, 80.7718]); // Default location
     const [filteredCategory, setFilteredCategory] = useState("");
     const dispatch = useDispatch();
@@ -187,6 +205,7 @@ const ShareRideMap = ({
 
     // console.log("Route Distance:", routeDistance);
 
+   
     useEffect(() => {
         const calculateRoute = async () => {
             if (pickupLocation && dropLocation) {
@@ -268,6 +287,7 @@ const ShareRideMap = ({
     return (
         <div className="relative h-full w-full">
             <MapContainer center={userLocation} zoom={8} className="h-full w-full rounded-xl relative">
+            <InvalidateMapSize isRideMatched={isRideMatched} />
                 <ChangeView coords={userLocation} />
                 <LayersControl position="topright">
                     <BaseLayer checked name="OpenStreetMap">

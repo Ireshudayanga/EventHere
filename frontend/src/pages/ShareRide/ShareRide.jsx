@@ -20,8 +20,8 @@ import { useSocket } from "../../socket/SocketPrivider";
 
 
 const ShareRide = () => {
-   const { socket } = useSocket();
-  const { currentUser,loading } = useContext(AuthContext);
+  const { socket } = useSocket();
+  const { currentUser, loading } = useContext(AuthContext);
 
 
 
@@ -39,10 +39,14 @@ const ShareRide = () => {
 
   // Ride status
   const [isRequesting, setIsRequesting] = useState(false);
-  const [availableRides, setAvailableRides] = useState([]); 
+  const [availableRides, setAvailableRides] = useState([]);
 
   // Ride index for selection ( If there multiple matching rides)
   const [rideIndex, setRideIndex] = useState(0);
+
+  // Hide ride selection after confirming a ride
+  const { isRideMatched, setIsRideMatched } = useSocket(); // 👈 from context
+
 
 
   const dispatch = useDispatch();
@@ -89,7 +93,7 @@ const ShareRide = () => {
 
         const matchedRides = res.data.rides;
         console.log("Matched rides:", matchedRides);
-        
+
         setIsRequesting(false);
         setShowRideSelection(false);
 
@@ -136,7 +140,7 @@ const ShareRide = () => {
           setAvailableRides(null);
           toast.info("No ride found. We'll notify you if a match becomes available.");
         }
-       
+
       })
       .catch((err) => console.error(err));
   };
@@ -144,18 +148,18 @@ const ShareRide = () => {
   const handleAccept = () => {
     const currentRide = availableRides[rideIndex];
     console.log("Accepted ride:", currentRide);
-  
+
     socket.current.emit("ride-accept-request", {
       to: currentRide.email, // receiver
       name: currentUser.displayName, // sender
       from: currentUser.email, // sender
       rideId: currentRide._id, // optional
     });
-  
+
     toast.info("Waiting for confirmation...");
   };
-  
-  
+
+
   const handleCancel = () => {
     const nextIndex = rideIndex + 1;
     if (nextIndex < availableRides.length) {
@@ -165,31 +169,30 @@ const ShareRide = () => {
       toast.info("No more rides found.");
     }
   };
-  
+
   useEffect(() => {
     if (!socket.current) return;
-  
+
     const handleConfirmed = () => {
       toast.success("Ride confirmed! 🎉");
-      // Navigate to chat or start a ride session
-      
-      // Here, you can start a ride session or navigate to chat
+      setIsRideMatched(true); //  Hide the left panel
     };
-  
+
+
     const handleRejected = () => {
       toast.error("Ride was rejected");
       handleCancel(); // Show next match
     };
-  
+
     socket.current.on("ride-confirmed", handleConfirmed);
     socket.current.on("ride-rejected", handleRejected);
-  
+
     return () => {
       socket.current.off("ride-confirmed", handleConfirmed);
       socket.current.off("ride-rejected", handleRejected);
     };
   }, [socket.current, handleCancel]);
-  
+
 
 
   return (
@@ -197,84 +200,81 @@ const ShareRide = () => {
       <ToastContainer />
       <SearchBar />
       <div className="h-full w-full md:w-[94%] mt-0 md:mt-4 rounded-none md:rounded-2xl shadow-xl md:shadow-2xl ml-auto">
-        <div className="flex flex-col md:flex-row h-full p-3 md:p-7 gap-4 md:gap-5">
+        <div className="flex flex-col md:flex-row h-full p-3 md:p-7 gap-4 md:gap-5 transition-all duration-700 ease-in-out">
 
-          
-
-          {/* Right Side - Ride Selection & Pool Matching */}
-          <div className="w-full md:w-[50%] flex flex-col gap-3 md:gap-5">
-            <div className="bg-white rounded-xl md:rounded-2xl shadow-lg p-8 flex flex-col items-center w-full mx-auto h-full transition-all duration-700 ease-in-out justify-center  ">
-              {showRideSelection ? (
-                <>
-                  <p className="text-2xl text-stone-950 font-medium">Choose Ride</p>
-                  <Lottie animationData={WalkingManAnimation} className="w-40 h-40" />
-                  <div className="flex my-3 md:my-6 items-center gap-3">
-                    <div className="flex flex-col gap-4 justify-center">
-                      <p className="text-sm primary-color">Pickup</p>
-                      <p className="text-sm yellow-color">Event</p>
+          {/* Left Side - Ride Selection & Pool Matching */}
+          {!isRideMatched && (
+            <div className="w-full md:w-[50%] flex flex-col gap-3 md:gap-5">
+              <div className="bg-white rounded-xl md:rounded-2xl shadow-lg p-8 flex flex-col items-center w-full mx-auto h-full transition-all duration-700 ease-in-out justify-center">
+                {showRideSelection ? (
+                  <>
+                    <p className="text-2xl text-stone-950 font-medium">Choose Ride</p>
+                    <Lottie animationData={WalkingManAnimation} className="w-40 h-40" />
+                    <div className="flex my-3 md:my-6 items-center gap-3">
+                      <div className="flex flex-col gap-4 justify-center">
+                        <p className="text-sm primary-color">Pickup</p>
+                        <p className="text-sm yellow-color">Event</p>
+                      </div>
+                      <div className="w-[250px] flex flex-col gap-4 justify-center">
+                        <input
+                          type="text"
+                          placeholder="Choose Location from map"
+                          value={location1}
+                          onClick={() => setActiveField("pickup")}
+                          className="text-base text-black text-center outline-none"
+                        />
+                        <hr />
+                        <input
+                          type="text"
+                          placeholder="Choose Event from map"
+                          value={location2}
+                          onClick={() => setActiveField("event")}
+                          className="text-base text-black text-center outline-none"
+                        />
+                      </div>
                     </div>
 
-                    <div className="w-[250px] flex flex-col gap-4 justify-center">
-                      <input
-                        type="text"
-                        placeholder="Choose Location from map"
-                        value={location1}
-                        onClick={() => setActiveField("pickup")}
-                        className="text-base text-black text-center outline-none"
-                      />
-                      <hr />
-                      <input
-                        type="text"
-                        placeholder="Choose Event from map"
-                        value={location2}
-                        onClick={() => setActiveField("event")}
-                        className="text-base text-black text-center outline-none"
-                      />
+                    <div className="flex mt-4 md:y-auto gap-3">
+                      <Button
+                        onClick={() => handleConfirmRide("find")}
+                        className="bg-green-600 md:w-[150px] text-white px-4 py-2 text-base md:text-lg rounded-3xl"
+                      >
+                        Find Ride
+                      </Button>
+                      <Button
+                        onClick={() => handleConfirmRide("offer")}
+                        className="bg-blue-500 md:w-[150px] text-white px-4 py-2 text-base md:text-lg rounded-3xl"
+                      >
+                        Offer Ride
+                      </Button>
                     </div>
+                  </>
+                ) : isRequesting ? (
+                  <div className="flex flex-col items-center justify-center h-full w-full">
+                    <Lottie animationData={rideAnimation} className="w-40 h-40" />
+                    <p className="text-xs text-center font-normal text-gray-600">
+                      Searching for a partner within a 3km range...
+                    </p>
                   </div>
-
-                  {/* Ride Buttons */}
-                  <div className="flex mt-4 md:y-auto gap-3">
-                    <Button
-                      onClick={() => handleConfirmRide("find")}
-                      className="bg-green-600 md:w-[150px] text-white px-4 py-2 text-base md:text-lg rounded-3xl"
-                    >
-                      Find Ride
-                    </Button>
-                    <Button
-                      onClick={() => handleConfirmRide("offer")}
-                      className="bg-blue-500 md:w-[150px] text-white px-4 py-2 text-base md:text-lg rounded-3xl"
-                    >
-                      Offer Ride
-                    </Button>
+                ) : availableRides && availableRides.length > 0 ? (
+                  <div className="flex flex-col items-center justify-center h-full w-full">
+                    <RideCard
+                      ride={availableRides[rideIndex]}
+                      onAccept={handleAccept}
+                      onCancel={handleCancel}
+                    />
                   </div>
-                </>
-              ) : isRequesting ? (
-                <div className="flex flex-col items-center justify-center h-full w-full">
-                  <Lottie animationData={rideAnimation} className="w-40 h-40" />
-                  <p className="text-xs text-center font-normal text-gray-600">
-                    Searching for a partner within a 3km range...
+                ) : (
+                  <p className="text-gray-400">
+                    No rides found right now. Your request is saved and we will notify you if a match appears!
                   </p>
-                </div>
-              ) : availableRides && availableRides.length > 0 ? (
-                <div className="flex flex-col items-center justify-center h-full w-full">
-                <RideCard
-                  ride={availableRides[rideIndex]}
-                  onAccept={handleAccept}
-                  onCancel={handleCancel}
-                />
-                </div>
-              ) : (
-                <p className="text-gray-400">
-                  No rides found right now. Your request is saved and we will notify you if a match appears!
-                </p>
-              )}
-              
+                )}
+              </div>
             </div>
-          </div>
+          )}
 
-          {/* Left Side - Map and Communication */}
-          <div className="w-full md:w-[50%] flex flex-col gap-3">
+          {/* Right Side - Map and Communication */}
+          <div className={`w-full ${isRideMatched ? 'md:w-full' : 'md:w-[50%]'} flex flex-col gap-3 transition-all duration-700 ease-in-out`}>
             {/* Map Section */}
             <div className="bg-white rounded-xl md:rounded-2xl shadow-lg h-[40vh] flex-grow">
               <ShareRideMap
@@ -283,7 +283,9 @@ const ShareRide = () => {
                 activeField={activeField}
                 pickupLocation={location1}
                 dropLocation={location2}
+                isRideMatched={isRideMatched} 
               />
+
             </div>
 
             {/* Communication & Ride Status Section */}
@@ -314,6 +316,7 @@ const ShareRide = () => {
         </div>
       </div>
     </div>
+
   );
 };
 

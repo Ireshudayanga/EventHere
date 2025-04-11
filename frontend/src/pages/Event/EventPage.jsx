@@ -145,7 +145,7 @@ const EventPage = () => {
                         <div className="flex flex-col md:flex-row gap-4">
                             <div className="bg-white rounded-xl md:rounded-2xl shadow-lg p-5 flex flex-col items-center justify-between text-center flex-1 min-h-[150px]">
                                 <p className="text-lg font-semibold text-black">Share Ride</p>
-                                <p className="text-xs text-gray-600">Choose event for ride</p>
+                                <p className="text-xs text-gray-600">Want you Share or Offer Ride?</p>
                                 <div className="flex gap-3">
 
                                     <Link to="/share-ride">

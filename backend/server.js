@@ -128,11 +128,20 @@ io.on("connection", (socket) => {
 
   // RIDE CONFIRMED
   socket.on("ride-confirmed", ({ to, from, name }) => {
-    const senderSocketId = onlineUsers[to];
+    const receiverSocketId = onlineUsers[to];
+    const senderSocketId = onlineUsers[from];
+  
+    const payload = { from, name };
+  
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit("ride-confirmed", payload);
+    }
+  
     if (senderSocketId) {
-      io.to(senderSocketId).emit("ride-confirmed", { from,name }); // include sender email
+      io.to(senderSocketId).emit("ride-confirmed", payload); // ✅ send to the one who accepted too
     }
   });
+  
 
   // RIDE REJECTED
   socket.on("ride-rejected", ({ to }) => {

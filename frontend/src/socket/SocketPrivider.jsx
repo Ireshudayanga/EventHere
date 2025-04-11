@@ -14,6 +14,8 @@ export const SocketProvider = ({ children }) => {
   const socket = useRef(null);
   const [incomingRideRequest, setIncomingRideRequest] = useState(null); // 👈 store ride request
   const [hasUnreadMessages, setHasUnreadMessages] = useState(false);
+  const [isRideMatched, setIsRideMatched] = useState(false); // NEW
+
 
 
   useEffect(() => {
@@ -50,8 +52,9 @@ export const SocketProvider = ({ children }) => {
 
     socket.current.on("ride-confirmed", (data) => {
       toast.success("You have been matched!");
-    console.log("🚗 Ride confirmed:", data);
-      // 🧠 LocalStorage chat key
+      setIsRideMatched(true); // 👈 NEW: update state shared across app
+    
+      // Your existing code...
       const userEmail = currentUser?.email;
       const otherUserEmail = data?.from;
       const otherUserName = data?.name;
@@ -65,16 +68,12 @@ export const SocketProvider = ({ children }) => {
         message: "🎉 Ride matched successfully! Say hi to your ride partner!",
         timestamp: new Date().toISOString()
       };
-    console.log("44444444",initialMessage);
-      // Prevent overwriting if already exists
-      if (!localStorage.getItem(keyA) && !localStorage.getItem(keyB)) {
+    
+      if (!localStorage.getItem(keyA) && !localStorage.getItem(keyB) && userEmail !== otherUserEmail) {
         localStorage.setItem(keyA, JSON.stringify([initialMessage]));
       }
-    
-      // You can now redirect both users or start the ride session
-      
-
     });
+    
     
 
   socket.current.on("ride-rejected", () => {
@@ -88,7 +87,7 @@ export const SocketProvider = ({ children }) => {
   }, [currentUser]);
 
   return (
-    <SocketContext.Provider value={{ socket, incomingRideRequest, setIncomingRideRequest, hasUnreadMessages, setHasUnreadMessages }}>
+    <SocketContext.Provider value={{ socket, incomingRideRequest, setIncomingRideRequest, hasUnreadMessages, setHasUnreadMessages, isRideMatched, setIsRideMatched }}>
       {children}
     </SocketContext.Provider>
   );
