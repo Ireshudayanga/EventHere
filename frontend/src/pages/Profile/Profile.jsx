@@ -2,10 +2,18 @@ import React, { useContext } from 'react';
 import { Mail, Phone, MapPin, Globe, Calendar, User } from 'lucide-react';
 import { AuthContext } from '../../context/AuthProvider';
 import { ClipLoader } from 'react-spinners';
+import { calculateUserRating } from '../../utils/calculateUserRating';
 
 
 export default function ModernUserProfile() {
     const { currentUser, loading } = useContext(AuthContext);
+
+     // Sample values — in real usage, these would come from your backend or DB
+  const userRating = calculateUserRating({
+    reviews: [4, 5, 5, 3, 4 , 5,5],         // Example user ratings
+    activityScore: 3.5,               // Custom metric (0-10)
+    profileCompleted: !!currentUser?.displayName && !!currentUser?.photoURL
+  });
 
 
     return (
@@ -36,7 +44,7 @@ export default function ModernUserProfile() {
                     <div className="flex flex-wrap justify-between items-center mb-6">
                         <div>
                             <p className="text-sm text-gray-400">Rating</p>
-                            <p className="text-lg font-bold text-blue-600">8.6 <span className='yellow-color'>★★★★★</span></p>
+                            <p className="text-lg font-bold text-blue-600">{userRating} <span className='yellow-color'>★★★★★</span></p>
                         </div>
                         <div className="flex gap-2 mt-2 md:mt-0">
                             <button className="text-sm px-3 py-1 rounded-md bg-blue-500 text-white hover:bg-blue-600">
