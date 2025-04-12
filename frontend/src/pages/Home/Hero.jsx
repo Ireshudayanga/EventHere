@@ -20,7 +20,7 @@ const Hero = () => {
                 <button onClick={() => navigate('/events')} className='primarybutton'>
                     Explore Event
                 </button>
-                <button className='secondarybutton'>Find Ride</button>
+                <button onClick={() => navigate('/share-ride')} className='secondarybutton'>Find Ride</button>
             </div>
         </div>
     );
