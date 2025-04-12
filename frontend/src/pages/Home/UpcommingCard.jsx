@@ -2,10 +2,11 @@ import React, { useState, useEffect } from "react";
 import forwardArrow from "../../assets/svg/ForwardArrow.svg";
 import axios from "axios";
 import useAxiosPublic from "../../hooks/useAxiosPublic";
+import { Link } from "react-router-dom";
 
 const UpcommingCard = () => {
   const [cardData, setCardData] = useState([]);
-  const  axiosPublic = useAxiosPublic();
+  const axiosPublic = useAxiosPublic();
 
   useEffect(() => {
     axiosPublic.get("/events")
@@ -15,7 +16,7 @@ const UpcommingCard = () => {
       .catch((error) => {
         console.error("Error fetching event data:", error.message);
       });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
 
@@ -91,11 +92,16 @@ const UpcommingCard = () => {
 
 
             <div className="flex justify-center items-center gap-2 mt-6">
-              <button className="secondary-color text-sm md:text-base text-center">
+              <Link
+                to="/events"
+                className="px-4 py-2 text-[#34A853] rounded-md text-sm md:text-base border border-transparent hover:border-[#1A73E8] hover:bg-transparent transition duration-300"
+
+              >
                 Explore
-              </button>
+              </Link>
               <img src={forwardArrow} className="w-4 md:w-6" alt="Arrow" />
             </div>
+
           </div>
         ))}
       </div>

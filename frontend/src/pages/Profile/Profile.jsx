@@ -63,30 +63,7 @@ export default function ModernUserProfile() {
                     </div>
 
                     {/* Contact Info */}
-                    <div className="space-y-4 text-sm text-gray-700">
-                        <div className="flex items-center gap-2">
-                            <Phone size={16} /> +1 234 567 890
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <MapPin size={16} /> 342 E 85th Street, NY 10028
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <Mail size={16} /> hello@marquatech.com
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <Globe size={16} /> www.marquatech.com
-                        </div>
-                    </div>
-
-                    {/* Basic Info */}
-                    <div className="mt-6 space-y-4 text-sm text-gray-700">
-                        <div className="flex items-center gap-2">
-                            <Calendar size={16} /> Birthday: Dec 25, 2000
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <User size={16} /> Gender: Male
-                        </div>
-                    </div>
+                    
                 </div>
             </div>
         </div>)))

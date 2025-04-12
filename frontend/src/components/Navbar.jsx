@@ -63,10 +63,13 @@ const Navbar = () => {
         </div>
 
         {/* Desktop Nav */}
-        <ul className="hidden lg:flex gap-8 text-white font-medium">
+        <ul className="hidden lg:flex gap-12 text-white font-medium">
           {navItems.map((item) => (
             <li key={item.name}>
-              <Link to={item.href} className="hover:underline">
+              <Link
+                to={item.href}
+                className="relative px-3 py-1 rounded-md transition duration-300 border border-transparent hover:border-[2px] hover:border-blue-400 hover:shadow-[0_0_8px_2px_rgba(59,130,246,0.5)]"
+              >
                 {item.name}
               </Link>
             </li>

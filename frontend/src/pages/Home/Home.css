@@ -93,7 +93,15 @@
   border-radius: 30px;
   background-color: #bedddb;
   box-shadow: #5ea38d 0px 0px 10px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
+
+.featureframe:hover {
+  transform: scale(1.08);
+  box-shadow: 0 0 20px #5ea38d;
+  cursor: pointer;
+}
+
 
 
 .cardButton {

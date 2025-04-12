@@ -7,10 +7,10 @@ const Testimonial = () => {
             <div className="flex flex-col lg:flex-row items-center gradient-bg max-w-4xl w-full rounded-3xl p-6 lg:p-8">
                 {/* Left side - Text Content */}
                 <div className="w-full lg:w-1/2 lg:pr-8">
-                    <h1 className="text-3xl sm:text-4xl lg:text-5xl font-semibold leading-snug text-white">
+                    <h1 className="text-3xl md:text-4xl font-medium   text-white">
                         Upcoming Events You Can’t Miss!
                     </h1>
-                    <p className="text-white mt-4 text-sm sm:text-base leading-relaxed">
+                    <p className="text-white mt-4 text-sm sm:text-base  md:leading-relaxed">
                         Discover the most exciting events happening near you! Whether it’s a vibrant music festival, 
                         a cultural celebration, or a meaningful charity event, there’s something for everyone on EventHere. 
                         Explore our curated list of trending events and find your next adventure. Don’t wait—secure your spot, 
