@@ -189,6 +189,7 @@ const EventPage = () => {
                                                         eventTitle={event.title}
                                                         eventTime={event.time}
                                                         eventDate={event.date}
+                                                        eventId={event._id}
                                                     />
                                                 ))
                                             ) : (

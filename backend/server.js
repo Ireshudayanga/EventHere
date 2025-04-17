@@ -60,22 +60,21 @@ const rideRoutes = require('./api/routers/ShareRideRoutes');
 const tokenRoutes = require('./api/routers/TokenRoutes');
 
 
+
 app.use('/users', userRoutes);
 app.use('/events', eventRoutes);
 app.use("/api/special-category", specialCategoryRoutes);
 app.use('/rides', rideRoutes);
 app.use('/jwt', tokenRoutes);
 
-// -------------------- CHAT FUNCTIONALITY (Local only) --------------------
 
-// In-memory chat message store (non-persistent)
-
-const onlineUsers = {};
 
 
 
 // -------------------- SOCKET.IO SETUP --------------------
+// In-memory chat message store (non-persistent)
 
+const onlineUsers = {};
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {

@@ -3,7 +3,7 @@ import React from 'react';
 import Button from './Button';
 import { useNavigate } from 'react-router-dom';
 
-const ReminderCard = ({ eventTitle, eventTime, eventDate }) => {
+const ReminderCard = ({ eventTitle, eventTime, eventDate, eventId }) => {
 
     const navigate = useNavigate();
 
@@ -12,7 +12,8 @@ const ReminderCard = ({ eventTitle, eventTime, eventDate }) => {
             state: {
                 title: eventTitle,
                 date: eventDate,
-                time: eventTime
+                time: eventTime,
+                eventid : eventId,
             }
         });
     };
