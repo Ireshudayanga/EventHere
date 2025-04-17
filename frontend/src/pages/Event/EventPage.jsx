@@ -127,9 +127,9 @@ const EventPage = () => {
                                 ) : status === "failed" ? (
                                     <p className="text-red-500 text-center text-sm">Error fetching events: {error}</p>
                                 ) : (
-                                   
-                                        <Calender date={selectedDate} setDate={handleDateChange} events={calenderEvents} />
-                                    
+
+                                    <Calender date={selectedDate} setDate={handleDateChange} events={calenderEvents} />
+
                                 )}
                             </div>
                         </div>
@@ -170,17 +170,31 @@ const EventPage = () => {
                                             <ClipLoader size={40} color={"#3498db"} loading={true} />
                                         </div>
                                     ) : (
-                                        events
-                                            .filter((event) => event.category === 'volunteer')
-                                            .map((event, index) => (
-                                                <ReminderCard
-                                                    key={index}
-                                                    eventTitle={event.title}
-                                                    eventTime={event.time}
-                                                    eventDate={event.date}
-                                                />
-                                            ))
+                                        (() => {
+                                            const upcomingVolunteerEvents = events
+                                                .filter((event) => {
+                                                    const eventDate = new Date(event.date);
+                                                    const today = new Date();
+                                                    today.setHours(0, 0, 0, 0);
+                                                    return event.category === 'volunteer' && eventDate >= today;
+                                                })
+                                                .sort((a, b) => new Date(a.date) - new Date(b.date));
+
+                                            return upcomingVolunteerEvents.length > 0 ? (
+                                                upcomingVolunteerEvents.map((event, index) => (
+                                                    <ReminderCard
+                                                        key={index}
+                                                        eventTitle={event.title}
+                                                        eventTime={event.time}
+                                                        eventDate={event.date}
+                                                    />
+                                                ))
+                                            ) : (
+                                                <p className="text-xs text-gray-500 ">No upcoming volunteer events.</p>
+                                            );
+                                        })()
                                     )}
+
                                 </div>
                             </div>
 
