@@ -277,31 +277,49 @@ const ShowEventMap = ({ setSelectedLocation, categoryType, filterDate, specialCa
                         position={[event.location.coordinates[1], event.location.coordinates[0]]}
                         icon={categoryIcons[event.category] || markerIcons.violet}
                     >
-                        <Popup>
-                            <div className="w-48 p-2 bg-white rounded-md shadow-md">
-                                <h3 className="font-bold text-sm text-gray-800">{event.title}</h3>
-                                <div className="max-h-16 overflow-y-auto text-gray-600 text-xs mt-1">
-                                    {event.description}
-                                </div>
-                                <div className="mt-1 text-xs">
-                                    <p><span className="font-semibold text-gray-700">Category:</span> {event.category}</p>
-                                    <p><span className="font-semibold text-gray-700">Date:</span> {new Date(event.date).toISOString().split('T')[0]}</p>
-                                </div>
-                                {event.imageUrl && (
-                                    <img
-                                        src={event.imageUrl}
-                                        alt={event.title}
-                                        className="w-full h-16 mt-1 rounded object-cover"
-                                    />
-                                )}
-                                <Button
-                                    onClick={() => handleShowDirection(event, userLocation)}
-                                    className="mt-2 w-full bg-blue-500 text-white text-xs py-1 rounded hover:bg-blue-600 transition"
-                                >
-                                    Direction
-                                </Button>
-                            </div>
-                        </Popup>
+                       <Popup>
+    <div className="w-60 p-3 rounded-xl shadow-md bg-white space-y-2">
+        {/* Event Title */}
+        <h3 className="text-sm font-semibold text-gray-900">{event.title}</h3>
+
+        {/* Optional Image */}
+        {event.imageUrl && (
+            <img
+                src={event.imageUrl}
+                alt={event.title}
+                className="w-full h-24 rounded-lg object-cover"
+            />
+        )}
+
+        {/* Description */}
+        <p className="text-xs text-gray-600 line-clamp-3">{event.description}</p>
+
+        {/* Meta Info */}
+        <div className="text-xs text-gray-700 space-y-1">
+            <div className="flex justify-between">
+                <span className="font-medium">Category:</span>
+                <span className="capitalize">{event.category}</span>
+            </div>
+            <div className="flex justify-between">
+                <span className="font-medium">Date:</span>
+                <span>{new Date(event.date).toISOString().split("T")[0]}</span>
+            </div>
+            <div className="flex justify-between">
+                <span className="font-medium">Time:</span>
+                <span>{event.time}</span>
+            </div>
+        </div>
+
+        {/* CTA Button */}
+        <Button
+            onClick={() => handleShowDirection(event, userLocation)}
+            className="w-full mt-2 bg-blue-600 text-white text-xs py-2 rounded-lg hover:bg-blue-700 transition-all"
+        >
+            Get Directions
+        </Button>
+    </div>
+</Popup>
+
                     </Marker>
                 ))}
 

@@ -361,83 +361,83 @@ const ShareRideMap = ({
                                 icon={categoryIcons[event.category] || markerIcons.violet}
                             >
                                 <Popup>
-                                    <div className="w-56 p-3 bg-white rounded-lg shadow-lg border border-gray-200">
-                                        {/* Event Title */}
-                                        <h3 className="font-semibold text-base text-gray-900 truncate">{event.title}</h3>
-
-                                        {/* Event Description */}
-                                        <p className="text-xs text-gray-600 mt-1 line-clamp-3">
-                                            {event.description}
-                                        </p>
-
-                                        {/* Event Details */}
-                                        <div className="mt-2 text-xs text-gray-700 space-y-1">
-                                            <p>
-                                                <span className="font-medium text-gray-800">Category:</span> {event.category}
-                                            </p>
-                                            <p>
-                                                <span className="font-medium text-gray-800">Date:</span> {new Date(event.date).toLocaleDateString()}
-                                            </p>
-                                        </div>
-
-                                        {/* Event Image */}
+                                    <div className="w-64 bg-white rounded-2xl shadow-md overflow-hidden border border-gray-200">
+                                        {/* Image Header */}
                                         {event.imageUrl && (
-                                            <div className="mt-2">
+                                            <div className="h-24 w-full overflow-hidden">
                                                 <img
                                                     src={event.imageUrl}
                                                     alt={event.title}
-                                                    className="w-full h-20 object-cover rounded-md shadow-sm"
+                                                    className="w-full h-full object-cover"
                                                 />
                                             </div>
                                         )}
 
-                                        {/* Action Buttons */}
-                                        <div className="mt-3 flex gap-2 justify-center">
-                                            {onPickupSelect ? (
-                                                <Button
-                                                    onClick={() => {
-                                                        const eventLat = event.location.coordinates[1];
-                                                        const eventLng = event.location.coordinates[0];
-                                                        if (typeof onDropSelect === "function") {
-                                                            onDropSelect(`${eventLat.toFixed(4)}, ${eventLng.toFixed(4)}`);
-                                                        }
-                                                    }}
-                                                    className="bg-purple-600 hover:bg-purple-700 text-white font-medium px-4 py-2 text-xs rounded-lg shadow-md transition-all"
-                                                >
-                                                    Select Event
-                                                </Button>
-                                            ) : (
-                                                <>
+                                        {/* Content */}
+                                        <div className="p-4 space-y-2">
+                                            {/* Title */}
+                                            <h3 className="text-base font-bold text-gray-900">{event.title}</h3>
+
+                                            {/* Description */}
+                                            <p className="text-sm text-gray-600 leading-snug line-clamp-3">
+                                                {event.description}
+                                            </p>
+
+                                            {/* Info Block */}
+                                            <div className="text-xs text-gray-700 bg-gray-50 rounded-lg p-2 space-y-1 border">
+                                                <div className="flex justify-between">
+                                                    <span className="font-medium">Date:</span>
+                                                    <span>{new Date(event.date).toLocaleDateString()}</span>
+                                                </div>
+                                                <div className="flex justify-between">
+                                                    <span className="font-medium">Time:</span>
+                                                    <span>{event.time || "TBA"}</span>
+                                                </div>
+                                                <div className="flex justify-between">
+                                                    <span className="font-medium">Type:</span>
+                                                    <span className="capitalize">{event.category}</span>
+                                                </div>
+                                            </div>
+
+                                            {/* Action Buttons */}
+                                            <div className="pt-2 flex justify-between items-center gap-2">
+                                                {onPickupSelect ? (
                                                     <Button
                                                         onClick={() => {
-                                                            const eventLat = event.location.coordinates[1];
-                                                            const eventLng = event.location.coordinates[0];
-                                                            if (typeof onDropSelect === "function") {
-                                                                onDropSelect(`${eventLat.toFixed(4)}, ${eventLng.toFixed(4)}`);
-                                                            }
+                                                            const [lat, lng] = [event.location.coordinates[1], event.location.coordinates[0]];
+                                                            onDropSelect(`${lat.toFixed(4)}, ${lng.toFixed(4)}`);
                                                         }}
-                                                        className="bg-green-600 hover:bg-green-700 text-white font-medium px-4 py-2 text-xs rounded-lg shadow-md transition-all"
+                                                        className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs px-4 py-1.5 rounded-lg w-full"
                                                     >
-                                                        Find
+                                                        Select Event
                                                     </Button>
-                                                    <Button
-                                                        onClick={() => {
-                                                            const eventLat = event.location.coordinates[1];
-                                                            const eventLng = event.location.coordinates[0];
-                                                            if (typeof onDropSelect === "function") {
-                                                                onDropSelect(`${eventLat.toFixed(4)}, ${eventLng.toFixed(4)}`);
-                                                            }
-                                                        }}
-                                                        className="bg-blue-500 hover:bg-blue-600 text-white font-medium px-4 py-2 text-xs rounded-lg shadow-md transition-all"
-                                                    >
-                                                        Offer
-                                                    </Button>
-                                                </>
-                                            )}
+                                                ) : (
+                                                    <>
+                                                        <Button
+                                                            onClick={() => {
+                                                                const [lat, lng] = [event.location.coordinates[1], event.location.coordinates[0]];
+                                                                onDropSelect(`${lat.toFixed(4)}, ${lng.toFixed(4)}`);
+                                                            }}
+                                                            className="bg-green-600 hover:bg-green-700 text-white text-xs px-3 py-1.5 rounded-lg w-full"
+                                                        >
+                                                            Find
+                                                        </Button>
+                                                        <Button
+                                                            onClick={() => {
+                                                                const [lat, lng] = [event.location.coordinates[1], event.location.coordinates[0]];
+                                                                onDropSelect(`${lat.toFixed(4)}, ${lng.toFixed(4)}`);
+                                                            }}
+                                                            className="bg-blue-500 hover:bg-blue-600 text-white text-xs px-3 py-1.5 rounded-lg w-full"
+                                                        >
+                                                            Offer
+                                                        </Button>
+                                                    </>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
                                 </Popup>
-
+                                
                             </Marker>
                         ))
                 }

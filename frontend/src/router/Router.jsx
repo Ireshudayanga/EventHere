@@ -13,6 +13,7 @@ import AdminPanel from '../pages/admin/AdminPanel';
 import Chat from '../pages/Massage/Chat';
 import PrivateRouter from '../privetRouter/privateRouter';
 import ProfilePage from '../pages/Profile/Profile';
+import JoinEventPage from '../pages/JoinEventForm/JoinEventPage';
 
 
 
@@ -57,6 +58,11 @@ const router = createBrowserRouter([
         {
             path: "/profile",
             element: <ProfilePage/>
+
+        },
+        {
+            path: "/join-event",
+            element: <JoinEventPage/>
 
         }
         ]

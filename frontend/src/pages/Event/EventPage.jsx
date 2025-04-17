@@ -180,6 +180,8 @@ const EventPage = () => {
                                                 })
                                                 .sort((a, b) => new Date(a.date) - new Date(b.date));
 
+                                                console.log(upcomingVolunteerEvents);
+
                                             return upcomingVolunteerEvents.length > 0 ? (
                                                 upcomingVolunteerEvents.map((event, index) => (
                                                     <ReminderCard

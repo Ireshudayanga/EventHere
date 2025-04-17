@@ -1,9 +1,21 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
 import Button from './Button';
+import { useNavigate } from 'react-router-dom';
 
 const ReminderCard = ({ eventTitle, eventTime, eventDate }) => {
 
+    const navigate = useNavigate();
+
+    const handleJoin = () => {
+        navigate("/join-event", {
+            state: {
+                title: eventTitle,
+                date: eventDate,
+                time: eventTime
+            }
+        });
+    };
 
     const truncateText = (text, maxLength = 12) => {
         return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
@@ -38,6 +50,7 @@ const ReminderCard = ({ eventTitle, eventTime, eventDate }) => {
 
             {/* Join Button */}
             <Button
+                onClick={handleJoin}
                 color="bg-green-500"
                 className="rounded-lg text-white shadow-sm"
                 customSize="py-1 px-4 text-xs"
