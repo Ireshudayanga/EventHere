@@ -38,7 +38,7 @@ const JoinEventPage = () => {
         };
         console.log("🚀 Payload to join event:", payload);
         try {
-            await dispatch(joinEvent(payload)).unwrap();
+        
 
             if (status === "loading") {
                 toast.info("⏳ Joining the event...");
