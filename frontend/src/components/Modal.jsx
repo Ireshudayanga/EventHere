@@ -28,7 +28,8 @@ const Modal = () => {
         login(email, password)
             .then(() => {
                 alert("Login successful!");
-                navigate("/events");
+                document.getElementById("LoginModel").close();
+                navigate("/");
             })
             .catch((error) => {
                 console.error("Error:", error);
@@ -48,11 +49,12 @@ const Modal = () => {
             axiosPublic.post("/users", userInfo)
             .then(() => {
               alert("SignUp successful!");
+              document.getElementById("LoginModel").close();
             })
             .catch((error) => {
               console.error("Error signing up:", error);
             });
-            navigate("/events");
+            navigate("/");
         }).catch((error) => {
             console.error("Error:", error);
             alert("Signup failed. Please try again.");

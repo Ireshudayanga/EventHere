@@ -37,9 +37,9 @@ export const SocketProvider = ({ children }) => {
 
       if (msg.senderId !== currentUser?.email) {
         setHasUnreadMessages(true); // 💡 Set unread flag
-        toast.info(`New message from ${msg.senderId}`);
+        toast.info(`New message from ${msg.senderName}`);
       }
-      //console.log(`💬 New message from ${msg.senderId}:`, msg);
+      // console.log(`💬 New message from ${msg.senderName}:`, msg);
     });
 
     // 🎯 Receive ride acceptance

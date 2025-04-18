@@ -107,9 +107,6 @@ export default function ModernUserProfile() {
                             </p>
                         </div>
                         <div className="flex gap-2 mt-3 md:mt-0">
-                            <button className="text-sm px-3 py-1 rounded-md bg-blue-500 text-white hover:bg-blue-600">
-                                ✔ Contacts
-                            </button>
                             <button className="text-sm px-3 py-1 rounded-md border border-red-500 text-red-500 hover:bg-red-100">
                                 Report Problem
                             </button>

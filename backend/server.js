@@ -93,9 +93,10 @@ io.on("connection", (socket) => {
     io.emit("onlineUsers", Object.keys(onlineUsers));
   });
 
-  socket.on("privateMessage", ({ senderId, receiverId, message }) => {
+  socket.on("privateMessage", ({ senderId, receiverId, message, senderName }) => {
     const chatMessage = {
       senderId,
+      senderName,
       receiverId,
       message,
       timestamp: new Date()

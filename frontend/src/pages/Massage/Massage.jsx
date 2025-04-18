@@ -99,6 +99,7 @@ const Massage = () => {
 
     const msg = {
       senderId: currentUserId,
+      senderName: currentUser?.displayName,
       receiverId: selectedChat.id.toString(),
       message: input.trim(),
       timestamp: new Date().toISOString(),
