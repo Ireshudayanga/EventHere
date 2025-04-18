@@ -10,6 +10,9 @@ import Button from '../components/Button';
 
 const EditEvent = () => {
   const { state: event } = useLocation();
+  const { _id: eventId } = event || {};
+  //console.log("🚀 Event ID:", eventId);
+  //console.log("🚀 Event Details:", event);
   const navigate = useNavigate();
   const axiosSecure = useAxiosSecure();
   const axiosPublic = useAxiosPublic();
@@ -58,7 +61,10 @@ const EditEvent = () => {
 
   const onSubmit = async (data) => {
     setLoading(true);
-    const formattedDate = selectedDate.toISOString().split('T')[0];
+    const formattedDate = `${selectedDate.getFullYear()}-${(selectedDate.getMonth() + 1)
+        .toString()
+        .padStart(2, "0")}-${selectedDate.getDate().toString().padStart(2, "0")}`;
+      
 
     const updatedEvent = {
       title: data.eventName,
@@ -70,7 +76,7 @@ const EditEvent = () => {
     };
 
     try {
-      const res = await axiosSecure.patch(`/events/${event._id}`, updatedEvent);
+      const res = await axiosSecure.patch(`/events/${eventId}`, updatedEvent);
       if (res.status === 200) {
         toast.success("✅ Event updated successfully!");
         setTimeout(() => navigate("/events"), 1500);

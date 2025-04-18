@@ -31,6 +31,8 @@ const AddEvent = () => {
   const [userEmail, setUserEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [specialCategory, setSpecialCategory] = useState(null);
+  const [locationSelected, setLocationSelected] = useState(false);
+
 
   const axiosPublic = useAxiosPublic();
   const axiosSecure = useAxiosSecure();
@@ -205,6 +207,23 @@ const AddEvent = () => {
   };
 
 
+  const handleDeleteEvent = async (id) => {
+    const confirm = window.confirm("Are you sure you want to delete this event?");
+    if (!confirm) return;
+
+    try {
+      const res = await axiosSecure.delete(`/events/${id}`);
+      if (res.status === 200) {
+        toast.success("Event deleted successfully!");
+        dispatch(fetchEvents()); // Refresh list after delete
+      } else {
+        toast.error("⚠️ Failed to delete event!");
+      }
+    } catch (err) {
+      console.error("Delete error:", err);
+      toast.error("🚨 Error deleting event!");
+    }
+  };
 
 
 
@@ -220,7 +239,12 @@ const AddEvent = () => {
           {/* Left Section */}
           <div className="w-full md:w-[50%] flex flex-col gap-3 md:gap-5">
             <div className="bg-white rounded-xl md:rounded-2xl shadow-lg h-[40vh] flex-grow ">
-              <Map setSelectedLocation={setSelectedLocation} />
+              <Map
+                setSelectedLocation={(coords) => {
+                  setSelectedLocation(coords);
+                  setLocationSelected(true);
+                }}
+              />
             </div>
             <div className="w-full md:max-h-52 flex flex-row gap-3 md:gap-5">
               <div className="bg-white text-black rounded-xl md:rounded-2xl shadow-lg p-3 flex flex-col flex-[3]">
@@ -235,7 +259,7 @@ const AddEvent = () => {
                       eventTime={event.time}
                       eventDate={event.date}
                       mode="edit"
-
+                      onDelete={handleDeleteEvent}
                     />
 
                   )) : (
@@ -261,7 +285,7 @@ const AddEvent = () => {
                       {...register("eventName", { required: "Event name is required" })}
                       type="text"
                       placeholder="Beach Cleanup"
-                      className="w-full px-4 py-2 bg-white border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                      className="w-full text-gray-600 px-4 py-2 bg-white border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none"
                     />
                     {errors.eventName && <p className="text-red-500 text-sm mt-1">{errors.eventName.message}</p>}
                   </div>
@@ -270,7 +294,7 @@ const AddEvent = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-1">Time</label>
                     <select
                       {...register("eventTime", { required: "Event time is required" })}
-                      className="w-full px-4 py-2 bg-white border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none text-gray-600"
+                      className="w-full text-gray-600 px-4 py-2 bg-white border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none text-gray-600"
                     >
                       <option value="">Select Time</option>
                       {[...Array(24)].map((_, i) => (
@@ -331,7 +355,7 @@ const AddEvent = () => {
                       },
                     })}
                     placeholder="Add a short event description (max 30 words)"
-                    className="w-full px-4 py-2 bg-white border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none resize-none"
+                    className="w-full text-gray-600 px-4 py-2 bg-white border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none resize-none"
                     rows="4"
                   />
                   {errors.eventDescription && <p className="text-red-500 text-sm mt-1">{errors.eventDescription.message}</p>}
@@ -343,7 +367,7 @@ const AddEvent = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
                     <select
                       {...register("eventCategory", { required: "Event category is required" })}
-                      className="w-full px-4 py-2 bg-white border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none text-gray-600"
+                      className="w-full  px-4 py-2 bg-white border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none text-gray-600"
                     >
                       <option value="">Select Category</option>
                       {categories.map((category, idx) => (
@@ -356,7 +380,7 @@ const AddEvent = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-1">Signup Required?</label>
                     <select
                       {...register("signupRequired", { required: "Signup requirement is required" })}
-                      className="w-full px-4 py-2 bg-white border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none text-gray-600"
+                      className="w-full  px-4 py-2 bg-white border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none text-gray-600"
                     >
                       <option value="">Select Option</option>
                       <option value="true">Yes</option>

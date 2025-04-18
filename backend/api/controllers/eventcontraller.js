@@ -1,4 +1,4 @@
-
+const mongoose = require('mongoose');
 const Event = require('../models/EventModel');
 const JointEvent = require('../models/joinEvents');
 
@@ -13,7 +13,7 @@ const getAllEvents = async (req, res) => {
 
 const createEvent = async (req, res) => {
     try {
-        console.log("🚀 Incoming Event Data:", req.body);
+        //console.log("🚀 Incoming Event Data:", req.body);
 
         // Ensure required fields exist
         if (!req.body.title || !req.body.date || !req.body.location) {
@@ -36,6 +36,7 @@ const createEvent = async (req, res) => {
 
 
 const updateEvent = async (req, res) => {
+    //console.log("🚀 Incoming Update Data:", req.body);
     const { id: _id } = req.params;
     const event = req.body;
     if (!mongoose.Types.ObjectId.isValid(_id)) return res.status(404).send('No event with that id');
@@ -46,11 +47,20 @@ const updateEvent = async (req, res) => {
 
 const deleteEvent = async (req, res) => {
     const { id } = req.params;
-    if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send('No event with that id');
-
-    await Event.findByIdAndRemove(id);
-    res.json({ message: 'Event deleted successfully' });
-}
+  
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(404).send("No event with that id");
+    }
+  
+    try {
+      await Event.findByIdAndDelete(id); // ✅ correct method
+      res.json({ message: "Event deleted successfully" });
+    } catch (error) {
+      console.error("Delete error:", error);
+      res.status(500).json({ message: "Server error while deleting event" });
+    }
+  };
+  
 
 const joinEvent = async (req, res) => {
     try {

@@ -169,9 +169,6 @@ const Map = ({ setSelectedLocation, clickable = true, setPickup, setDropoff, act
                 (position) => {
                     const newLocation = [position.coords.latitude, position.coords.longitude];
                     setUserLocation(newLocation);
-                    if (typeof setSelectedLocation === "function") {
-                        setSelectedLocation(newLocation);
-                    }
                 },
                 (error) => {
                     console.error("Geolocation error:", error.message);
