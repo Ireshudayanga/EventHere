@@ -56,10 +56,10 @@ const Massage = () => {
       key.startsWith(`chat_${currentUserId}_`)
     );
   
-    console.log("Chats:", chats);
+    //console.log("Chats:", chats);
 
     const contactIds = chats.map(key => key.split("_")[2]);
-    console.log("Contact IDs:", contactIds);
+    //console.log("Contact IDs:", contactIds);
   
     const mapped = contactIds.map((id) => {
 
@@ -78,7 +78,7 @@ const Massage = () => {
     });
   
     setContacts(mapped);
-    console.log("Contacts:", mapped);
+    //console.log("Contacts:", mapped);
   };
   
 

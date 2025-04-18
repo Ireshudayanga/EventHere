@@ -10,10 +10,10 @@ import Massage from '../pages/Massage/Massage';
 import AddEvent from '../pages/Addevent/AddEvent';
 import Signup from '../components/Signup';
 import AdminPanel from '../pages/admin/AdminPanel';
-import Chat from '../pages/Massage/Chat';
 import PrivateRouter from '../privetRouter/privateRouter';
 import ProfilePage from '../pages/Profile/Profile';
 import JoinEventPage from '../pages/JoinEventForm/JoinEventPage';
+import EditEvent from '../components/EditEvent';
 
 
 
@@ -35,8 +35,7 @@ const router = createBrowserRouter([
     },
     {
         path: "/",
-        // element:<PrivateRouter> <Dashboard />  </PrivateRouter>,
-        element : <Dashboard />,
+        element:<PrivateRouter> <Dashboard />  </PrivateRouter>,
         children: [
         {
             path: "/events",
@@ -64,7 +63,13 @@ const router = createBrowserRouter([
             path: "/join-event",
             element: <JoinEventPage/>
 
-        }
+        },
+        {
+            path: "/edit-event",
+            element: <EditEvent/>
+
+        },
+
         ]
     },
     {

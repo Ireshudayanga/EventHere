@@ -2,9 +2,17 @@
 import React from 'react';
 import Button from './Button';
 import { useNavigate } from 'react-router-dom';
+import { Pencil, Trash2 } from 'lucide-react';
 
-const ReminderCard = ({ eventTitle, eventTime, eventDate, eventId }) => {
-
+const ReminderCard = ({
+    event,
+    eventTitle,
+    eventTime,
+    eventDate,
+    eventId,
+    mode = "join", 
+    onDelete, 
+}) => {
     const navigate = useNavigate();
 
     const handleJoin = () => {
@@ -13,35 +21,40 @@ const ReminderCard = ({ eventTitle, eventTime, eventDate, eventId }) => {
                 title: eventTitle,
                 date: eventDate,
                 time: eventTime,
-                eventid : eventId,
-            }
+                eventid: eventId,
+            },
         });
     };
 
-    const truncateText = (text, maxLength = 12) => {
+    const handleEdit = () => {
+        navigate("/edit-event", {
+            state: {
+             ...event, // send the whole event object (recommended)
+            },
+          });
+          
+    };
+
+    const truncateText = (text, maxLength = 16) => {
         return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
     };
 
-    // Extract the day and month name from the full date (YYYY-MM-DD)
     const getFormattedDate = (dateString) => {
         const date = new Date(dateString);
         const day = date.getDate();
-        const month = date.toLocaleString('default', { month: 'short' }); // Extract short month name (e.g., "Feb")
+        const month = date.toLocaleString("default", { month: "short" });
         return { day, month };
     };
 
     const { day, month } = getFormattedDate(eventDate);
 
     return (
-        <div className='bg-gray-300 text-black p-4 md:p-3 mb-5 rounded-2xl h-16 md:h-15 w-full flex items-center justify-between shadow-md gap-3'>
-
-
+        <div className="bg-gray-300 text-black p-4 md:p-3 mb-5 rounded-2xl h-16 md:h-15 w-full flex items-center justify-between shadow-md gap-3">
             <div className="flex flex-col items-center justify-center text-3xl font-semibold text-gray-700 leading-none">
                 <span>{day}</span>
                 <p className="text-[12px] text-gray-600 uppercase">{month}</p>
             </div>
 
-            {/* Event Details */}
             <div className="flex flex-col text-left">
                 <span className="text-[12px] text-gray-800">
                     {truncateText(eventTitle)}
@@ -49,16 +62,39 @@ const ReminderCard = ({ eventTitle, eventTime, eventDate, eventId }) => {
                 <span className="text-[9px] text-gray-600">{eventTime}</span>
             </div>
 
-            {/* Join Button */}
-            <Button
-                onClick={handleJoin}
-                color="bg-green-500"
-                className="rounded-lg text-white shadow-sm"
-                customSize="py-1 px-4 text-xs"
-                hoverEffect="hover:bg-green-600"
-            >
-                Join
-            </Button>
+            {/* Button(s) depending on mode */}
+            {mode === "edit" ? (
+                <div className="flex gap-1">
+                    <Button
+                        onClick={handleEdit}
+                        color="bg-blue-500"
+                        className="rounded-lg text-white shadow-sm"
+                        customSize="p-2"
+                        hoverEffect="hover:bg-blue-600"
+                    >
+                        <Pencil size={16} />
+                    </Button>
+                    <Button
+                        onClick={() => onDelete?.(eventId)}
+                        color="bg-red-500"
+                        className="rounded-lg text-white shadow-sm"
+                        customSize="p-2"
+                        hoverEffect="hover:bg-red-600"
+                    >
+                        <Trash2 size={16} />
+                    </Button>
+                </div>
+            ) : (
+                <Button
+                    onClick={handleJoin}
+                    color="bg-green-500"
+                    className="rounded-lg text-white shadow-sm"
+                    customSize="py-1 px-4 text-xs"
+                    hoverEffect="hover:bg-green-600"
+                >
+                    Join
+                </Button>
+            )}
         </div>
     );
 };
