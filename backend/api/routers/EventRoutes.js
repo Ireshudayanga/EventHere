@@ -7,7 +7,8 @@ router.get('/', eventController.getAllEvents);
 router.post('/join-event', TokenVerify.TokenVerify, eventController.joinEvent);
 router.post('/joined', TokenVerify.TokenVerify, eventController.getJoinEventByEmail);
 router.post('/', TokenVerify.TokenVerify, eventController.createEvent);
-router.patch('/:id', eventController.updateEvent);
-router.delete('/:id', eventController.deleteEvent);
+router.patch('/:id', TokenVerify.TokenVerify, eventController.updateEvent);
+router.delete('/:id', TokenVerify.TokenVerify, eventController.deleteEvent);
+
 
 module.exports = router;

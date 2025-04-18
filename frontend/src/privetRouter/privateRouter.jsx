@@ -1,12 +1,49 @@
-/* eslint-disable react/prop-types */
-import React, { useContext } from 'react';
+import { jwtDecode } from "jwt-decode";
+import { useContext, useEffect } from "react";
+import { Navigate, useLocation } from "react-router-dom";
+import { ClipLoader } from "react-spinners";
 import { AuthContext } from '../context/AuthProvider';
-import { Navigate, useLocation } from 'react-router-dom';
-import { ClipLoader } from 'react-spinners';
 
+// eslint-disable-next-line react/prop-types
 const PrivateRouter = ({ children }) => {
-  const { currentUser, loading } = useContext(AuthContext);
+  const { currentUser, loading, logout , setCurrentUser } = useContext(AuthContext);
   const location = useLocation();
+
+  const token = localStorage.getItem("access-token");
+
+  let isTokenValid = true;
+
+  const getTokenExpiry = () => {
+    const token = localStorage.getItem("access-token");
+    if (!token) return null;
+  
+    try {
+      const decoded = jwtDecode(token);
+      return decoded.exp * 1000; // Convert to ms
+    } catch (e) {
+      return null;
+    }
+  };
+
+  useEffect(() => {
+    const expiry = getTokenExpiry();
+    if (!expiry) return;
+  
+    const now = Date.now();
+    const timeLeft = expiry - now;
+  
+    if (timeLeft > 0) {
+      const timeout = setTimeout(() => {
+        console.log("JWT expired, logging out");
+        logout();
+        localStorage.removeItem("access-token");
+        setCurrentUser(null);
+      }, timeLeft);
+  
+      return () => clearTimeout(timeout);
+    }
+  }, [currentUser]);
+  
 
   if (loading) {
     return (
@@ -16,11 +53,11 @@ const PrivateRouter = ({ children }) => {
     );
   }
 
-  if (currentUser) {
-    return children;
+  if ( !token || !isTokenValid) {
+    return <Navigate to="/signup" state={{ from: location }} replace />;
   }
 
-  return <Navigate to="/signup" state={{ from: location }} />;
+  return children;
 };
 
 export default PrivateRouter;
