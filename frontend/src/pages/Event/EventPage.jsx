@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchEvents } from '../../../redux/eventSlice';
 import { fetchSpecialCategory } from '../../../redux/specialCategorySlice';
-import { ClipLoader } from "react-spinners"; // ✅ Import spinner
+import { ClipLoader } from "react-spinners";
 import SearchBar from '../../components/SearchBar';
 import '../Event/Event.css';
 import { Link } from 'react-router-dom';
@@ -11,6 +11,11 @@ import Calender from '../../utils/Calender';
 import Button from '../../components/Button';
 import ReminderCard from '../../components/ReminderCard';
 import ShowEventMap from '../../components/mapType/ShowEventMap';
+import { IoMdClose } from "react-icons/io";
+import { BsChatDotsFill } from 'react-icons/bs'; // ⬅️ add this at top with other imports
+
+
+
 
 
 const EventPage = () => {
@@ -19,33 +24,30 @@ const EventPage = () => {
     const { category: specialCategory, status: categoryStatus } = useSelector(
         (state) => state.specialCategory
     );
+
     const [selectedDate, setSelectedDate] = useState(null);
-
-
-
+    const [showChat, setShowChat] = useState(false);
 
     const categoryColors = {
         entertainment: "bg-green-500 text-white",
         volunteer: "bg-yellow-400 text-white",
         traditional: "bg-blue-600 text-white",
         All: "bg-gray-500 text-white p-6",
-
     };
 
     const [categories, setCategories] = useState([]);
-
     const [calenderEvents, setCalenderEvents] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState("");
 
     const handleDateChange = (newDate) => {
         setSelectedDate(newDate);
-        setSelectedCategory(''); // Reset category when date is selected
+        setSelectedCategory('');
     };
 
     const HandleCategoryFilter = (e) => {
         const category = e.target.innerText;
-        setSelectedCategory(category === "All" ? "" : category)
-        setSelectedDate(null); // Reset date when category is selected
+        setSelectedCategory(category === "All" ? "" : category);
+        setSelectedDate(null);
     };
 
     useEffect(() => {
@@ -55,7 +57,6 @@ const EventPage = () => {
 
     useEffect(() => {
         if (status === "succeeded" && categoryStatus === "succeeded") {
-            //console.log(events);
             setCalenderEvents(events);
             const uniqueCategories = [
                 "All",
@@ -69,10 +70,12 @@ const EventPage = () => {
     }, [status, categoryStatus, events, specialCategory]);
 
     return (
-        <div className=" w-full">
+        <div className="w-full relative">
             <SearchBar />
-            <div className="h-[92%] w-full md:w-[94%] mt-0 md:mt-4 rounded-none md:rounded-2xl shadow-xl  ml-auto">
+
+            <div className="h-[92%] w-full md:w-[94%] mt-0 md:mt-4 rounded-none md:rounded-2xl shadow-xl ml-auto">
                 <div className="flex flex-col md:flex-row h-full p-3 md:p-7 gap-4 md:gap-0">
+                    {/* Left Panel */}
                     <div className="w-full md:w-[35%] flex flex-col gap-3 md:gap-5">
                         <div className="bg-white p-4 md:p-5 rounded-xl md:rounded-2xl shadow-lg">
                             <p className="text-2xl text-black font-medium font-sans">Upcoming ...</p>
@@ -83,30 +86,28 @@ const EventPage = () => {
                                     </div>
                                 ) : categoryStatus === "failed" ? (
                                     <p className="text-red-500 text-center text-sm">Error fetching special category: {error}</p>
-                                ) : (categories.length > 0 && (
+                                ) : (
                                     categories.map((category, index) => {
                                         const isCategoryAll = category === "All";
                                         const isCategorySelected = isCategoryAll ? (selectedCategory === "") : (selectedCategory === category);
-                                        const isSelected = isCategorySelected && !selectedDate; // Only selected if no date is chosen
+                                        const isSelected = isCategorySelected && !selectedDate;
                                         const categoryClass = categoryColors[category] || "bg-purple-600 text-white";
                                         return (
                                             <button
                                                 onClick={HandleCategoryFilter}
                                                 key={index}
                                                 className={`px-4 py-2 rounded-full text-sm transition-all duration-300 
-                                                ${isSelected ? `${categoryClass} font-bold shadow-lg` : "bg-gray-300 text-gray-500 opacity-50 hover:opacity-80"}`}
+                        ${isSelected ? `${categoryClass} font-bold shadow-lg` : "bg-gray-300 text-gray-500 opacity-50 hover:opacity-80"}`}
                                             >
                                                 {category}
                                             </button>
                                         );
                                     })
-                                ))}
+                                )}
                             </div>
-
                         </div>
 
-                        {/* ✅ Show Loading Spinner Instead of "Loading events..." */}
-                        <div className="bg-white  rounded-xl md:rounded-2xl h-full">
+                        <div className="bg-white rounded-xl md:rounded-2xl h-full">
                             <div className="flex px-5 pt-5 justify-between items-center w-full">
                                 <div>
                                     <p className="text-2xl font-medium text-black font-sans">Events</p>
@@ -119,7 +120,8 @@ const EventPage = () => {
                                     </div>
                                 </Link>
                             </div>
-                            <div className="mt-2 overflow-y-auto md:overflow-y-scroll custom-scrollbar   ">
+
+                            <div className="mt-2 overflow-y-auto md:overflow-y-scroll custom-scrollbar">
                                 {status === "loading" ? (
                                     <div className="flex justify-center items-center h-full">
                                         <ClipLoader size={50} color={"#3498db"} loading={true} />
@@ -127,44 +129,43 @@ const EventPage = () => {
                                 ) : status === "failed" ? (
                                     <p className="text-red-500 text-center text-sm">Error fetching events: {error}</p>
                                 ) : (
-
                                     <Calender date={selectedDate} setDate={handleDateChange} events={calenderEvents} />
-
                                 )}
                             </div>
                         </div>
                     </div>
 
+                    {/* Right Panel */}
                     <div className="w-full md:w-[65%] flex flex-col gap-4 md:pl-6">
                         <div className="h-[60vh] md:h-[75vh] flex-grow">
                             <div className="bg-white rounded-xl md:rounded-2xl shadow-lg h-full">
-                                <ShowEventMap filterDate={selectedDate} categoryType={selectedCategory} specialCategoryName={specialCategory} />
+                                <ShowEventMap
+                                    filterDate={selectedDate}
+                                    categoryType={selectedCategory}
+                                    specialCategoryName={specialCategory}
+                                />
                             </div>
                         </div>
 
                         <div className="flex flex-col md:flex-row gap-4">
-                            <div className="bg-white rounded-xl md:rounded-2xl shadow-lg p-5 flex flex-col items-center justify-between text-center flex-1 min-h-[150px]">
+                            {/* 🚗 Share Ride */}
+                            <div className="bg-white rounded-xl md:rounded-2xl shadow-lg p-5 flex flex-col items-center justify-between text-center md:w-1/2 w-full min-h-[150px]">
                                 <p className="text-lg font-semibold text-black">Share Ride</p>
                                 <p className="text-xs text-gray-600">Want you Share or Offer Ride?</p>
                                 <div className="flex gap-3">
-
                                     <Link to="/share-ride">
-                                        <Button className="bg-blue-600 text-white px-4 py-2 rounded-full text-sm">
-                                            Share
-                                        </Button>
+                                        <Button className="bg-blue-600 text-white px-4 py-2 rounded-full text-sm">Share</Button>
                                     </Link>
-
                                     <Link to="/share-ride">
-                                        <Button className="bg-green-500 text-white px-4 py-2 rounded-full text-sm">
-                                            Offer
-                                        </Button>
+                                        <Button className="bg-green-500 text-white px-4 py-2 rounded-full text-sm">Offer</Button>
                                     </Link>
                                 </div>
                             </div>
 
-                            <div className="bg-white rounded-xl md:rounded-2xl shadow-lg p-5 flex flex-col justify-between flex-2 min-h-[150px]">
+                            {/* 🤝 Become a Volunteer */}
+                            <div className="bg-white rounded-xl md:rounded-2xl shadow-lg p-5 flex flex-col justify-between md:w-1/2 w-full min-h-[200px] md:min-h-[150px]">
                                 <p className="text-lg font-semibold text-center text-black">Become a Volunteer</p>
-                                <div className="mt-2 overflow-y-auto custom-scrollbar max-h-[75px]">
+                                <div className="mt-2 overflow-y-auto custom-scrollbar max-h-[150px] md:max-h-[75px]">
                                     {status === "loading" ? (
                                         <div className="flex justify-center items-center">
                                             <ClipLoader size={40} color={"#3498db"} loading={true} />
@@ -180,8 +181,6 @@ const EventPage = () => {
                                                 })
                                                 .sort((a, b) => new Date(a.date) - new Date(b.date));
 
-                                                //console.log(upcomingVolunteerEvents);
-
                                             return upcomingVolunteerEvents.length > 0 ? (
                                                 upcomingVolunteerEvents.map((event, index) => (
                                                     <ReminderCard
@@ -193,30 +192,64 @@ const EventPage = () => {
                                                     />
                                                 ))
                                             ) : (
-                                                <p className="text-xs text-gray-500 ">No upcoming volunteer events.</p>
+                                                <p className="text-xs text-gray-500">No upcoming volunteer events.</p>
                                             );
                                         })()
                                     )}
-
-                                </div>
-                            </div>
-
-                            <div className="bg-white rounded-xl md:rounded-2xl shadow-lg p-5 flex flex-col justify-between flex-1 min-h-[150px]">
-                                <p className="text-lg font-semibold text-center text-black">Ask from Admin</p>
-                                <div className="relative flex-1">
-                                    <textarea
-                                        className="w-full h-full bg-gray-200 rounded-lg p-3 text-gray-700 text-sm outline-none focus:ring-2 focus:ring-gray-400 resize-none"
-                                        placeholder="Enter Your Message .."
-                                    ></textarea>
-                                    <Button className="absolute bottom-2 right-2 px-4 py-1 text-white bg-blue-500 text-sm rounded-3xl">
-                                        Send
-                                    </Button>
                                 </div>
                             </div>
                         </div>
+
                     </div>
                 </div>
             </div>
+
+            {/* 🧊 Floating Chat Popup */}
+            <div className="fixed bottom-6 right-6 z-[1600]">
+                {/* Toggle Button */}
+                {!showChat && (
+                    <button
+                        onClick={() => setShowChat(true)}
+                        className="bg-gradient-to-br from-blue-500 to-blue-700 text-white p-4 rounded-full shadow-lg hover:scale-105 hover:shadow-xl transition-all duration-200"
+                        title="Ask from Admin"
+                    >
+                        <BsChatDotsFill className="w-7 h-7" />
+                    </button>
+                )}
+
+                {/* Chat Window */}
+                {showChat && (
+                    <div className="relative w-[340px] max-h-[400px] bg-white rounded-3xl shadow-2xl border border-gray-200 overflow-hidden animate-fade-in-up">
+
+                        {/* Header */}
+                        <div className="flex justify-between items-center px-5 py-3 border-b bg-gradient-to-r from-blue-600 to-blue-500 text-white">
+                            <h3 className="text-md font-semibold">Admin Support</h3>
+                            <button onClick={() => setShowChat(false)} className="hover:text-gray-100 transition">
+                                <IoMdClose className="w-5 h-5" />
+                            </button>
+                        </div>
+
+                        {/* Body */}
+                        <div className="px-5 py-4">
+                            <textarea
+                                className="w-full h-28 bg-gray-50 border border-gray-300 rounded-xl p-3 text-gray-700 text-sm shadow-sm focus:ring-2 focus:ring-blue-400 outline-none resize-none transition-all"
+                                placeholder="Write your message..."
+                            ></textarea>
+                        </div>
+
+                        {/* Footer */}
+                        <div className="px-5 pb-5 flex justify-end">
+                            <Button className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-5 py-2 rounded-full transition-shadow shadow-md hover:shadow-lg">
+                                Send
+                            </Button>
+                        </div>
+                    </div>
+                )}
+            </div>
+
+
+
+
         </div>
     );
 };
