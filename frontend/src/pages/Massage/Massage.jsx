@@ -5,11 +5,9 @@ import { motion } from "framer-motion";
 import "../Massage/Message.css";
 import { AuthContext } from "../../context/AuthProvider";
 import { ClipLoader } from "react-spinners";
-import './Message.css'
 import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { useSocket } from "../../socket/SocketPrivider";
-
 
 const Massage = () => {
   const { currentUser, loading } = useContext(AuthContext);
@@ -24,133 +22,115 @@ const Massage = () => {
   const currentUserId = currentUser?.email || "";
   const { socket, setHasUnreadMessages } = useSocket();
 
-
-
   useEffect(() => {
     setHasUnreadMessages(false);
-
     if (!currentUserId) return;
     fetchContacts();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedChat, currentUserId]);
-
-  useEffect(() => {
-    if (!socket.current || !selectedChat) return;
-  
-    socket.current.on("typing", ({ senderId }) => {
-      if (senderId === selectedChat.id.toString()) {
-        setIsTyping(true);
-        setTimeout(() => setIsTyping(false), 2000);
-      }
-    });
-  
-    return () => {
-      socket.current.off("typing");
-    };
-  }, [socket, selectedChat]);
-  
-
 
   const fetchContacts = () => {
     const chats = Object.keys(localStorage).filter((key) =>
       key.startsWith(`chat_${currentUserId}_`)
     );
-  
-    //console.log("Chats:", chats);
 
     const contactIds = chats.map(key => key.split("_")[2]);
-    //console.log("Contact IDs:", contactIds);
-  
-    const mapped = contactIds.map((id) => {
 
+    const mapped = contactIds.map((id) => {
       const messages = JSON.parse(localStorage.getItem(`chat_${currentUserId}_${id}`));
       const lastMsg = messages[messages.length - 1];
-
-      const contactName =
-      messages.find((m) => m.senderId === id)?.senderName || id;
+      const contactName = messages.find((m) => m.senderId === id)?.senderName || id;
+      const initials = contactName
+        .split(" ")
+        .map(word => word.charAt(0).toUpperCase())
+        .join("")
+        .slice(0, 2);
 
       return {
         id,
         name: contactName,
-        img: `https://i.pravatar.cc/40?img=${(id.length % 70) + 1}`,
+        initials,
         lastMessage: lastMsg?.message || "",
       };
     });
-  
+
     setContacts(mapped);
-    //console.log("Contacts:", mapped);
   };
-  
 
   const loadMessages = async (contact) => {
     const chatKey = `chat_${currentUserId}_${contact.id}`;
     const stored = localStorage.getItem(chatKey);
     const parsed = stored ? JSON.parse(stored) : [];
-  
+
     const formatted = parsed.map((msg) => ({
       text: msg.message,
       sender: msg.senderId === currentUserId ? "user" : "bot",
       time: msg.timestamp,
     }));
-  
+
     setMessages(formatted);
   };
-  
 
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
 
+  useEffect(() => {
+    if (!socket.current || !selectedChat) return;
+
+    const handleTyping = ({ senderId }) => {
+      if (senderId === selectedChat.id.toString()) {
+        setIsTyping(true);
+        setTimeout(() => setIsTyping(false), 2000);
+      }
+    };
+
+    socket.current.on("typing", handleTyping);
+    return () => {
+      socket.current.off("typing", handleTyping);
+    };
+  }, [socket, selectedChat]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-
   const sendMessage = () => {
-  if (!input.trim() || !selectedChat) return;
+    if (!input.trim() || !selectedChat) return;
 
-  const msg = {
-    senderId: currentUserId,
-    receiverId: selectedChat.id.toString(),
-    message: input.trim(),
-    timestamp: new Date().toISOString(),
+    const msg = {
+      senderId: currentUserId,
+      receiverId: selectedChat.id.toString(),
+      message: input.trim(),
+      timestamp: new Date().toISOString(),
+    };
+
+    socket.current.emit("privateMessage", msg);
+    setInput("");
   };
 
-  // Just emit — don't store
-  socket.current.emit("privateMessage", msg);
-  
-  setInput("");
-};
+  useEffect(() => {
+    if (!socket.current || !selectedChat) return;
 
-useEffect(() => {
-  if (!socket.current || !selectedChat) return;
+    const handleNewMessage = (msg) => {
+      const isCurrentChat =
+        (msg.senderId === currentUserId && msg.receiverId === selectedChat.id.toString()) ||
+        (msg.receiverId === currentUserId && msg.senderId === selectedChat.id.toString());
 
-  const handleNewMessage = (msg) => {
-    const isCurrentChat =
-      (msg.senderId === currentUserId && msg.receiverId === selectedChat.id.toString()) ||
-      (msg.receiverId === currentUserId && msg.senderId === selectedChat.id.toString());
+      if (isCurrentChat) {
+        setMessages((prev) => [
+          ...prev,
+          {
+            text: msg.message,
+            sender: msg.senderId === currentUserId ? "user" : "bot",
+            time: msg.timestamp || new Date().toISOString(),
+          },
+        ]);
+      }
+    };
 
-    if (isCurrentChat) {
-      setMessages((prev) => [
-        ...prev,
-        {
-          text: msg.message,
-          sender: msg.senderId === currentUserId ? "user" : "bot",
-          time: msg.timestamp || new Date().toISOString(),
-        },
-      ]);
-    }
-  };
-
-  socket.current.on("privateMessage", handleNewMessage);
-
-  return () => {
-    socket.current.off("privateMessage", handleNewMessage);
-  };
-}, [socket, selectedChat, currentUserId]);
-
-  
+    socket.current.on("privateMessage", handleNewMessage);
+    return () => socket.current.off("privateMessage", handleNewMessage);
+  }, [socket, selectedChat, currentUserId]);
 
   return (
     <div className="h-screen w-full">
@@ -169,34 +149,43 @@ useEffect(() => {
                 <div className="bg-white w-full md:w-[30%] rounded-xl md:rounded-2xl shadow-lg p-5">
                   <p className="text-2xl font-medium font-sans text-black p-3">Messages</p>
                   <div className="overflow-y-auto scrollbar-hide">
-                    {contacts.map((contact) => (
-                      <div
-                        key={contact.id}
-                        className="flex items-center gap-3 p-3 cursor-pointer hover:bg-gray-100"
-                        onClick={async () => {
-                          setSelectedChat(contact);
-                          if (window.innerWidth < 768) setShowChat(true);
-                          await loadMessages(contact);
-                        }}
-                      >
-                        <img src={contact.img} alt={contact.name} className="w-10 h-10 object-contain rounded-full" />
-                        <div>
-                          <p className="text-lg font-medium text-black">{contact.name}</p>
-                          <p className="text-sm text-gray-600">{contact.lastMessage}</p>
+                    {contacts.length === 0 ? (
+                      <p className="text-gray-500 text-sm px-3 pt-3">No messages yet. Chats appear after ride matches.</p>
+                    ) : (
+                      contacts.map((contact) => (
+                        <div
+                          key={contact.id}
+                          className="flex items-center gap-3 p-3 cursor-pointer hover:bg-gray-100"
+                          onClick={async () => {
+                            setSelectedChat(contact);
+                            if (window.innerWidth < 768) setShowChat(true);
+                            await loadMessages(contact);
+                          }}
+                        >
+                          <div className="w-10 h-10 flex items-center justify-center rounded-full bg-blue-500 text-white font-bold">
+                            {contact.initials}
+                          </div>
+                          <div>
+                            <p className="text-lg font-medium text-black">{contact.name}</p>
+                            <p className="text-sm text-gray-600">{contact.lastMessage}</p>
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      ))
+                    )}
                   </div>
                 </div>
               )}
 
+              {/* Mobile chat view */}
               {showChat && selectedChat && (
                 <div className="bg-white w-full md:flex rounded-xl md:rounded-2xl shadow-lg flex flex-col h-full flex-grow">
                   <div className="p-3 flex items-center gap-3 border-b">
                     <button onClick={() => setShowChat(false)} className="text-gray-600">
                       <ArrowLeft className="w-6 h-6" />
                     </button>
-                    <img src={selectedChat.img} alt={selectedChat.name} className="w-10 h-10 object-contain rounded-full" />
+                    <div className="w-10 h-10 flex items-center justify-center rounded-full bg-blue-500 text-white font-bold">
+                      {selectedChat.initials}
+                    </div>
                     <p className="text-lg text-black font-medium">{selectedChat.name}</p>
                   </div>
 
@@ -223,9 +212,7 @@ useEffect(() => {
                     <div ref={messagesEndRef}></div>
                   </div>
 
-                  {isTyping && (
-                    <p className="text-sm text-gray-500 px-4 pb-1">Typing...</p>
-                  )}
+                  {isTyping && <p className="text-sm text-gray-500 px-4 pb-1">Typing...</p>}
 
                   <div className="p-4 flex items-center gap-2 border-t">
                     <input
@@ -249,6 +236,7 @@ useEffect(() => {
                 </div>
               )}
 
+              {/* Desktop chat view */}
               <div className="hidden md:flex bg-white flex-1 rounded-xl md:rounded-2xl shadow-lg flex-col h-full">
                 {selectedChat ? (
                   <>
@@ -267,8 +255,10 @@ useEffect(() => {
                           >
                             <p>{msg.text}</p>
                             <p className="text-[10px] mt-1 text-right opacity-70">
-                            {new Date(msg.time || msg.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
-
+                              {new Date(msg.time || msg.timestamp).toLocaleTimeString([], {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              })}
                             </p>
                           </div>
                         </motion.div>
@@ -277,11 +267,11 @@ useEffect(() => {
                     </div>
 
                     {isTyping && (
-                       <div className="flex items-center gap-1 px-4 pb-1">
-                       <span className="dot-animation w-1.5 h-1.5 bg-red-500 rounded-full"></span>
-                       <span className="dot-animation w-1.5 h-1.5 bg-red-500 rounded-full delay-150"></span>
-                       <span className="dot-animation w-1.5 h-1.5 bg-red-500 rounded-full delay-300"></span>
-                     </div>
+                      <div className="flex items-center gap-1 px-4 pb-1">
+                        <span className="dot-animation w-1.5 h-1.5 bg-red-500 rounded-full"></span>
+                        <span className="dot-animation w-1.5 h-1.5 bg-red-500 rounded-full delay-150"></span>
+                        <span className="dot-animation w-1.5 h-1.5 bg-red-500 rounded-full delay-300"></span>
+                      </div>
                     )}
 
                     <div className="p-4 flex items-center gap-2 border-t">
