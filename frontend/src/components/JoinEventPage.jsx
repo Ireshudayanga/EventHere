@@ -1,12 +1,12 @@
 import React, { useContext } from 'react';
 import { useLocation } from 'react-router-dom';
-import Button from '../../components/Button';
+import Button from './Button';
 import { CalendarDays, Clock, Info } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
-import { joinEvent } from '../../../redux/joinEventSlice';
+import { joinEvent } from '../../redux/joinEventSlice';
 import { useForm } from 'react-hook-form';
 import { toast } from "react-toastify";
-import { AuthContext } from '../../context/AuthProvider';
+import { AuthContext } from '../context/AuthProvider';
 import { useNavigate } from 'react-router-dom';
 
 
@@ -30,35 +30,24 @@ const JoinEventPage = () => {
 
     const onSubmit = async (data) => {
         const payload = {
-            ...data,
-            title,
-            date,
-            time,
-            eventid,
+          ...data,
+          title,
+          date,
+          time,
+          eventid,
         };
-        console.log("🚀 Payload to join event:", payload);
+      
         try {
-        
-
-            if (status === "loading") {
-                toast.info("⏳ Joining the event...");
-                await dispatch(joinEvent(payload)).unwrap();
-            }
-            if (status === "succeeded") {
-                toast.success("🎉 Successfully joined the event!");
-                reset();
-                setTimeout(() => {
-                    navigate("/events"); // or any route you want
-                  }, 2000); 
-            }
-            if (status === "failed") {
-                toast.error(`Failed to join the event: ${error}`);
-            }
+          const result = await dispatch(joinEvent(payload)).unwrap(); // ✅ use unwrap
+          toast.success("Successfully joined the event!");
+          reset();
+          setTimeout(() => navigate("/events"), 2000);
         } catch (err) {
-            toast.error(err || "Failed to join the event.");
-          }
-          
-    };
+          console.error("Join failed:", err);
+          toast.error(err?.message || "Failed to join the event.");
+        }
+      };
+      
 
     return (
         <div className="min-h-screen flex items-center justify-center px-4 py-10">
@@ -136,11 +125,7 @@ const JoinEventPage = () => {
                         {status === "loading" ? "Submitting..." : "Join Event"}
                     </Button>
 
-                    {status === "succeeded" && (
-                        <p className="text-green-600 text-sm text-center mt-2">
-                            🎉 Successfully joined the event!
-                        </p>
-                    )}
+                
                     {status === "failed" && (
                         <p className="text-red-500 text-sm text-center mt-2">
                             {error}

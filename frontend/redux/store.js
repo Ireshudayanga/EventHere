@@ -11,6 +11,7 @@ export const store = configureStore({
     specialCategory: specialCategoryReducer,
     rideShare: rideShareReducer, 
     joinEvent: joinEventReducer,
+    
   },
 });
 

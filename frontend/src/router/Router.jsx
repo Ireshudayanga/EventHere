@@ -12,7 +12,7 @@ import Signup from '../components/Signup';
 import AdminPanel from '../pages/admin/AdminPanel';
 import PrivateRouter from '../privetRouter/privateRouter';
 import ProfilePage from '../pages/Profile/Profile';
-import JoinEventPage from '../pages/JoinEventForm/JoinEventPage';
+import JoinEventPage from '../components/JoinEventPage';
 import EditEvent from '../components/EditEvent';
 
 

@@ -8,6 +8,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Button from '../components/Button';
 
+
 const EditEvent = () => {
   const { state: event } = useLocation();
   const { _id: eventId } = event || {};

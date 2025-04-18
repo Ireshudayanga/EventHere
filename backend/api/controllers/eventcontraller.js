@@ -94,5 +94,18 @@ const joinEvent = async (req, res) => {
 };
 
 
-module.exports = { getAllEvents, createEvent, updateEvent, deleteEvent, joinEvent };
+const getJoinEventByEmail = async (req, res) => {
+    const { email } = req.body;
+
+    try {
+        const joinedEvents = await JointEvent.find({ email: email });
+        res.status(200).json(joinedEvents);
+    } catch (error) {
+        console.error("Error fetching joined events:", error);
+        res.status(500).json({ message: "Server error while fetching joined events" });
+    }
+};
+
+
+module.exports = { getAllEvents, createEvent, updateEvent, deleteEvent, joinEvent , getJoinEventByEmail,};
 

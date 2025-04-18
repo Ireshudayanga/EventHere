@@ -29,27 +29,65 @@ export const joinEvent = createAsyncThunk(
       }
     }
   );
+
+  export const fetchJoinedEvents = createAsyncThunk(
+    "events/fetchJoinedEvents",
+    async (email, { rejectWithValue }) => {
+      try {
+        const token = localStorage.getItem("access-token");
+        if (!token) return rejectWithValue("Not authorized");
   
-const joinEventSlice = createSlice({
+        const response = await axios.post(
+          "http://localhost:5000/events/joined",
+          { email },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+  
+        return response.data; // Should be an array of joined events
+      } catch (err) {
+        return rejectWithValue(err.response?.data?.message || err.message);
+      }
+    }
+  );
+  
+  
+  const joinEventSlice = createSlice({
     name: "joinEvent",
     initialState: {
-        status: "idle",
-        error: null,
+      status: "idle",
+      error: null,
+      joinedEvents: [], 
     },
     reducers: {},
     extraReducers: (builder) => {
-        builder
-            .addCase(joinEvent.pending, (state) => {
-                state.status = "loading";
-            })
-            .addCase(joinEvent.fulfilled, (state) => {
-                state.status = "succeeded";
-            })
-            .addCase(joinEvent.rejected, (state, action) => {
-                state.status = "failed";
-                state.error = action.error.message;
-            });
+      builder
+        .addCase(joinEvent.pending, (state) => {
+          state.status = "loading";
+        })
+        .addCase(joinEvent.fulfilled, (state) => {
+          state.status = "succeeded";
+        })
+        .addCase(joinEvent.rejected, (state, action) => {
+          state.status = "failed";
+          state.error = action.error.message;
+        })
+        .addCase(fetchJoinedEvents.pending, (state) => {
+          state.status = "loading";
+        })
+        .addCase(fetchJoinedEvents.fulfilled, (state, action) => {
+          state.status = "succeeded";
+          state.joinedEvents = action.payload;
+        })
+        .addCase(fetchJoinedEvents.rejected, (state, action) => {
+          state.status = "failed";
+          state.error = action.payload;
+        });
     },
-});
+  });
+  
 
 export default joinEventSlice.reducer;
