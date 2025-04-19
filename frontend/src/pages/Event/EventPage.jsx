@@ -13,13 +13,18 @@ import ReminderCard from '../../components/ReminderCard';
 import ShowEventMap from '../../components/mapType/ShowEventMap';
 import { IoMdClose } from "react-icons/io";
 import { BsChatDotsFill } from 'react-icons/bs'; // ⬅️ add this at top with other imports
-
+import { useContext } from "react";
+import { AuthContext } from "../../context/AuthProvider";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { useSocket } from "../../socket/SocketPrivider";
 
 
 
 
 const EventPage = () => {
     const dispatch = useDispatch();
+    const { socket } = useSocket();
     const { events, status, error } = useSelector((state) => state.events);
     const { category: specialCategory, status: categoryStatus } = useSelector(
         (state) => state.specialCategory
@@ -27,6 +32,33 @@ const EventPage = () => {
 
     const [selectedDate, setSelectedDate] = useState(null);
     const [showChat, setShowChat] = useState(false);
+
+    const [message, setMessage] = useState("");
+    const { currentUser } = useContext(AuthContext);
+
+   
+    const handleSendMessage = () => {
+        if (!message.trim()) {
+          toast.warning("Message is empty");
+          return;
+        }
+      
+        const data = {
+          name: currentUser?.displayName || "Anonymous",
+          email: currentUser?.email || "unknown@email.com",
+          message: message.trim(),
+        };
+      
+        // ✅ Only emit through socket
+        socket.current.emit("admin-message", data);
+      
+        toast.success("Message sent to admin");
+        setMessage("");
+        setShowChat(false);
+      };
+      
+
+
 
     const categoryColors = {
         entertainment: "bg-green-500 text-white",
@@ -204,9 +236,9 @@ const EventPage = () => {
                 </div>
             </div>
 
+
             {/* 🧊 Floating Chat Popup */}
             <div className="fixed bottom-6 right-6 z-[1600]">
-                {/* Toggle Button */}
                 {!showChat && (
                     <button
                         onClick={() => setShowChat(true)}
@@ -217,10 +249,8 @@ const EventPage = () => {
                     </button>
                 )}
 
-                {/* Chat Window */}
                 {showChat && (
                     <div className="relative w-[340px] max-h-[400px] bg-white rounded-3xl shadow-2xl border border-gray-200 overflow-hidden animate-fade-in-up">
-
                         {/* Header */}
                         <div className="flex justify-between items-center px-5 py-3 border-b bg-gradient-to-r from-blue-600 to-blue-500 text-white">
                             <h3 className="text-md font-semibold">Admin Support</h3>
@@ -232,6 +262,8 @@ const EventPage = () => {
                         {/* Body */}
                         <div className="px-5 py-4">
                             <textarea
+                                value={message}
+                                onChange={(e) => setMessage(e.target.value)}
                                 className="w-full h-28 bg-gray-50 border border-gray-300 rounded-xl p-3 text-gray-700 text-sm shadow-sm focus:ring-2 focus:ring-blue-400 outline-none resize-none transition-all"
                                 placeholder="Write your message..."
                             ></textarea>
@@ -239,13 +271,17 @@ const EventPage = () => {
 
                         {/* Footer */}
                         <div className="px-5 pb-5 flex justify-end">
-                            <Button className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-5 py-2 rounded-full transition-shadow shadow-md hover:shadow-lg">
+                            <Button
+                                onClick={handleSendMessage}
+                                className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-5 py-2 rounded-full transition-shadow shadow-md hover:shadow-lg"
+                            >
                                 Send
                             </Button>
                         </div>
                     </div>
                 )}
             </div>
+
 
 
 

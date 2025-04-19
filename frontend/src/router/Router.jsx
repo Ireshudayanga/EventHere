@@ -17,6 +17,7 @@ import AdminLayout from '../layout/AdminLayout';
 import AdminRoute from '../privetRouter/AdminRoute';
 import UserManagement from '../pages/admin/UserManagement';
 import EventManager from '../pages/admin/EventManager';
+import AdminMessages from '../pages/admin/AdminMessages';
 
 const router = createBrowserRouter([
 
@@ -50,7 +51,12 @@ const router = createBrowserRouter([
       {
         path: "/admin/events",
         element: <EventManager />
+      },
+      {
+        path: "/admin/messages",
+        element: <AdminMessages />,
       }
+      
       
     ]
   },

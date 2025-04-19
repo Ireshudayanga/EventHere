@@ -60,6 +60,8 @@ const specialCategoryRoutes = require("./api/routers/SpecialCategoryRoutes");
 const rideRoutes = require('./api/routers/ShareRideRoutes');
 const tokenRoutes = require('./api/routers/TokenRoutes');
 const adminRoutes = require('./api/routers/AdminRoutes');
+const adminMessageRoutes = require('./api/routers/AdminMessageRoutes');
+
 
 
 app.use('/users', userRoutes);
@@ -68,7 +70,7 @@ app.use("/api/special-category", specialCategoryRoutes);
 app.use('/rides', rideRoutes);
 app.use('/jwt', tokenRoutes);
 app.use('/admin', adminRoutes);
-
+app.use('/admin-messages', adminMessageRoutes);
 
 
 
@@ -162,6 +164,22 @@ io.on("connection", (socket) => {
   socket.on("location-update", ({ rideId, lat, lng }) => {
     socket.to(rideId).emit("partner-location", { lat, lng });
   });
+
+  const AdminMessage = require('./api/models/AdminMessage');
+
+socket.on("admin-message", async ({ name, email, message }) => {
+  try {
+    const saved = await AdminMessage.create({ name, email, message });
+    console.log("📥 Admin message saved & emitting:", saved);
+
+    // Emit to all connected admin clients
+    io.emit("admin-message-receive", saved);
+  } catch (error) {
+    console.error("❌ Failed to save admin message:", error);
+    socket.emit("admin-message-error", { message: "Failed to send message" });
+  }
+});
+
 
 
 

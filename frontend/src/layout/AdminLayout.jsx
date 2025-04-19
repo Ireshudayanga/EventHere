@@ -19,10 +19,9 @@ const AdminLayout = () => {
           <NavLink
             to="/"
             className={({ isActive }) =>
-              `flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition ${
-                isActive
-                  ? 'bg-blue-100 text-blue-600'
-                  : 'hover:bg-gray-100 text-gray-700'
+              `flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition ${isActive
+                ? 'bg-blue-100 text-blue-600'
+                : 'hover:bg-gray-100 text-gray-700'
               }`
             }
           >
@@ -34,10 +33,9 @@ const AdminLayout = () => {
             to="/admin"
             end
             className={({ isActive }) =>
-              `flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition ${
-                isActive
-                  ? 'bg-blue-100 text-blue-600'
-                  : 'hover:bg-gray-100 text-gray-700'
+              `flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition ${isActive
+                ? 'bg-blue-100 text-blue-600'
+                : 'hover:bg-gray-100 text-gray-700'
               }`
             }
           >
@@ -48,10 +46,9 @@ const AdminLayout = () => {
           <NavLink
             to="/admin/users"
             className={({ isActive }) =>
-              `flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition ${
-                isActive
-                  ? 'bg-blue-100 text-blue-600'
-                  : 'hover:bg-gray-100 text-gray-700'
+              `flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition ${isActive
+                ? 'bg-blue-100 text-blue-600'
+                : 'hover:bg-gray-100 text-gray-700'
               }`
             }
           >
@@ -62,16 +59,41 @@ const AdminLayout = () => {
           <NavLink
             to="/admin/events"
             className={({ isActive }) =>
-              `flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition ${
-                isActive
-                  ? 'bg-blue-100 text-blue-600'
-                  : 'hover:bg-gray-100 text-gray-700'
+              `flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition ${isActive
+                ? 'bg-blue-100 text-blue-600'
+                : 'hover:bg-gray-100 text-gray-700'
               }`
             }
           >
             <FaCalendarAlt />
             Events
           </NavLink>
+          <NavLink
+            to="/admin/messages"
+            className={({ isActive }) =>
+              `flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition ${isActive
+                ? 'bg-blue-100 text-blue-600'
+                : 'hover:bg-gray-100 text-gray-700'
+              }`
+            }
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M7 8h10M7 12h5m-1 8c-4.418 0-8-3.582-8-8s3.582-8 8-8 8 3.582 8 8-3.582 8-8 8z"
+              />
+            </svg>
+            Messages
+          </NavLink>
+
         </nav>
       </aside>
 
