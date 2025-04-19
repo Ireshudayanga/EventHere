@@ -24,7 +24,7 @@ import { useSocket } from "../../socket/SocketPrivider";
 
 const EventPage = () => {
     const dispatch = useDispatch();
-    const { socket } = useSocket();
+    const { socket, sendAdminMessage } = useSocket();
     const { events, status, error } = useSelector((state) => state.events);
     const { category: specialCategory, status: categoryStatus } = useSelector(
         (state) => state.specialCategory
@@ -36,27 +36,24 @@ const EventPage = () => {
     const [message, setMessage] = useState("");
     const { currentUser } = useContext(AuthContext);
 
-   
+
     const handleSendMessage = () => {
         if (!message.trim()) {
-          toast.warning("Message is empty");
-          return;
+            toast.warning("Message is empty");
+            return;
         }
-      
-        const data = {
-          name: currentUser?.displayName || "Anonymous",
-          email: currentUser?.email || "unknown@email.com",
-          message: message.trim(),
-        };
-      
-        // ✅ Only emit through socket
-        socket.current.emit("admin-message", data);
-      
+
+        sendAdminMessage({
+            receiverId: "admin",
+            message: message.trim(),
+        });
+
+
         toast.success("Message sent to admin");
         setMessage("");
         setShowChat(false);
-      };
-      
+    };
+
 
 
 

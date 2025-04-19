@@ -105,7 +105,14 @@ const Massage = () => {
       timestamp: new Date().toISOString(),
     };
 
-    socket.current.emit("privateMessage", msg);
+    // ✅ FIX: if chatting with admin, emit "adminMessage"
+    const isToAdmin = selectedChat.id === "admin";
+    if (isToAdmin) {
+      socket.current.emit("adminMessage", msg);
+    } else {
+      socket.current.emit("privateMessage", msg);
+    }
+
     setInput("");
   };
 
@@ -130,7 +137,12 @@ const Massage = () => {
     };
 
     socket.current.on("privateMessage", handleNewMessage);
-    return () => socket.current.off("privateMessage", handleNewMessage);
+    socket.current.on("adminMessage", handleNewMessage); // ✅ listen for admin messages too
+
+    return () => {
+      socket.current.off("privateMessage", handleNewMessage);
+      socket.current.off("adminMessage", handleNewMessage);
+    };
   }, [socket, selectedChat, currentUserId]);
 
   return (
@@ -151,7 +163,7 @@ const Massage = () => {
                   <p className="text-2xl font-medium font-sans text-black p-3">Messages</p>
                   <div className="overflow-y-auto scrollbar-hide">
                     {contacts.length === 0 ? (
-                      <p className="text-gray-500 text-sm px-3 pt-3">No messages yet. Chats appear after ride matches.</p>
+                      <p className="text-gray-500 text-sm px-3 pt-3">No messages yet.</p>
                     ) : (
                       contacts.map((contact) => (
                         <div
@@ -177,13 +189,15 @@ const Massage = () => {
                 </div>
               )}
 
-              {/* Mobile chat view */}
-              {showChat && selectedChat && (
-                <div className="bg-white w-full md:flex rounded-xl md:rounded-2xl shadow-lg flex flex-col h-full flex-grow">
+              {/* Chat View */}
+              {selectedChat && (
+                <div className="bg-white w-full flex flex-col rounded-xl md:rounded-2xl shadow-lg h-full">
                   <div className="p-3 flex items-center gap-3 border-b">
-                    <button onClick={() => setShowChat(false)} className="text-gray-600">
-                      <ArrowLeft className="w-6 h-6" />
-                    </button>
+                    {showChat && (
+                      <button onClick={() => setShowChat(false)} className="text-gray-600">
+                        <ArrowLeft className="w-6 h-6" />
+                      </button>
+                    )}
                     <div className="w-10 h-10 flex items-center justify-center rounded-full bg-blue-500 text-white font-bold">
                       {selectedChat.initials}
                     </div>
@@ -236,69 +250,6 @@ const Massage = () => {
                   </div>
                 </div>
               )}
-
-              {/* Desktop chat view */}
-              <div className="hidden md:flex bg-white flex-1 rounded-xl md:rounded-2xl shadow-lg flex-col h-full">
-                {selectedChat ? (
-                  <>
-                    <div className="flex-1 overflow-y-auto scrollbar-hide p-8 space-y-4">
-                      {messages.map((msg, index) => (
-                        <motion.div
-                          key={index}
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          className={`flex ${msg.sender === "user" ? "justify-end" : "justify-start"}`}
-                        >
-                          <div
-                            className={`p-3 rounded-2xl max-w-xs ${
-                              msg.sender === "user" ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-800"
-                            }`}
-                          >
-                            <p>{msg.text}</p>
-                            <p className="text-[10px] mt-1 text-right opacity-70">
-                              {new Date(msg.time || msg.timestamp).toLocaleTimeString([], {
-                                hour: "2-digit",
-                                minute: "2-digit",
-                              })}
-                            </p>
-                          </div>
-                        </motion.div>
-                      ))}
-                      <div ref={messagesEndRef}></div>
-                    </div>
-
-                    {isTyping && (
-                      <div className="flex items-center gap-1 px-4 pb-1">
-                        <span className="dot-animation w-1.5 h-1.5 bg-red-500 rounded-full"></span>
-                        <span className="dot-animation w-1.5 h-1.5 bg-red-500 rounded-full delay-150"></span>
-                        <span className="dot-animation w-1.5 h-1.5 bg-red-500 rounded-full delay-300"></span>
-                      </div>
-                    )}
-
-                    <div className="p-4 flex items-center gap-2 border-t">
-                      <input
-                        type="text"
-                        className="flex-1 p-2 rounded-lg border border-gray-300 text-black focus:outline-none focus:ring-2 focus:ring-blue-400"
-                        placeholder="Type a message..."
-                        value={input}
-                        onChange={(e) => {
-                          setInput(e.target.value);
-                          socket.current.emit("typing", {
-                            senderId: currentUserId,
-                            receiverId: selectedChat?.id.toString(),
-                          });
-                        }}
-                        onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-                      />
-                      <button className="bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600" onClick={sendMessage}>
-                        <Send className="w-5 h-5" />
-                      </button>
-                    </div>
-                  </>
-                ) : (
-                  <p className="text-center text-gray-500 p-10">Select a chat to start messaging.</p>
-                )}
-              </div>
             </div>
           </div>
         </>

@@ -97,6 +97,40 @@ io.on("connection", (socket) => {
     io.emit("onlineUsers", Object.keys(onlineUsers));
   });
 
+
+
+  socket.on("adminMessage", async ({ senderId, receiverId, message, senderName }) => {
+    const chatMessage = {
+      senderId,
+      senderName,
+      receiverId,
+      message,
+      timestamp: new Date(),
+    };
+  
+    // Always emit the message to both sender and receiver
+    io.to(receiverId).emit("adminMessage", chatMessage);
+    io.to(senderId).emit("adminMessage", chatMessage);
+  
+
+    const AdminMessage = require("./api/models/AdminMessage");
+      try {
+        const saved = await AdminMessage.create({
+          name: senderName || "Unknown",
+          email: senderId,
+          message,
+        });
+  
+      
+     
+      } catch (error) {
+        console.error("❌ Failed to save admin-related message:", error);
+      }
+    }
+  );
+  
+  
+
   socket.on("privateMessage", ({ senderId, receiverId, message, senderName }) => {
     const chatMessage = {
       senderId,
@@ -109,6 +143,7 @@ io.on("connection", (socket) => {
     io.to(receiverId).emit("privateMessage", chatMessage);
     io.to(senderId).emit("privateMessage", chatMessage);
   });
+
 
   socket.on("typing", ({ senderId, receiverId }) => {
     io.to(receiverId).emit("typing", { senderId });
@@ -164,23 +199,6 @@ io.on("connection", (socket) => {
   socket.on("location-update", ({ rideId, lat, lng }) => {
     socket.to(rideId).emit("partner-location", { lat, lng });
   });
-
-  const AdminMessage = require('./api/models/AdminMessage');
-
-socket.on("admin-message", async ({ name, email, message }) => {
-  try {
-    const saved = await AdminMessage.create({ name, email, message });
-    console.log("📥 Admin message saved & emitting:", saved);
-
-    // Emit to all connected admin clients
-    io.emit("admin-message-receive", saved);
-  } catch (error) {
-    console.error("❌ Failed to save admin message:", error);
-    socket.emit("admin-message-error", { message: "Failed to send message" });
-  }
-});
-
-
 
 
   socket.on("disconnect", () => {
