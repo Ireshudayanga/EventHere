@@ -53,12 +53,13 @@ app.get('/', (req, res) => {
 });
 
 // -------------------- ROUTES --------------------
+
 const userRoutes = require('./api/routers/UserRoutes');
 const eventRoutes = require('./api/routers/EventRoutes');
 const specialCategoryRoutes = require("./api/routers/SpecialCategoryRoutes");
 const rideRoutes = require('./api/routers/ShareRideRoutes');
 const tokenRoutes = require('./api/routers/TokenRoutes');
-
+const adminRoutes = require('./api/routers/AdminRoutes');
 
 
 app.use('/users', userRoutes);
@@ -66,6 +67,7 @@ app.use('/events', eventRoutes);
 app.use("/api/special-category", specialCategoryRoutes);
 app.use('/rides', rideRoutes);
 app.use('/jwt', tokenRoutes);
+app.use('/admin', adminRoutes);
 
 
 

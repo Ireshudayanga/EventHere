@@ -20,6 +20,7 @@ import { fetchEvents } from "../../../redux/eventSlice"; // ✅ update path if n
 
 const AddEvent = () => {
   const { currentUser } = useContext(AuthContext);
+  console.log("Current User:", currentUser);
   const [events, setEvents] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selectedDate, setSelectedDate] = useState(new Date());

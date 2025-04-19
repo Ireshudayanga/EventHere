@@ -1,34 +1,46 @@
 /* eslint-disable react-refresh/only-export-components */
 /* eslint-disable react/prop-types */
 import React, { createContext, useState, useEffect } from "react";
-import { auth, createUser, signInWithGoogle, login, logout, updateUserProfile } from "../firebase/authService"; // Import functions
+import {
+  auth,
+  createUser,
+  signInWithGoogle,
+  login,
+  logout,
+  updateUserProfile,
+} from "../firebase/authService";
 import { setPersistence, browserSessionPersistence } from "firebase/auth";
-import axios from "axios";
 import useAxiosPublic from "../hooks/useAxiosPublic";
 
 export const AuthContext = createContext();
 
-
 const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const  axiosPublic = useAxiosPublic();
-  
-  // Listen for authentication state changes
+  const axiosPublic = useAxiosPublic();
+
   useEffect(() => {
-    // Set Firebase to session-only persistence (clears on tab/browser close)
     setPersistence(auth, browserSessionPersistence)
       .then(() => {
         const unsubscribe = auth.onAuthStateChanged(async (user) => {
           if (user) {
             const idToken = await user.getIdToken();
             try {
+              // 1. Get your app's access token
               const response = await axiosPublic.post("/jwt", { token: idToken });
               const appToken = response.data.token;
               localStorage.setItem("access-token", appToken);
-              setCurrentUser(user);
+
+              // 2. Check admin status from backend
+              const adminRes = await axiosPublic.post("/admin/check", {
+                email: user?.email,
+              });
+              const role = adminRes.data.isAdmin ? "admin" : "user";
+
+              // 3. Set user object with role
+              setCurrentUser({ ...user, role });
             } catch (error) {
-              console.error("Token error:", error);
+              console.error("Token or admin check error:", error);
               await logout();
               localStorage.removeItem("access-token");
               setCurrentUser(null);
@@ -37,16 +49,16 @@ const AuthProvider = ({ children }) => {
             setCurrentUser(null);
             localStorage.removeItem("access-token");
           }
+
           setLoading(false);
         });
-  
+
         return unsubscribe;
       })
       .catch((error) => {
         console.error("Error setting Firebase persistence:", error);
       });
   }, []);
-  
 
   const authInfo = {
     currentUser,
@@ -57,14 +69,10 @@ const AuthProvider = ({ children }) => {
     signInWithGoogle,
     login,
     logout,
-    updateUserProfile
+    updateUserProfile,
   };
 
-  return (
-    <AuthContext.Provider value={authInfo}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={authInfo}>{children}</AuthContext.Provider>;
 };
 
 export default AuthProvider;

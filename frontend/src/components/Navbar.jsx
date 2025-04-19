@@ -44,6 +44,7 @@ const AuthButton = () => {
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { currentUser } = useContext(AuthContext);
 
   const navItems = [
     { name: "Home", href: "/" },
@@ -53,9 +54,13 @@ const Navbar = () => {
     { name: "Explore", href: "/explore" },
   ];
 
+  // ✅ Push Admin Panel if user is admin
+  if (currentUser?.role === "admin") {
+    navItems.push({ name: "Admin Panel", href: "/admin" });
+  }
+
   return (
     <nav className="mx-4 sm:mx-10 lg:mx-20 py-4">
-      {/* Main row */}
       <div className="flex items-center justify-between">
         {/* Logo */}
         <div className="w-28 sm:w-36 lg:w-52">
@@ -76,19 +81,15 @@ const Navbar = () => {
           ))}
         </ul>
 
-        {/* Right: Mobile hamburger + auth buttons (mobile & desktop separately) */}
+        {/* Right-side */}
         <div className="flex items-center gap-4">
-          {/* Desktop login/logout */}
           <div className="hidden lg:block">
             <AuthButton />
           </div>
-
-          {/* Mobile login/logout */}
           <div className="block lg:hidden">
             <AuthButton />
           </div>
 
-          {/* Hamburger icon */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             className="lg:hidden text-white focus:outline-none"
@@ -117,11 +118,10 @@ const Navbar = () => {
               )}
             </svg>
           </button>
-
         </div>
       </div>
 
-      {/* Mobile dropdown menu */}
+      {/* Mobile Nav */}
       {isMenuOpen && (
         <div className="lg:hidden mt-4 bg-[#1A73E8] p-4 rounded-md">
           <ul className="flex flex-col gap-4 text-white font-medium text-center">
@@ -140,10 +140,11 @@ const Navbar = () => {
         </div>
       )}
 
-      {/* Login modal component */}
+      {/* Modal */}
       <Modal />
     </nav>
   );
 };
+
 
 export default Navbar;
