@@ -8,42 +8,45 @@ import { toast } from "react-toastify";
 // Create context
 export const SocketContext = createContext();
 
-// Provider component
 export const SocketProvider = ({ children }) => {
   const { currentUser } = useContext(AuthContext);
   const socket = useRef(null);
-  const [incomingRideRequest, setIncomingRideRequest] = useState(null); // 👈 store ride request
+  const [incomingRideRequest, setIncomingRideRequest] = useState(null);
   const [hasUnreadMessages, setHasUnreadMessages] = useState(false);
-  const [isRideMatched, setIsRideMatched] = useState(false); // NEW
+  const [isRideMatched, setIsRideMatched] = useState(false);
   const [adminMessages, setAdminMessages] = useState([]);
 
   const sendAdminMessage = (msg) => {
     if (!msg?.message || !msg?.receiverId || !currentUser?.email) return;
     if (!socket.current) {
-      console.warn("Socket not connected yet.");
+      console.warn("⚠️ Socket not connected yet.");
       return;
     }
-  
+
     const payload = {
       senderId: currentUser?.email,
       senderName: currentUser?.displayName,
       ...msg,
       timestamp: new Date().toISOString(),
     };
-  
+
+    console.log("📤 Emitting adminMessage:", payload);
     socket.current.emit("adminMessage", payload);
   };
-  
 
   useEffect(() => {
     if (!currentUser?.email) return;
 
     // Connect socket
     socket.current = io("http://localhost:5000");
+    console.log("🔌 Socket connected:", socket.current.id);
+
     socket.current.emit("join", currentUser.email);
+    console.log(`📢 Sent join event with ID: ${currentUser.email}`);
 
-    //  receive global message
+    // 🔔 PRIVATE MESSAGE
     socket.current.on("privateMessage", (msg) => {
+      console.log("📩 privateMessage received:", msg);
       const chatKey = `chat_${msg.senderId}_${msg.receiverId}`;
       const reverseKey = `chat_${msg.receiverId}_${msg.senderId}`;
       const keyToUse = msg.senderId === currentUser.email ? chatKey : reverseKey;
@@ -52,51 +55,47 @@ export const SocketProvider = ({ children }) => {
       stored.push(msg);
       localStorage.setItem(keyToUse, JSON.stringify(stored));
 
-      if (msg.senderId !== currentUser?.email) {
-        setHasUnreadMessages(true); // 💡 Set unread flag
-        toast.info(`New message from ${msg.senderName}`);
-      }
-      // console.log(`💬 New message from ${msg.senderName}:`, msg);
-    });
-
-
-    // 👂 Handle admin replies
-    socket.current.on("adminMessage", (msg) => {
-      // Store in localStorage like private messages
-      const chatKey = `chat_${msg.senderId}_${msg.receiverId}`;
-      const reverseKey = `chat_${msg.receiverId}_${msg.senderId}`;
-      const keyToUse = msg.senderId === currentUser.email ? chatKey : reverseKey;
-    
-      const stored = JSON.parse(localStorage.getItem(keyToUse) || "[]");
-      stored.push(msg);
-      localStorage.setItem(keyToUse, JSON.stringify(stored));
-    
-      // Update unread state if it's from admin
       if (msg.senderId !== currentUser?.email) {
         setHasUnreadMessages(true);
         toast.info(`New message from ${msg.senderName}`);
       }
-    
-      // Optional: track admin-specific messages separately
+    });
+
+    // 🔔 ADMIN MESSAGE
+    socket.current.on("adminMessage", (msg) => {
+      console.log("📩 adminMessage received:", msg);
+
+      const chatKey = `chat_${msg.senderId}_${msg.receiverId}`;
+      const reverseKey = `chat_${msg.receiverId}_${msg.senderId}`;
+      const keyToUse = msg.senderId === currentUser.email ? chatKey : reverseKey;
+
+      const stored = JSON.parse(localStorage.getItem(keyToUse) || "[]");
+      stored.push(msg);
+      localStorage.setItem(keyToUse, JSON.stringify(stored));
+
+      if (msg.senderId !== currentUser?.email) {
+        setHasUnreadMessages(true);
+        toast.info(`New message from ${msg.senderName}`);
+      }
+
       if (msg.senderId === "admin" || msg.receiverId === "admin") {
         setAdminMessages((prev) => [...prev, msg]);
       }
     });
-    
 
-    // 🎯 Receive ride acceptance
+    // 🚗 RIDE ACCEPT
     socket.current.on("ride-accept-request", (data) => {
-      // Save incoming ride request data to state
+      console.log("🚗 ride-accept-request received:", data);
       setIncomingRideRequest(data);
-      console.log("🚗 Ride request:", data);
       toast.info(`${data.name} wants to ride with you`);
     });
 
+    // 🤝 RIDE CONFIRMED
     socket.current.on("ride-confirmed", (data) => {
+      console.log("✅ ride-confirmed received:", data);
       toast.success("You have been matched!");
-      setIsRideMatched(true); // 👈 NEW: update state shared across app
+      setIsRideMatched(true);
 
-      // Your existing code...
       const userEmail = currentUser?.email;
       const otherUserEmail = data?.from;
       const otherUserName = data?.name;
@@ -108,7 +107,7 @@ export const SocketProvider = ({ children }) => {
         senderName: otherUserName,
         receiverId: userEmail,
         message: "🎉 Ride matched successfully! Say hi to your ride partner!",
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
 
       if (!localStorage.getItem(keyA) && !localStorage.getItem(keyB) && userEmail !== otherUserEmail) {
@@ -116,26 +115,36 @@ export const SocketProvider = ({ children }) => {
       }
     });
 
-
-
+    // ❌ RIDE REJECTED
     socket.current.on("ride-rejected", () => {
+      console.log("❌ ride-rejected received");
       toast.error("Ride was rejected");
-      // Handle fallback UI on rejection
     });
 
     return () => {
+      console.log("🔌 Socket disconnecting...");
       socket.current.disconnect();
     };
   }, [currentUser]);
 
-
-
   return (
-    <SocketContext.Provider value={{ socket, incomingRideRequest, setIncomingRideRequest, hasUnreadMessages, setHasUnreadMessages, isRideMatched, setIsRideMatched , adminMessages, sendAdminMessage }}>
+    <SocketContext.Provider
+      value={{
+        socket,
+        incomingRideRequest,
+        setIncomingRideRequest,
+        hasUnreadMessages,
+        setHasUnreadMessages,
+        isRideMatched,
+        setIsRideMatched,
+        adminMessages,
+        sendAdminMessage,
+      }}
+    >
       {children}
     </SocketContext.Provider>
   );
 };
 
-// Custom hook for easier access
+// Custom hook
 export const useSocket = () => useContext(SocketContext);

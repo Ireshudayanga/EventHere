@@ -3,6 +3,7 @@ import axios from "axios";
 import { useSocket } from "../../socket/SocketPrivider";
 import { motion } from "framer-motion";
 import { ClipLoader } from "react-spinners";
+import { toast } from "react-toastify";
 
 const AdminMessages = () => {
   const { socket } = useSocket();
@@ -12,44 +13,64 @@ const AdminMessages = () => {
   const [newMessage, setNewMessage] = useState("");
   const [loading, setLoading] = useState(true);
   const messagesEndRef = useRef(null);
+  const selectedUserRef = useRef(selectedUser);
 
-  // 📥 Load all messages
+  useEffect(() => {
+    selectedUserRef.current = selectedUser;
+  }, [selectedUser]);
+
+  useEffect(() => {
+    if (!socket.current) return;
+
+    const handleConnect = () => {
+      socket.current.emit("join", "admin");
+      console.log("✅ Admin joined socket room after connect");
+    };
+
+    if (socket.current.connected) handleConnect();
+    socket.current.on("connect", handleConnect);
+
+    return () => {
+      socket.current.off("connect", handleConnect);
+    };
+  }, [socket]);
+
   const loadMessages = async () => {
     try {
+      console.log("📦 Fetching messages...");
       const res = await axios.get("http://localhost:5000/admin-messages");
       const all = res.data.reverse();
-
       setMessages(all);
       extractContacts(all);
+      console.log("✅ Messages loaded:", all);
     } catch (err) {
-      console.error("Failed to fetch messages:", err);
+      console.error("❌ Failed to fetch messages:", err);
+      toast.error("Failed to load messages.");
     } finally {
       setLoading(false);
     }
   };
 
-  // 🧠 Group messages by sender
   const extractContacts = (msgs) => {
     const users = {};
     msgs.forEach((msg) => {
-      if (msg.email !== "admin") {
-        users[msg.email] = msg.name || msg.email;
-      }
+      const userEmail = msg.email !== "admin" ? msg.email : msg.receiverId;
+      if (!userEmail || userEmail === "admin") return;
+      users[userEmail] = msg.name || msg.senderName || userEmail;
     });
 
     const contactList = Object.keys(users).map((email) => {
-      const name = users[email] || email; // fallback if name is undefined
+      const name = users[email];
       const initials = name
-        ? name
-            .split(" ")
-            .map((w) => w[0])
-            .join("")
-            .toUpperCase()
-            .slice(0, 2)
-        : "??";
-      
+        .split(" ")
+        .map((w) => w[0])
+        .join("")
+        .toUpperCase()
+        .slice(0, 2);
 
-      const userMessages = msgs.filter((m) => m.email === email);
+      const userMessages = msgs.filter(
+        (m) => m.email === email || m.receiverId === email
+      );
       const lastMessage = userMessages[userMessages.length - 1];
 
       return {
@@ -60,11 +81,13 @@ const AdminMessages = () => {
       };
     });
 
+    console.log("📬 Extracted contacts:", contactList);
     setContacts(contactList);
   };
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    console.log("🔽 Scrolled to bottom");
   };
 
   useEffect(() => {
@@ -76,27 +99,72 @@ const AdminMessages = () => {
   }, [selectedUser, messages]);
 
   useEffect(() => {
-    if (!socket.current) return;
+    if (!socket.current) {
+      console.log("🛑 Socket not ready.");
+      return;
+    }
 
     const handleMessage = (msg) => {
-      const isUserMessage = msg.receiverId === "admin" || msg.email === selectedUser?.id;
+      console.log("📩 Received adminMessage:", msg);
+      toast.info(`New message from ${msg.senderName || msg.email}`);
 
-      if (isUserMessage) {
-        setMessages((prev) => {
-          const updated = [...prev, msg];
-          extractContacts(updated);
-          return updated;
-        });
+      setMessages((prev) => {
+        const updated = [...prev, msg];
+        extractContacts(updated);
 
-        if (msg.senderId === selectedUser?.id || msg.email === selectedUser?.id) {
+        if (!selectedUserRef.current && msg.email !== "admin") {
+          const senderName = msg.name || msg.senderName || msg.email || msg.receiverId;
+          const userId =
+            msg.email && msg.email !== "admin"
+              ? msg.email
+              : msg.senderId !== "admin"
+              ? msg.senderId
+              : msg.receiverId;
+        
+          if (!userId) {
+            console.warn("⚠️ Skipping auto-select: userId is undefined");
+            return;
+          }
+        
+          const newUser = {
+            id: userId,
+            name: senderName,
+            initials: senderName
+              .split(" ")
+              .map((w) => w[0])
+              .join("")
+              .toUpperCase()
+              .slice(0, 2),
+            lastMessage: msg.message,
+          };
+        
+          setSelectedUser(newUser);
+          console.log("🟢 Auto-selected user (fixed):", newUser);
           scrollToBottom();
         }
+        
+        return updated;
+      });
+
+      const activeUser = selectedUserRef.current;
+      if (
+        activeUser &&
+        (msg.email === activeUser.id || msg.receiverId === activeUser.id)
+      ) {
+        scrollToBottom();
+      } else {
+        console.log("📤 Message not for current chat.");
       }
     };
 
+    console.log("✅ Subscribed to adminMessage");
     socket.current.on("adminMessage", handleMessage);
-    return () => socket.current.off("adminMessage", handleMessage);
-  }, [socket, selectedUser]);
+
+    return () => {
+      console.log("❌ Unsubscribed from adminMessage");
+      socket.current.off("adminMessage", handleMessage);
+    };
+  }, [socket]);
 
   const handleSend = () => {
     if (!newMessage.trim() || !selectedUser) return;
@@ -104,14 +172,16 @@ const AdminMessages = () => {
     const payload = {
       senderId: "admin",
       senderName: "Admin",
+      email: "admin",
       receiverId: selectedUser.id,
       message: newMessage.trim(),
       timestamp: new Date().toISOString(),
     };
 
     socket.current.emit("adminMessage", payload);
+    console.log("📤 Sent adminMessage:", payload);
+    toast.success("Message sent");
 
-    // Optimistically update UI
     setMessages((prev) => {
       const updated = [...prev, payload];
       extractContacts(updated);
@@ -121,11 +191,14 @@ const AdminMessages = () => {
     setNewMessage("");
   };
 
-  const filteredMessages = messages.filter(
-    (m) =>
-      m.email === selectedUser?.id || // user -> admin
-      (m.senderId === "admin" && m.receiverId === selectedUser?.id) // admin -> user
-  );
+  const currentUser = selectedUser || selectedUserRef.current;
+  const filteredMessages = currentUser
+    ? messages.filter(
+        (m) =>
+          (m.email === currentUser.id && m.receiverId === "admin") ||
+          (m.email === "admin" && m.receiverId === currentUser.id)
+      )
+    : [];
 
   return (
     <div className="h-screen w-full flex flex-col md:flex-row overflow-hidden">
@@ -143,9 +216,26 @@ const AdminMessages = () => {
             {contacts.map((contact) => (
               <div
                 key={contact.id}
-                onClick={() => setSelectedUser(contact)}
+                onClick={() => {
+                  console.log("📌 Selected user:", contact);
+                  setSelectedUser(contact);
+
+                  setTimeout(() => {
+                    const filtered = messages.filter(
+                      (m) =>
+                        (m.email === contact.id &&
+                          m.receiverId === "admin") ||
+                        (m.email === "admin" &&
+                          m.receiverId === contact.id)
+                    );
+                    console.log("🧾 Filtered messages on click:", filtered);
+                    scrollToBottom();
+                  }, 100);
+                }}
                 className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all ${
-                  selectedUser?.id === contact.id ? "bg-blue-100" : "hover:bg-gray-100"
+                  selectedUser?.id === contact.id
+                    ? "bg-blue-100"
+                    : "hover:bg-gray-100"
                 }`}
               >
                 <div className="w-10 h-10 bg-blue-600 text-white flex items-center justify-center rounded-full font-bold">
@@ -165,11 +255,11 @@ const AdminMessages = () => {
 
       {/* Chat window */}
       <div className="flex-1 bg-gray-50 p-4 flex flex-col relative">
-        {selectedUser ? (
+        {currentUser ? (
           <>
             <div className="border-b pb-3 mb-4">
               <h3 className="text-xl font-semibold text-gray-800">
-                Chat with {selectedUser.name}
+                Chat with {currentUser.name}
               </h3>
             </div>
 
@@ -180,12 +270,12 @@ const AdminMessages = () => {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   className={`flex ${
-                    msg.senderId === "admin" ? "justify-end" : "justify-start"
+                    msg.email === "admin" ? "justify-end" : "justify-start"
                   }`}
                 >
                   <div
                     className={`p-3 rounded-2xl max-w-xs ${
-                      msg.senderId === "admin"
+                      msg.email === "admin"
                         ? "bg-blue-600 text-white"
                         : "bg-gray-200 text-black"
                     }`}
@@ -221,7 +311,9 @@ const AdminMessages = () => {
             </div>
           </>
         ) : (
-          <p className="text-center text-gray-400 mt-20">Select a user to start chatting</p>
+          <p className="text-center text-gray-400 mt-20">
+            Select a user to start chatting
+          </p>
         )}
       </div>
     </div>

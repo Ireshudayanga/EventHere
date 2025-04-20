@@ -93,13 +93,19 @@ io.on("connection", (socket) => {
   socket.on("join", (userId) => {
     socket.join(userId);
     onlineUsers[userId] = socket.id;
-
+    console.log(`👤 ${userId} joined and mapped to socket ${socket.id}`);
     io.emit("onlineUsers", Object.keys(onlineUsers));
   });
 
 
-
+  // 💬 Admin Message Handler with Debug Logs
   socket.on("adminMessage", async ({ senderId, receiverId, message, senderName }) => {
+    console.log("📥 adminMessage received on server:");
+    console.log("   ↳ senderId:", senderId);
+    console.log("   ↳ receiverId:", receiverId);
+    console.log("   ↳ message:", message);
+    console.log("   ↳ senderName:", senderName);
+
     const chatMessage = {
       senderId,
       senderName,
@@ -107,29 +113,41 @@ io.on("connection", (socket) => {
       message,
       timestamp: new Date(),
     };
-  
-    // Always emit the message to both sender and receiver
-    io.to(receiverId).emit("adminMessage", chatMessage);
-    io.to(senderId).emit("adminMessage", chatMessage);
-  
 
     const AdminMessage = require("./api/models/AdminMessage");
-      try {
-        const saved = await AdminMessage.create({
-          name: senderName || "Unknown",
-          email: senderId,
-          message,
-        });
-  
-      
-     
-      } catch (error) {
-        console.error("❌ Failed to save admin-related message:", error);
-      }
+
+    try {
+      await AdminMessage.create({
+        name: senderName || "Unknown",
+        email: senderId, // "admin"
+        receiverId,
+        message,
+      });
+
+      console.log("✅ Message saved to MongoDB");
+    } catch (error) {
+      console.error("❌ Error saving admin message:", error);
     }
-  );
-  
-  
+
+    const receiverSocketId = onlineUsers[receiverId];
+    const senderSocketId = onlineUsers[senderId];
+
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit("adminMessage", chatMessage);
+      console.log(`📤 Sent message to receiver (${receiverId}) via socket ${receiverSocketId}`);
+    } else {
+      console.log(`⚠️ Receiver (${receiverId}) is not online`);
+    }
+
+    if (senderSocketId) {
+      io.to(senderSocketId).emit("adminMessage", chatMessage);
+      console.log(`📤 Sent message back to sender (${senderId}) via socket ${senderSocketId}`);
+    } else {
+      console.log(`⚠️ Sender (${senderId}) is not online`);
+    }
+  });
+
+
 
   socket.on("privateMessage", ({ senderId, receiverId, message, senderName }) => {
     const chatMessage = {
