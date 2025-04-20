@@ -1,7 +1,7 @@
 // Import Firebase
 import { initializeApp } from "firebase/app";
 import { getStorage } from "firebase/storage";
-import { getAnalytics } from "firebase/analytics";
+import { getAnalytics, isSupported } from "firebase/analytics";
 
 // Firebase Configuration
 const firebaseConfig = {
@@ -14,13 +14,19 @@ const firebaseConfig = {
   measurementId: import.meta.env.VITE_MEASUREMENTID,
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const storage = getStorage(app);
 
+// ✅ Now you can safely check for analytics support
+let analytics = null;
+if (import.meta.env.PROD) {
+  isSupported().then((yes) => {
+    if (yes) {
+      analytics = getAnalytics(app);
+    }
+  });
+}
 
-// Export Firebase App & Storage
+// ✅ Export
 export default app;
-export { storage };
-
-
+export { storage, analytics };
