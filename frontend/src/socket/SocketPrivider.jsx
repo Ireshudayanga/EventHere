@@ -63,7 +63,8 @@ export const SocketProvider = ({ children }) => {
 
     // 🔔 ADMIN MESSAGE
     socket.current.on("adminMessage", (msg) => {
-      console.log("📩 adminMessage received:", msg);
+      console.log("📩 adminMessage received to SocketProvider:", msg);
+     
 
       const chatKey = `chat_${msg.senderId}_${msg.receiverId}`;
       const reverseKey = `chat_${msg.receiverId}_${msg.senderId}`;
@@ -75,7 +76,7 @@ export const SocketProvider = ({ children }) => {
 
       if (msg.senderId !== currentUser?.email) {
         setHasUnreadMessages(true);
-        toast.info(`New message from ${msg.senderName}`);
+        toast.warn(`New message from ${msg.senderName} To Admin`);
       }
 
       if (msg.senderId === "admin" || msg.receiverId === "admin") {

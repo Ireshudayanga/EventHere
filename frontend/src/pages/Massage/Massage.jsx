@@ -58,17 +58,47 @@ const Massage = () => {
 
   const loadMessages = async (contact) => {
     const chatKey = `chat_${currentUserId}_${contact.id}`;
-    const stored = localStorage.getItem(chatKey);
-    const parsed = stored ? JSON.parse(stored) : [];
-
-    const formatted = parsed.map((msg) => ({
-      text: msg.message,
-      sender: msg.senderId === currentUserId ? "user" : "bot",
-      time: msg.timestamp,
-    }));
-
-    setMessages(formatted);
+    let parsed = [];
+  
+    if (contact.id === "admin") {
+      // ✅ Fetch messages from MongoDB for admin chat
+      try {
+        const res = await fetch("http://localhost:5000/admin-messages");
+        const serverMessages = await res.json();
+  
+        // Filter only those relevant to this user
+        parsed = serverMessages
+        .filter(
+          (msg) =>
+            (msg.email === currentUserId && msg.receiverId === "admin") ||
+            (msg.email === "admin" && msg.receiverId === currentUserId)
+        )
+        .map((msg) => ({
+          text: msg.message,
+          sender: msg.email === currentUserId ? "user" : "bot",
+          time: msg.timestamp || msg.createdAt,
+        }))
+        .sort((a, b) => new Date(a.time) - new Date(b.time)); // ✅ ascending order
+      
+  
+      } catch (err) {
+        console.error("❌ Failed to load admin messages:", err);
+        toast.error("Failed to load chat with admin.");
+      }
+  
+    } else {
+      // 🧠 Standard user-to-user chat from localStorage
+      const stored = localStorage.getItem(chatKey);
+      parsed = stored ? JSON.parse(stored).map((msg) => ({
+        text: msg.message,
+        sender: msg.senderId === currentUserId ? "user" : "bot",
+        time: msg.timestamp,
+      })) : [];
+    }
+  
+    setMessages(parsed);
   };
+  
 
   useEffect(() => {
     scrollToBottom();
