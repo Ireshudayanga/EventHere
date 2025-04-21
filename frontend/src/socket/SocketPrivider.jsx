@@ -76,7 +76,6 @@ export const SocketProvider = ({ children }) => {
 
       if (msg.senderId !== currentUser?.email) {
         setHasUnreadMessages(true);
-        toast.warn(`New message from ${msg.senderName} To Admin`);
       }
 
       if (msg.senderId === "admin" || msg.receiverId === "admin") {

@@ -39,7 +39,8 @@ const AdminChat = () => {
     socket.current.emit("join", "admin");
 
     const handleNewMessage = (msg) => {
-      console.log("📩 New message received To Handle Message:", msg);
+      
+      toast.warn(`New message from ${msg.senderName} To Admin`);
 
       setMessages((prev) => {
         const updated = [...prev, msg];
