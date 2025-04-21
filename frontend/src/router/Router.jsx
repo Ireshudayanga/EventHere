@@ -20,9 +20,17 @@ import EventManager from '../pages/admin/EventManager';
 import AdminMessages from '../pages/admin/AdminMessages';
 import CalendarPage from '../pages/Calendar/Calendar';
 import AppContentLayout from '../layout/AppContentLayout';
+import VolunteerPage from '../pages/Volunteer/VolunteerPage';
+import ExplorePage from '../pages/Explore/ExplorePage';
+import LegalLayout from '../layout/LegalLayout';
+import PrivacyPolicy from '../pages/leagalPages/PrivacyPolicy';
+import TermsAndConditions from '../pages/leagalPages/TermsAndConditions';
+import CookieSettings from '../pages/leagalPages/CookieSettings';
+import ModernSlaveryStatement from '../pages/leagalPages/ModernSlaveryStatement';
 
 const router = createBrowserRouter([
 
+  // HomePage Routes
   {
     path: "/",
     element: <Main />,
@@ -40,6 +48,12 @@ const router = createBrowserRouter([
     children: [{
       path: "/calendar", element: <CalendarPage />,
     },
+    {
+      path: "/volunteer", element: <VolunteerPage/>,
+    },
+    {
+      path : "/explore", element: <ExplorePage />,
+    }
 
     ]
   },
@@ -93,10 +107,31 @@ const router = createBrowserRouter([
     ]
   },
 
+  // Signup Route
   {
     path: "/signup",
     element: <Signup />
-  }
+  },
+
+  // Legal Pages
+  {
+    path: "/",
+    element: < LegalLayout />,
+    children: [{
+      path: "/privacy", element: <PrivacyPolicy />,
+    },
+    {
+      path: "/terms", element: <TermsAndConditions/>,
+    },
+    {
+      path : "/cookies", element: <CookieSettings />,
+    },
+    {
+      path : "/modern-slavery", element: <ModernSlaveryStatement />,
+    }
+
+    ]
+  },
 ]);
 
 export default router;
