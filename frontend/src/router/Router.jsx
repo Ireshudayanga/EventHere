@@ -18,6 +18,7 @@ import AdminRoute from '../privetRouter/AdminRoute';
 import UserManagement from '../pages/admin/UserManagement';
 import EventManager from '../pages/admin/EventManager';
 import AdminMessages from '../pages/admin/AdminMessages';
+import CalendarPage from '../pages/Calendar/Calendar';
 
 const router = createBrowserRouter([
 
@@ -28,6 +29,7 @@ const router = createBrowserRouter([
       path: "/",
       element: <Home />,
     },
+    { path: "/calendar", element: <CalendarPage/> },
     ]
   },
 
