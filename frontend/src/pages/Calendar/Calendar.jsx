@@ -97,10 +97,9 @@ const CalendarPage = () => {
               key={cat}
               onClick={() => setSelectedCategory(isAll ? "" : cat)}
               className={`px-4 py-1.5 rounded-full text-sm font-medium capitalize transition-all duration-150 border
-                ${
-                  isSelected
-                    ? `${colorSet.bg} ${colorSet.text} ${colorSet.ring} ring-2`
-                    : `${colorSet.pill} hover:opacity-90 border-transparent`
+                ${isSelected
+                  ? `${colorSet.bg} ${colorSet.text} ${colorSet.ring} ring-2`
+                  : `${colorSet.pill} hover:opacity-90 border-transparent`
                 }`}
             >
               {cat}
@@ -110,9 +109,16 @@ const CalendarPage = () => {
       </div>
 
       {/* Calendar */}
-      <div className="bg-white border border-gray-200 shadow rounded-xl p-5 mb-10">
-        <Calender date={selectedDate} setDate={setSelectedDate} events={filteredEvents} />
+      {/* Calendar */}
+      <div className="mb-10 rounded-xl border border-blue-200/40 backdrop-blur-md bg-blue-50/30 p-6 shadow-sm">
+   
+        <Calender
+          date={selectedDate}
+          setDate={setSelectedDate}
+          events={filteredEvents}
+        />
       </div>
+
 
       {/* Events */}
       <div>
@@ -129,31 +135,31 @@ const CalendarPage = () => {
 
                   return (
                     <div
-                    key={i}
-                    className="flex flex-col justify-between bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200 p-5 h-full"
-                  >
-                    <div>
-                      <div className="flex justify-between items-start mb-2">
-                        <h3 className="text-lg font-bold text-gray-900">{event.title}</h3>
-                        <span
-                          className={`px-3 py-0.5 rounded-full text-xs font-semibold capitalize ${colorSet.pill}`}
-                        >
-                          {event.category}
-                        </span>
-                      </div>
-                      <p className="text-sm text-gray-500 flex items-center gap-1 mb-4">
-                        ⏰ <span>{event.time}</span>
-                      </p>
-                    </div>
-                  
-                    <button
-                      onClick={() => navigate("/events")}
-                      className="mt-auto inline-flex items-center justify-center px-4 py-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-1 rounded-lg transition-all duration-200 shadow-sm"
+                      key={i}
+                      className="flex flex-col justify-between bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200 p-5 h-full"
                     >
-                      View Details
-                    </button>
-                  </div>
-                  
+                      <div>
+                        <div className="flex justify-between items-start mb-2">
+                          <h3 className="text-lg font-bold text-gray-900">{event.title}</h3>
+                          <span
+                            className={`px-3 py-0.5 rounded-full text-xs font-semibold capitalize ${colorSet.pill}`}
+                          >
+                            {event.category}
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray-500 flex items-center gap-1 mb-4">
+                          ⏰ <span>{event.time}</span>
+                        </p>
+                      </div>
+
+                      <button
+                        onClick={() => navigate("/events")}
+                        className="mt-auto inline-flex items-center justify-center px-4 py-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-1 rounded-lg transition-all duration-200 shadow-sm"
+                      >
+                        View Details
+                      </button>
+                    </div>
+
                   );
                 })}
               </div>

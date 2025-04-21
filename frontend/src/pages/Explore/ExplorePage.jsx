@@ -48,7 +48,7 @@ const ExplorePage = () => {
 
       {/* Featured Events */}
       <div className="mb-16">
-        <h2 className="text-2xl font-semibold text-gray-900 mb-8">✨ Featured</h2>
+        <h2 className="text-2xl font-semibold text-gray-900 mb-8">Featured</h2>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {featured.map((event, i) => (
             <div
@@ -80,7 +80,7 @@ const ExplorePage = () => {
 
       {/* Latest Events List */}
       <div className="mb-20">
-        <h2 className="text-2xl font-semibold text-gray-900 mb-6">🆕 Latest</h2>
+        <h2 className="text-2xl font-semibold text-gray-900 mb-6">Latest</h2>
         <div className="space-y-4">
           {latest.map((event, i) => (
             <div

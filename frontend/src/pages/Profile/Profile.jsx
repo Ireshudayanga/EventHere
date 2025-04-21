@@ -107,9 +107,13 @@ export default function ModernUserProfile() {
                             </p>
                         </div>
                         <div className="flex gap-2 mt-3 md:mt-0">
-                            <button className="text-sm px-3 py-1 rounded-md border border-red-500 text-red-500 hover:bg-red-100">
+                            <a
+                                href={`mailto:ireshudayanga23976@gmail.com?subject=Issue%20Report&body=Hello%20Team%2C%0A%0AI%20would%20like%20to%20report%20an%20issue%20I%20encountered%20on%20the%20platform.%0A%0ADetails%3A%0A-%20Date%3A%20%5BYour%20Date%5D%0A-%20Issue%3A%20%5BDescribe%20what%20went%20wrong%5D%0A-%20Event%20(if%20applicable)%3A%20%5BEvent%20Name%5D%0A%0AThank%20you%2C%0A%5BYour%20Name%5D`}
+                                className="inline-block text-sm px-3 py-1 rounded-md border border-red-500 text-red-500 hover:bg-red-100 transition"
+                            >
                                 Report Problem
-                            </button>
+                            </a>
+
                         </div>
                     </div>
 
