@@ -107,5 +107,21 @@ const getJoinEventByEmail = async (req, res) => {
 };
 
 
-module.exports = { getAllEvents, createEvent, updateEvent, deleteEvent, joinEvent , getJoinEventByEmail,};
+const getParticipantsByEventId = async (req, res) => {
+   // console.log("🚀 Incoming Event ID:", req.body);
+    const { eventid } = req.body;
+   console.log("🚀 Event ID:", eventid);
+    try {
+        const participants = await JointEvent.find({ eventid: eventid }); // ✅ Correct variable
+        console.log("🚀 Participants Data:", participants);
+        res.status(200).json(participants);
+
+    } catch (err) {
+        console.error("getParticipantsByEventId error:", err); // add this for better debugging
+        res.status(500).json({ message: "Failed to fetch participants" });
+    }
+};
+
+
+module.exports = { getAllEvents, createEvent, updateEvent, deleteEvent, joinEvent , getJoinEventByEmail, getParticipantsByEventId};
 

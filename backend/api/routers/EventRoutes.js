@@ -9,6 +9,8 @@ router.post('/joined', TokenVerify.TokenVerify, eventController.getJoinEventByEm
 router.post('/', TokenVerify.TokenVerify, eventController.createEvent);
 router.patch('/:id', TokenVerify.TokenVerify, eventController.updateEvent);
 router.delete('/:id', TokenVerify.TokenVerify, eventController.deleteEvent);
+router.post('/participants/:eventid', TokenVerify.TokenVerify, eventController.getParticipantsByEventId);
+
 
 
 module.exports = router;

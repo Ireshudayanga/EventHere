@@ -12,31 +12,29 @@ import { Link } from 'react-router-dom';
 import useAxiosSecure from '../../hooks/useAxiosSecure';
 import { toast } from 'react-toastify';
 import { fetchJoinedEvents } from '../../../redux/joinEventSlice';
+import { fetchParticipantsByEventId } from '../../../redux/joinEventSlice';
 
 
 
 export default function ModernUserProfile() {
-
     const axiosSecure = useAxiosSecure();
-
     const dispatch = useDispatch();
     const { events } = useSelector((state) => state.events);
-    const { joinedEvents } = useSelector((state) => state.joinEvent);
-
+    const { joinedEvents, participantsByEventId } = useSelector((state) => state.joinEvent);
     const { currentUser, loading } = useContext(AuthContext);
+
+    const hostedEvents = events.filter((event) => event.userEmail === currentUser?.email);
+    const [activeTab, setActiveTab] = useState('Host Events');
 
     useEffect(() => {
         if (currentUser?.email) {
-            dispatch(fetchEvents());
-            dispatch(fetchJoinedEvents(currentUser.email)); // 👈 add this line
+            dispatch(fetchEvents()).then((res) => {
+                const hosted = res.payload.filter((event) => event.userEmail === currentUser.email);
+                hosted.forEach((e) => dispatch(fetchParticipantsByEventId(e._id)));
+            });
+            dispatch(fetchJoinedEvents(currentUser.email));
         }
     }, [dispatch, currentUser]);
-
-    const hostedEvents = events.filter((event) => event.userEmail === currentUser?.email);
-
-
-
-    const [activeTab, setActiveTab] = useState('Host Events');
 
     const userRating = calculateUserRating({
         reviews: [4, 5, 5, 3, 4, 5, 5],
@@ -45,9 +43,7 @@ export default function ModernUserProfile() {
     });
 
     const tabStyle = (tab) =>
-        `pb-2 transition-all duration-200 ${activeTab === tab
-            ? 'border-b-2 border-blue-600 text-blue-600 font-semibold'
-            : 'text-gray-400 hover:text-blue-600'
+        `pb-2 transition-all duration-200 ${activeTab === tab ? 'border-b-2 border-blue-600 text-blue-600 font-semibold' : 'text-gray-400 hover:text-blue-600'
         }`;
 
     if (loading) {
@@ -77,7 +73,7 @@ export default function ModernUserProfile() {
     };
 
     return (
-        <div className="h-full md:h-screen p-6 flex justify-center ">
+        <div className="h-full md:h-screen p-6 flex justify-center">
             <div className="bg-white shadow-2xl rounded-3xl overflow-hidden w-full max-w-5xl grid grid-cols-1 md:grid-cols-3">
                 {/* Left Side */}
                 <div className="bg-white p-6 border-r">
@@ -108,26 +104,21 @@ export default function ModernUserProfile() {
                         </div>
                         <div className="flex gap-2 mt-3 md:mt-0">
                             <a
-                                href={`mailto:ireshudayanga23976@gmail.com?subject=Issue%20Report&body=Hello%20Team%2C%0A%0AI%20would%20like%20to%20report%20an%20issue%20I%20encountered%20on%20the%20platform.%0A%0ADetails%3A%0A-%20Date%3A%20%5BYour%20Date%5D%0A-%20Issue%3A%20%5BDescribe%20what%20went%20wrong%5D%0A-%20Event%20(if%20applicable)%3A%20%5BEvent%20Name%5D%0A%0AThank%20you%2C%0A%5BYour%20Name%5D`}
+                                href="mailto:ireshudayanga23976@gmail.com?subject=Issue%20Report&body=Hello..."
                                 className="inline-block text-sm px-3 py-1 rounded-md border border-red-500 text-red-500 hover:bg-red-100 transition"
                             >
                                 Report Problem
                             </a>
-
                         </div>
                     </div>
 
                     {/* Tabs */}
                     <div className="border-b mb-6 flex gap-6 text-sm">
-                        <button className={tabStyle('Host Events')} onClick={() => setActiveTab('Host Events')}>
-                            Host Events
-                        </button>
-                        <button className={tabStyle('Mark as Going')} onClick={() => setActiveTab('Mark as Going')}>
-                            Mark as Going
-                        </button>
+                        <button className={tabStyle('Host Events')} onClick={() => setActiveTab('Host Events')}>Host Events</button>
+                        <button className={tabStyle('Mark as Going')} onClick={() => setActiveTab('Mark as Going')}>Mark as Going</button>
                     </div>
 
-                    {/* Animated Tab Content */}
+                    {/* Animated Content */}
                     <div className="relative h-full min-h-[200px]">
                         <AnimatePresence mode="wait">
                             {activeTab === 'Host Events' && (
@@ -142,51 +133,37 @@ export default function ModernUserProfile() {
                                     <div>
                                         <h3 className="text-lg font-semibold text-gray-700 mb-2">Your Hosted Events</h3>
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
-
                                             {hostedEvents.map((event) => (
-                                                <div
-                                                    key={event._id}
-                                                    className="relative bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow duration-300"
-                                                >
-                                                    {/* Edit + Delete Icons */}
+                                                <div key={event._id} className="relative bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow duration-300">
                                                     <div className="absolute top-3 right-3 flex gap-2">
-                                                        <Link
-                                                            to="/edit-event"
-                                                            state={event} // pass full event object
-                                                            title="Edit Event"
-                                                            className="text-blue-600 hover:text-blue-800 transition"
-                                                        >
+                                                        <Link to="/edit-event" state={event} className="text-blue-600 hover:text-blue-800 transition">
                                                             <Pencil className="w-5 h-5" />
                                                         </Link>
-                                                        <button
-                                                            title="Delete Event"
-                                                            className="text-red-500 hover:text-red-700 transition"
-                                                            onClick={() => handleDeleteEvent(event._id)}
-                                                        >
+                                                        <button className="text-red-500 hover:text-red-700 transition" onClick={() => handleDeleteEvent(event._id)}>
                                                             <Trash2 className="w-5 h-5" />
                                                         </button>
                                                     </div>
-
-                                                    {/* Event Content */}
                                                     <div className="mb-2 mt-1">
                                                         <h4 className="text-xl font-semibold text-gray-800 truncate">{event.title}</h4>
                                                         <p className="text-sm text-gray-500">{event.category || 'Uncategorized'}</p>
                                                     </div>
-
                                                     <div className="flex items-center justify-between text-sm text-gray-600 mt-2">
                                                         <span>📅 {event.date}</span>
                                                         <span>⏰ {event.time}</span>
                                                     </div>
-
-                                                    <div className="mt-4 flex justify-end">
-                                                        <span className="px-3 py-1 text-xs bg-blue-100 text-blue-700 rounded-full">
-                                                            Hosted
-                                                        </span>
+                                                    <div className="mt-4 flex justify-between items-center text-sm text-gray-500">
+                                                        <span className="px-3 py-1 text-xs bg-blue-100 text-blue-700 rounded-full">Hosted</span>
+                                                        <span>{participantsByEventId[event._id] || 0} participants</span>
                                                     </div>
+                                                    {participantsByEventId[event._id] === 0  && event.category === 'volunteer' && (
+                                                        <div className="mt-3 p-2 text-xs bg-yellow-50 border-l-4 border-yellow-400 text-yellow-700 rounded">
+                                                          No participants yet. Volunteers can sign up if this event is marked as &quot;Sign-Up Required&quot;.
+                                                        </div>
+                                                    )}
+
                                                 </div>
                                             ))}
                                         </div>
-
                                     </div>
                                 </motion.div>
                             )}
@@ -206,34 +183,17 @@ export default function ModernUserProfile() {
                                             {joinedEvents.length > 0 ? (
                                                 joinedEvents.map((event) => {
                                                     const formattedDate = new Date(event.date).toLocaleDateString('en-US', {
-                                                        year: 'numeric',
-                                                        month: 'long',
-                                                        day: 'numeric',
+                                                        year: 'numeric', month: 'long', day: 'numeric'
                                                     });
-
                                                     return (
-                                                        <div
-                                                            key={event._id}
-                                                            className="bg-gradient-to-r from-green-50 to-white border border-green-200 rounded-xl p-5 shadow-md hover:shadow-lg transition-shadow duration-300"
-                                                        >
-                                                            {/* Title */}
+                                                        <div key={event._id} className="bg-gradient-to-r from-green-50 to-white border border-green-200 rounded-xl p-5 shadow-md hover:shadow-lg transition-shadow duration-300">
                                                             <h4 className="text-lg md:text-xl font-semibold text-gray-800">{event.title}</h4>
-
-                                                            {/* Date & Time */}
                                                             <div className="flex flex-wrap gap-4 text-sm text-gray-600 mt-3">
-                                                                <span className="flex items-center gap-1">
-                                                                    📅 <span>{formattedDate}</span>
-                                                                </span>
-                                                                <span className="flex items-center gap-1">
-                                                                    ⏰ <span>{event.time}</span>
-                                                                </span>
+                                                                <span className="flex items-center gap-1">📅 <span>{formattedDate}</span></span>
+                                                                <span className="flex items-center gap-1">⏰ <span>{event.time}</span></span>
                                                             </div>
-
-                                                            {/* Badge */}
                                                             <div className="mt-4 flex justify-end">
-                                                                <span className="px-3 py-1 text-xs font-medium bg-green-100 text-green-700 rounded-full">
-                                                                    Joined
-                                                                </span>
+                                                                <span className="px-3 py-1 text-xs font-medium bg-green-100 text-green-700 rounded-full">Joined</span>
                                                             </div>
                                                         </div>
                                                     );
@@ -241,9 +201,7 @@ export default function ModernUserProfile() {
                                             ) : (
                                                 <p className="text-gray-500">You haven’t joined any events yet.</p>
                                             )}
-
                                         </div>
-
                                     </div>
                                 </motion.div>
                             )}

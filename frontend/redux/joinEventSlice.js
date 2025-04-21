@@ -54,14 +54,38 @@ export const joinEvent = createAsyncThunk(
     }
   );
   
+
+  export const fetchParticipantsByEventId = createAsyncThunk(
+    "events/fetchParticipantsByEventId",
+    async (eventid, { rejectWithValue }) => {
+      try {
+        const token = localStorage.getItem("access-token");
+        const response = await axios.post(
+          `http://localhost:5000/events/participants/${eventid}`,
+          { eventid },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        return { eventid, participants: response.data };
+      } catch (err) {
+        return rejectWithValue(err.response?.data?.message || err.message);
+      }
+    }
+  );
+  
   
   const joinEventSlice = createSlice({
     name: "joinEvent",
     initialState: {
       status: "idle",
       error: null,
-      joinedEvents: [], 
+      joinedEvents: [],
+      participantsByEventId: {}, 
     },
+    
     reducers: {},
     extraReducers: (builder) => {
       builder
@@ -85,7 +109,12 @@ export const joinEvent = createAsyncThunk(
         .addCase(fetchJoinedEvents.rejected, (state, action) => {
           state.status = "failed";
           state.error = action.payload;
-        });
+        })
+        .addCase(fetchParticipantsByEventId.fulfilled, (state, action) => {
+          const { eventid, participants } = action.payload;
+          state.participantsByEventId[eventid] = participants.length;
+        })
+        ;
     },
   });
   

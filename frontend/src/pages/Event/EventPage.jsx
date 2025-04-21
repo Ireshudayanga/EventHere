@@ -202,14 +202,14 @@ const EventPage = () => {
                                     ) : (
                                         (() => {
                                             const upcomingVolunteerEvents = events
-                                                .filter((event) => {
-                                                    const eventDate = new Date(event.date);
-                                                    const today = new Date();
-                                                    today.setHours(0, 0, 0, 0);
-                                                    return event.category === 'volunteer' && eventDate >= today;
-                                                })
-                                                .sort((a, b) => new Date(a.date) - new Date(b.date));
-
+                                            .filter((event) => {
+                                                const eventDate = new Date(event.date);
+                                                const today = new Date();
+                                                today.setHours(0, 0, 0, 0);
+                                                return event.category === 'volunteer' && event.signupRequired === true && eventDate >= today;
+                                            })
+                                            .sort((a, b) => new Date(a.date) - new Date(b.date));
+                                        
                                             return upcomingVolunteerEvents.length > 0 ? (
                                                 upcomingVolunteerEvents.map((event, index) => (
                                                     <ReminderCard
