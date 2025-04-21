@@ -19,6 +19,7 @@ import UserManagement from '../pages/admin/UserManagement';
 import EventManager from '../pages/admin/EventManager';
 import AdminMessages from '../pages/admin/AdminMessages';
 import CalendarPage from '../pages/Calendar/Calendar';
+import AppContentLayout from '../layout/AppContentLayout';
 
 const router = createBrowserRouter([
 
@@ -29,11 +30,21 @@ const router = createBrowserRouter([
       path: "/",
       element: <Home />,
     },
-    { path: "/calendar", element: <CalendarPage/> },
     ]
   },
 
-  
+  // Public Routes
+  {
+    path: "/",
+    element: <AppContentLayout />,
+    children: [{
+      path: "/calendar", element: <CalendarPage />,
+    },
+
+    ]
+  },
+
+
   // Admin Routes
   {
     path: "/admin",
@@ -46,7 +57,7 @@ const router = createBrowserRouter([
       {
         path: "", // Default route for /admin
         element: <AdminPanel />
-      },{
+      }, {
         path: "/admin/users",
         element: <UserManagement />
       },
@@ -58,8 +69,8 @@ const router = createBrowserRouter([
         path: "/admin/messages",
         element: <AdminMessages />,
       }
-      
-      
+
+
     ]
   },
 
