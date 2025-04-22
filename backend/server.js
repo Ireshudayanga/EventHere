@@ -249,6 +249,11 @@ io.on("connection", (socket) => {
 
 // -------------------- START SERVER --------------------
 
+app.get('/healthz', (req, res) => {
+  res.send('OK');
+});
+
+
 server.listen(PORT, () => {
   console.log(`🚀 Server running at http://localhost:${PORT}`);
 });
