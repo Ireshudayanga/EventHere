@@ -6,7 +6,7 @@ import { AuthContext } from '../context/AuthProvider';
 
 // 🔁 create only once outside the hook
 const axiosSecureInstance = axios.create({
-  baseURL: 'http://localhost:5000',
+  baseURL: import.meta.env.VITE_API_URL,
 });
 
 const useAxiosSecure = () => {
