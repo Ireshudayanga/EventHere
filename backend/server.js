@@ -14,15 +14,15 @@ const app = express();
 // Middleware
 app.use(express.json());
 
-
 app.use(cors({
-  origin: (origin, callback) => {
-    
-    if (!origin) return callback(null, true);
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true); // allow server-to-server calls
+
     if (allowedOrigins.includes(origin)) {
       return callback(null, true);
     } else {
-      return callback(new Error("Not allowed by CORS"));
+      console.warn(`❌ CORS blocked request from origin: ${origin}`);
+      return callback(new Error('Not allowed by CORS'));
     }
   },
   credentials: true,
