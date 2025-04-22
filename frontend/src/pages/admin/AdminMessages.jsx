@@ -3,6 +3,7 @@ import { useSocket } from "../../socket/SocketPrivider";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { motion } from "framer-motion";
+import useAxiosPublic from "../../hooks/useAxiosPublic";
 
 const AdminChat = () => {
   const { socket } = useSocket();
@@ -11,12 +12,13 @@ const AdminChat = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [messageInput, setMessageInput] = useState("");
   const messagesEndRef = useRef(null);
+  const axiosPublic = useAxiosPublic ();
 
   // Fetch all messages on load
   useEffect(() => {
     const fetchMessages = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/admin-messages");
+        const res = await axiosPublic.get("/admin-messages");
         const data = res.data.reverse().map((msg) => ({
           ...msg,
           senderId: msg.email,

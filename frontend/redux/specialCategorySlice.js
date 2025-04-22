@@ -1,11 +1,11 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
+import { axiosPublic } from "../src/hooks/useAxiosPublic";
 
 // Async thunk to fetch the special category from API
 export const fetchSpecialCategory = createAsyncThunk(
   "specialCategory/fetchSpecialCategory",
   async () => {
-    const response = await axios.get("http://localhost:5000/api/special-category/active");
+    const response = await axiosPublic.get("/api/special-category/active");
     return response.data.category; // Assuming response has { category: "some-category" }
   }
 );

@@ -38,7 +38,10 @@ export const SocketProvider = ({ children }) => {
     if (!currentUser?.email) return;
 
     // Connect socket
-    socket.current = io("http://localhost:5000");
+    socket.current = io(import.meta.env.VITE_SOCKET_URL, {
+      transports: ["websocket"],
+    });
+    
     console.log("🔌 Socket connected:", socket.current.id);
 
     socket.current.emit("join", currentUser.email);

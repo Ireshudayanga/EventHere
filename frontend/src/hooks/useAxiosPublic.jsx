@@ -1,13 +1,16 @@
-import React from 'react'
-import axios from 'axios'
+// 📄 src/hooks/useAxiosPublic.js
+import axios from 'axios';
 
+// ✅ Axios instance (for Redux, or anywhere)
 const axiosPublic = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
 });
 
-
+// ✅ Hook (for React components)
 const useAxiosPublic = () => {
-  return ( axiosPublic );
-}
+  return axiosPublic;
+};
 
-export default useAxiosPublic
+// ✅ Export both
+export { axiosPublic };
+export default useAxiosPublic;

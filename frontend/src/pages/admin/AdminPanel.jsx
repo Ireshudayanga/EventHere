@@ -1,15 +1,17 @@
 import React, { useState } from "react";
 import axios from "axios";
+import useAxiosPublic from "../../hooks/useAxiosPublic";
 
 const AdminPanel = () => {
   const [category, setCategory] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const axiosPublic = useAxiosPublic ();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:5000/api/special-category/set", {
+      const response = await axiosPublic.post("/api/special-category/set", {
         category,
         startDate,
         endDate

@@ -1,9 +1,11 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
+
+import { axiosPublic } from "../src/hooks/useAxiosPublic";
+
 
 // Async Thunk to fetch events from API
 export const fetchEvents = createAsyncThunk("events/fetchEvents", async () => {
-  const response = await axios.get("http://localhost:5000/events"); // API call
+  const response = await axiosPublic.get("/events"); // API call
   return response.data.map(event => ({
     ...event,
     date: new Date(event.date).toISOString().split('T')[0], // Convert to YYYY-MM-DD

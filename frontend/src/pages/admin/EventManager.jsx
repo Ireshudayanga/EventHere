@@ -2,14 +2,17 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { FaTrash } from "react-icons/fa";
 import { toast, ToastContainer } from "react-toastify";
+import useAxiosPublic from "../../hooks/useAxiosPublic";
+
 
 const EventManager = () => {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
+  const axiosPublic = useAxiosPublic ();
 
   const fetchEvents = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/events");
+      const res = await axiosPublic.get("/events");
       setEvents(res.data);
     } catch (error) {
       console.error("Failed to load events", error);
@@ -23,7 +26,7 @@ const EventManager = () => {
     if (!confirmDelete) return;
 
     try {
-        await axios.delete(`http://localhost:5000/events/${id}`, {
+        await axiosPublic.delete(`/events/${id}`, {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("access-token")}`,
             },

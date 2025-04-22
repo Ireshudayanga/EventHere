@@ -1,8 +1,8 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
+import { axiosPublic } from "../src/hooks/useAxiosPublic";
 
 export const addRide = createAsyncThunk("rides/addRide", async (rideData) => {
-    const response = await axios.post("http://localhost:5000/rides/set-ride", rideData);
+    const response = await axiosPublic.post("/rides/set-ride", rideData);
     console.log("🚀 Backend Response in addRide:", response.data);
     return response.data;
 });

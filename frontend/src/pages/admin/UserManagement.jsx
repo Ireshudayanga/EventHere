@@ -9,7 +9,7 @@ const UserManagement = () => {
 
     const fetchUsers = async () => {
         try {
-            const res = await axios.get("http://localhost:5000/users");
+            const res = await axios.get(`${import.meta.env.VITE_API_URL}/users`);
             setUsers(res.data);
         } catch (error) {
             console.error("Failed to load users", error);
@@ -19,14 +19,14 @@ const UserManagement = () => {
     const handlePromote = async (id) => {
         try {
             // 1. Promote user to admin
-            await axios.patch(`http://localhost:5000/users/promote/${id}`);
+            await axios.patch(`${import.meta.env.VITE_API_URL}/users/promote/${id}`);
 
             // 2. Get user email (to send to admin DB)
             const user = users.find((u) => u._id === id);
 
             // 3. Save admin email in /admin/create route
             await axios.post(
-                "http://localhost:5000/admin/create",
+                `${import.meta.env.VITE_API_URL}/admin/create`,
                 { email: user.email },
                 {
                     headers: {
@@ -48,7 +48,7 @@ const UserManagement = () => {
         const confirm = window.confirm("Are you sure you want to delete this user?");
         if (!confirm) return;
         try {
-            await axios.delete(`http://localhost:5000/users/${id}`, {
+            await axios.delete(`${import.meta.env.VITE_API_URL}/users/${id}`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             toast.success("User deleted");

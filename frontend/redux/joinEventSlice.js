@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
+import { axiosPublic } from "../src/hooks/useAxiosPublic";
+
 
 export const joinEvent = createAsyncThunk(
     "events/joinRide",
@@ -13,8 +14,8 @@ export const joinEvent = createAsyncThunk(
           return rejectWithValue("No access token found. Please log in.");
         }
   
-        const response = await axios.post(
-          "http://localhost:5000/events/join-event",
+        const response = await axiosPublic.post(
+          "/events/join-event",
           eventData,
           {
             headers: {
@@ -37,8 +38,8 @@ export const joinEvent = createAsyncThunk(
         const token = localStorage.getItem("access-token");
         if (!token) return rejectWithValue("Not authorized");
   
-        const response = await axios.post(
-          "http://localhost:5000/events/joined",
+        const response = await axiosPublic.post(
+          "/events/joined",
           { email },
           {
             headers: {
@@ -60,8 +61,8 @@ export const joinEvent = createAsyncThunk(
     async (eventid, { rejectWithValue }) => {
       try {
         const token = localStorage.getItem("access-token");
-        const response = await axios.post(
-          `http://localhost:5000/events/participants/${eventid}`,
+        const response = await axiosPublic.post(
+          `/events/participants/${eventid}`,
           { eventid },
           {
             headers: {
