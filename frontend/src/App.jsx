@@ -1,6 +1,9 @@
 import { useContext } from "react";
 import { RouterProvider } from "react-router-dom";
 import { toast } from "react-toastify";
+import Maintenance from "../src/pages/Maintenance/Maintenance";
+
+
 
 // Firebase Analytics
 import { logEvent } from "firebase/analytics";
@@ -19,6 +22,15 @@ import "./App.css";
 function App() {
   const { incomingRideRequest, setIncomingRideRequest, socket } = useSocket();
   const { currentUser } = useContext(AuthContext);
+  
+  
+  // ✅ For Maintenance Mode
+  // Check if the app is in maintenance mode
+  const isMaintenance = import.meta.env.VITE_MAINTENANCE_MODE === "true";
+  if (isMaintenance) return <Maintenance />;
+
+
+
 
   // ✅ Handle ride acceptance
   const handleAccept = () => {
