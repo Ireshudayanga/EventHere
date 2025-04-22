@@ -21,15 +21,29 @@ export default function ComingSoon() {
   };
 
   useEffect(() => {
-    const initial = calculateCountdown();
+    if (!launchTime) return;
+  
+    const [h, m] = launchTime.split(":").map(Number);
+    if (isNaN(h) || isNaN(m)) return;
+  
+    const getSecondsUntilLaunch = () => {
+      const now = new Date();
+      const target = new Date();
+      target.setHours(h, m, 0, 0);
+      if (target <= now) target.setDate(target.getDate() + 1);
+      return Math.floor((target - now) / 1000);
+    };
+  
+    const initial = getSecondsUntilLaunch();
     setCountdown(initial);
-    if (initial === null) return;
-
+  
     const timer = setInterval(() => {
       setCountdown((prev) => (prev && prev > 0 ? prev - 1 : 0));
     }, 1000);
+  
     return () => clearInterval(timer);
-  }, []);
+  }, [launchTime]);
+  
 
   const formatTime = (secs) => {
     const h = String(Math.floor(secs / 3600)).padStart(2, "0");

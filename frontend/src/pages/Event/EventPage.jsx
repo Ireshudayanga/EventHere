@@ -18,6 +18,7 @@ import { AuthContext } from "../../context/AuthProvider";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useSocket } from "../../socket/SocketPrivider";
+import PopupModal from "../../components/PopupModal";
 
 
 
@@ -35,6 +36,16 @@ const EventPage = () => {
 
     const [message, setMessage] = useState("");
     const { currentUser } = useContext(AuthContext);
+    const [showPopup, setShowPopup] = useState(false);
+
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setShowPopup(true);
+        }, 8000); // 8 seconds = 8000ms
+
+        return () => clearTimeout(timer);
+    }, []);
 
 
     const handleSendMessage = () => {
@@ -142,7 +153,7 @@ const EventPage = () => {
                                     <p className="text-2xl font-medium text-black font-sans">Events</p>
                                     <p className="text-[12px] text-black">Join our community</p>
                                 </div>
-                                
+
                             </div>
 
                             <div className="mt-2 overflow-y-auto md:overflow-y-scroll custom-scrollbar">
@@ -197,14 +208,14 @@ const EventPage = () => {
                                     ) : (
                                         (() => {
                                             const upcomingVolunteerEvents = events
-                                            .filter((event) => {
-                                                const eventDate = new Date(event.date);
-                                                const today = new Date();
-                                                today.setHours(0, 0, 0, 0);
-                                                return event.category === 'volunteer' && event.signupRequired === true && eventDate >= today;
-                                            })
-                                            .sort((a, b) => new Date(a.date) - new Date(b.date));
-                                        
+                                                .filter((event) => {
+                                                    const eventDate = new Date(event.date);
+                                                    const today = new Date();
+                                                    today.setHours(0, 0, 0, 0);
+                                                    return event.category === 'volunteer' && event.signupRequired === true && eventDate >= today;
+                                                })
+                                                .sort((a, b) => new Date(a.date) - new Date(b.date));
+
                                             return upcomingVolunteerEvents.length > 0 ? (
                                                 upcomingVolunteerEvents.map((event, index) => (
                                                     <ReminderCard
@@ -277,6 +288,7 @@ const EventPage = () => {
 
 
 
+            {showPopup && <PopupModal onClose={() => setShowPopup(false)} />}
 
         </div>
     );
