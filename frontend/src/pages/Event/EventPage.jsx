@@ -142,12 +142,7 @@ const EventPage = () => {
                                     <p className="text-2xl font-medium text-black font-sans">Events</p>
                                     <p className="text-[12px] text-black">Join our community</p>
                                 </div>
-                                <Link to="/events" className="text-blue-500">
-                                    <div className="flex items-center gap-1">
-                                        <p>See all</p>
-                                        <img className='w-3' src={ArrowFW} alt="Arrow" />
-                                    </div>
-                                </Link>
+                                
                             </div>
 
                             <div className="mt-2 overflow-y-auto md:overflow-y-scroll custom-scrollbar">

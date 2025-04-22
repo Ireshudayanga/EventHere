@@ -6,13 +6,28 @@ const http = require('http');
 const { Server } = require('socket.io');
 const admin = require("firebase-admin");
 const PORT = process.env.PORT || 5000;
+const allowedOrigins = process.env.FRONTEND_ORIGINS?.split(',') || [];
 
 // Initialize Express App
 const app = express();
 
 // Middleware
 app.use(express.json());
-app.use(cors());
+
+
+app.use(cors({
+  origin: (origin, callback) => {
+    
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    } else {
+      return callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+}));
+
 
 // Firebase Admin Setup
 const serviceAccount = {
