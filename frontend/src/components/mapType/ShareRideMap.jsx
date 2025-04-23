@@ -361,10 +361,10 @@ const ShareRideMap = ({
                                 icon={categoryIcons[event.category] || markerIcons.violet}
                             >
                                 <Popup>
-                                    <div className="w-64 bg-white rounded-2xl shadow-md overflow-hidden border border-gray-200">
+                                    <div className="w-[90vw] max-w-[240px] md:w-64 bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200 text-sm md:text-base">
                                         {/* Image Header */}
                                         {event.imageUrl && (
-                                            <div className="h-24 w-full overflow-hidden">
+                                            <div className="h-20 md:h-24 w-full overflow-hidden">
                                                 <img
                                                     src={event.imageUrl}
                                                     alt={event.title}
@@ -374,17 +374,14 @@ const ShareRideMap = ({
                                         )}
 
                                         {/* Content */}
-                                        <div className="p-4 space-y-2">
-                                            {/* Title */}
-                                            <h3 className="text-base font-bold text-gray-900">{event.title}</h3>
+                                        <div className="p-3 md:p-4 space-y-2">
+                                            <h3 className="text-base font-semibold text-gray-900 truncate">{event.title}</h3>
 
-                                            {/* Description */}
-                                            <p className="text-sm text-gray-600 leading-snug line-clamp-3">
+                                            <p className="text-xs md:text-sm text-gray-600 line-clamp-3 leading-snug">
                                                 {event.description}
                                             </p>
 
-                                            {/* Info Block */}
-                                            <div className="text-xs text-gray-700 bg-gray-50 rounded-lg p-2 space-y-1 border">
+                                            <div className="text-xs bg-gray-50 text-gray-700 rounded-lg p-2 border space-y-1">
                                                 <div className="flex justify-between">
                                                     <span className="font-medium">Date:</span>
                                                     <span>{new Date(event.date).toLocaleDateString()}</span>
@@ -399,45 +396,22 @@ const ShareRideMap = ({
                                                 </div>
                                             </div>
 
-                                            {/* Action Buttons */}
-                                            <div className="pt-2 flex justify-between items-center gap-2">
-                                                {onPickupSelect ? (
-                                                    <Button
-                                                        onClick={() => {
-                                                            const [lat, lng] = [event.location.coordinates[1], event.location.coordinates[0]];
-                                                            onDropSelect(`${lat.toFixed(4)}, ${lng.toFixed(4)}`);
-                                                        }}
-                                                        className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs px-4 py-1.5 rounded-lg w-full"
-                                                    >
-                                                        Select Event
-                                                    </Button>
-                                                ) : (
-                                                    <>
-                                                        <Button
-                                                            onClick={() => {
-                                                                const [lat, lng] = [event.location.coordinates[1], event.location.coordinates[0]];
-                                                                onDropSelect(`${lat.toFixed(4)}, ${lng.toFixed(4)}`);
-                                                            }}
-                                                            className="bg-green-600 hover:bg-green-700 text-white text-xs px-3 py-1.5 rounded-lg w-full"
-                                                        >
-                                                            Find
-                                                        </Button>
-                                                        <Button
-                                                            onClick={() => {
-                                                                const [lat, lng] = [event.location.coordinates[1], event.location.coordinates[0]];
-                                                                onDropSelect(`${lat.toFixed(4)}, ${lng.toFixed(4)}`);
-                                                            }}
-                                                            className="bg-blue-500 hover:bg-blue-600 text-white text-xs px-3 py-1.5 rounded-lg w-full"
-                                                        >
-                                                            Offer
-                                                        </Button>
-                                                    </>
-                                                )}
+                                            <div className="pt-2 flex gap-2">
+                                                <Button
+                                                    onClick={() => {
+                                                        const [lat, lng] = [event.location.coordinates[1], event.location.coordinates[0]];
+                                                        onDropSelect(`${lat.toFixed(4)}, ${lng.toFixed(4)}`);
+                                                    }}
+                                                    className="flex-1 text-xs md:text-sm bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-lg"
+                                                >
+                                                    Select Event
+                                                </Button>
                                             </div>
                                         </div>
                                     </div>
                                 </Popup>
-                                
+
+
                             </Marker>
                         ))
                 }

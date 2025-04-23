@@ -314,7 +314,8 @@ const ShareRide = () => {
           {/* Right Side - Map and Communication */}
           <div className={`w-full ${isRideMatched ? 'md:w-full' : 'md:w-[50%]'} flex flex-col gap-3 transition-all duration-700 ease-in-out`}>
             {/* Map Section */}
-            <div className="bg-white rounded-xl md:rounded-2xl shadow-lg h-[40vh] flex-grow">
+            <div className="bg-white rounded-xl md:rounded-2xl shadow-lg h-[70vh] md:h-[40vh] flex-grow">
+
               <ShareRideMap
                 onPickupSelect={setLocation1}
                 onDropSelect={setLocation2}

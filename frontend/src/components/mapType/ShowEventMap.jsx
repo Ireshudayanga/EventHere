@@ -277,48 +277,50 @@ const ShowEventMap = ({ setSelectedLocation, categoryType, filterDate, specialCa
                         position={[event.location.coordinates[1], event.location.coordinates[0]]}
                         icon={categoryIcons[event.category] || markerIcons.violet}
                     >
-                       <Popup>
-    <div className="w-60 p-3 rounded-xl shadow-md bg-white space-y-2">
-        {/* Event Title */}
-        <h3 className="text-sm font-semibold text-gray-900">{event.title}</h3>
 
-        {/* Optional Image */}
-        {event.imageUrl && (
-            <img
-                src={event.imageUrl}
-                alt={event.title}
-                className="w-full h-24 rounded-lg object-cover"
-            />
-        )}
+                        <Popup>
+                            <div className="w-[90vw] max-w-[240px] md:w-60 p-2 md:p-3 rounded-xl shadow-md bg-white space-y-2 text-xs md:text-sm">
 
-        {/* Description */}
-        <p className="text-xs text-gray-600 line-clamp-3">{event.description}</p>
+                                {/* Event Title */}
+                                <h3 className="text-sm font-semibold text-gray-900">{event.title}</h3>
 
-        {/* Meta Info */}
-        <div className="text-xs text-gray-700 space-y-1">
-            <div className="flex justify-between">
-                <span className="font-medium">Category:</span>
-                <span className="capitalize">{event.category}</span>
-            </div>
-            <div className="flex justify-between">
-                <span className="font-medium">Date:</span>
-                <span>{new Date(event.date).toISOString().split("T")[0]}</span>
-            </div>
-            <div className="flex justify-between">
-                <span className="font-medium">Time:</span>
-                <span>{event.time}</span>
-            </div>
-        </div>
+                                {/* Optional Image */}
+                                {event.imageUrl && (
+                                    <img
+                                        src={event.imageUrl}
+                                        alt={event.title}
+                                        className="w-full h-24 rounded-lg object-cover"
+                                    />
+                                )}
 
-        {/* CTA Button */}
-        <Button
-            onClick={() => handleShowDirection(event, userLocation)}
-            className="w-full mt-2 bg-blue-600 text-white text-xs py-2 rounded-lg hover:bg-blue-700 transition-all"
-        >
-            Get Directions
-        </Button>
-    </div>
-</Popup>
+                                {/* Description */}
+                                <p className="text-xs text-gray-600 line-clamp-3">{event.description}</p>
+
+                                {/* Meta Info */}
+                                <div className="text-xs text-gray-700 space-y-1">
+                                    <div className="flex justify-between">
+                                        <span className="font-medium">Category:</span>
+                                        <span className="capitalize">{event.category}</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <span className="font-medium">Date:</span>
+                                        <span>{new Date(event.date).toISOString().split("T")[0]}</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <span className="font-medium">Time:</span>
+                                        <span>{event.time}</span>
+                                    </div>
+                                </div>
+
+                                {/* CTA Button */}
+                                <Button
+                                    onClick={() => handleShowDirection(event, userLocation)}
+                                    className="w-full mt-2 bg-blue-600 text-white text-xs py-2 rounded-lg hover:bg-blue-700 transition-all"
+                                >
+                                    Get Directions
+                                </Button>
+                            </div>
+                        </Popup>
 
                     </Marker>
                 ))}
