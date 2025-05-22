@@ -52,7 +52,7 @@ const ShareRide = () => {
     const sorted = [email1, email2].sort();
     return `ride_${sorted[0]}_${sorted[1]}`;
   };
-  
+
 
   const dispatch = useDispatch();
 
@@ -176,24 +176,24 @@ const ShareRide = () => {
   };
 
   const geoWatchIdRef = useRef(null);
-  
+
   useEffect(() => {
     if (!socket.current) return;
-  
+
     geoWatchIdRef.current = null;
 
-    
-  
+
+
     const handleConfirmed = (data) => {
       toast.success("Ride confirmed! 🎉");
       setIsRideMatched(true);
-  
+
       const myEmail = currentUser?.email;
       const partnerEmail = data?.from;
-  
+
       const rideRoomId = generateRideRoomId(myEmail, partnerEmail);
       socket.current.emit("join-ride-room", rideRoomId);
-  
+
       // 🔴 Start tracking
       geoWatchIdRef.current = navigator.geolocation.watchPosition(
         (pos) => {
@@ -207,30 +207,30 @@ const ShareRide = () => {
         (err) => console.error("Geo error when real time tracking:", err),
         { enableHighAccuracy: true, maximumAge: 0 }
       );
-      
+
     };
-  
+
     const handleRejected = () => {
       toast.error("Ride was rejected");
       handleCancel();
     };
-  
+
     socket.current.on("ride-confirmed", handleConfirmed);
     socket.current.on("ride-rejected", handleRejected);
-  
+
     // 🔁 Cleanup when component unmounts or ride ends
     return () => {
       socket.current.off("ride-confirmed", handleConfirmed);
       socket.current.off("ride-rejected", handleRejected);
-      
+
       if (geoWatchIdRef.current) {
         navigator.geolocation.clearWatch(geoWatchIdRef.current);
         console.log("🛑 Stopped location tracking");
       }
     };
-    
+
   }, [socket.current, handleCancel]);
-  
+
 
 
   return (
@@ -322,38 +322,37 @@ const ShareRide = () => {
                 activeField={activeField}
                 pickupLocation={location1}
                 dropLocation={location2}
-                isRideMatched={isRideMatched} 
+                isRideMatched={isRideMatched}
               />
 
             </div>
 
             {/* Communication & Ride Status Section */}
-           
-           { isRideMatched && (
-             <div className="w-full md:max-h-52 flex flex-row gap-3 md:gap-5">
-             {/* Chat Box */}
-             <div className="bg-white text-black rounded-xl md:rounded-2xl shadow-lg p-4 flex flex-col items-center justify-center text-center flex-[2] md:w-2/3">
-               <p className="text-2xl font-medium">Contact Your Partner</p>
-               <div className="relative w-full mt-3">
-                 <textarea
-                   className="w-full h-28 bg-gray-200 rounded-lg p-3 text-gray-700 text-sm outline-none focus:ring-2 focus:ring-gray-400 resize-none"
-                   placeholder="Enter Your Message .."
-                 ></textarea>
-                 <Button className="absolute bottom-3 right-2 px-4 py-1 text-white bg-blue-500 text-sm rounded-3xl">
-                   Send
-                 </Button>
-               </div>
-             </div>
 
-             {/* Ongoing Ride Status */}
-             <div className="bg-white text-black rounded-xl md:rounded-2xl shadow-lg p-4 flex flex-col justify-center text-center flex-[1] md:w-1/3">
-               <p className="text-2xl font-medium">Ongoing</p>
-               <p className="m-6 text-6xl">
-                 67<span className="text-base">KM</span>
-               </p>
-             </div>
-           </div>
-           )}
+            {isRideMatched && (
+              <div className="w-full md:max-h-52 flex flex-row gap-3 md:gap-5">
+                {/* Chat Box */}
+                <div className="bg-white text-black rounded-xl md:rounded-2xl shadow-lg p-4 flex flex-col items-center justify-center text-center flex-[2] md:w-2/3">
+                  <p className="text-2xl font-medium">Contact Your Partner</p>
+                  <div className="relative w-full mt-3">
+                    <textarea
+                      className="w-full h-28 bg-gray-200 rounded-lg p-3 text-gray-700 text-sm outline-none focus:ring-2 focus:ring-gray-400 resize-none"
+                      placeholder="Enter Your Message .."
+                    ></textarea>
+                    <Button className="absolute bottom-3 right-2 px-4 py-1 text-white bg-blue-500 text-sm rounded-3xl">
+                      Send
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Ongoing Ride Status */}
+                <div className="bg-white text-black rounded-xl md:rounded-2xl shadow-lg p-4 flex flex-col justify-center text-center flex-[1] md:w-1/3">
+                  <p className="text-2xl font-medium">Safety Tip</p>
+                  <p className="mt-4 text-sm text-gray-700">Always verify your partner’s name before starting the ride.</p>
+                </div>
+
+              </div>
+            )}
 
           </div>
         </div>

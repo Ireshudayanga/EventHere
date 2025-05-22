@@ -4,7 +4,6 @@ const eventController = require('../controllers/eventcontraller');
 const TokenVerify = require("../middleware/TokenIssue");
 
 router.get('/', eventController.getAllEvents);
-router.get('/:id', eventController.getEventById);
 router.post('/join-event', TokenVerify.TokenVerify, eventController.joinEvent);
 router.post('/joined', TokenVerify.TokenVerify, eventController.getJoinEventByEmail);
 router.post('/', TokenVerify.TokenVerify, eventController.createEvent);
