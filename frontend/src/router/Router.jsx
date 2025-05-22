@@ -113,6 +113,11 @@ const router = createBrowserRouter([
     element: <Signup />
   },
 
+  {
+  path: "/event/:id",
+  element: <EventPage />
+},
+
   // Legal Pages
   {
     path: "/",
