@@ -338,15 +338,10 @@ const ShareRide = () => {
                   <p className="text-2xl font-medium">Contact Your Partner</p>
                   <p className="text-sm text-gray-500 mt-2">You can send messages and share updates from the messaging page.</p>
 
-                  <div className="w-full mt-4">
-                    <textarea
-                      className="w-full h-28 bg-gray-200 rounded-lg p-3 text-gray-700 text-sm outline-none focus:ring-2 focus:ring-gray-400 resize-none"
-                      placeholder="Write a message or just click Send to start chatting..."
-                      disabled
-                    ></textarea>
+                  <div className="w-full mt-3">
                     <Button
                       onClick={() => navigate("/message")}
-                      className="mt-3 w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-3xl text-sm"
+                      className="mt-3  bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-3xl text-sm"
                     >
                       Go to Messages
                     </Button>

@@ -13,7 +13,7 @@ export const SocketProvider = ({ children }) => {
   const socket = useRef(null);
   const [incomingRideRequest, setIncomingRideRequest] = useState(null);
   const [hasUnreadMessages, setHasUnreadMessages] = useState(false);
-  const [isRideMatched, setIsRideMatched] = useState(false);
+  const [isRideMatched, setIsRideMatched] = useState(true);
   const [adminMessages, setAdminMessages] = useState([]);
 
   const sendAdminMessage = (msg) => {
